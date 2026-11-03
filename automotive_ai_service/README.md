@@ -68,6 +68,37 @@ $env:AI_SERVICE_API_KEY = "change-this-local-api-key"
 
 Use the same value in the caller. For production, set a strong secret in your environment, disable debug mode, and do not expose Django's development server publicly.
 
+## Deploying the AI service to Render
+
+Create a **Web Service** using Render's Python runtime. Set its Root Directory
+to the directory containing `manage.py` and `requirements.txt`
+(`automotive_ai_service` if the repository root is `CaRen-AI`). Use:
+
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `gunicorn automotive_ai.wsgi:application --bind 0.0.0.0:$PORT`
+
+Set these variables in the Render service's **Environment** settings:
+
+| Variable | Value |
+| --- | --- |
+| `DJANGO_SECRET_KEY` | Generate a new, long random secret in Render. |
+| `DJANGO_DEBUG` | `False` |
+| `DJANGO_ALLOWED_HOSTS` | The service hostname Render assigns, without `https://` (for example, `your-ai-service.onrender.com`). |
+| `AI_SERVICE_API_KEY` | A strong random secret. Set the exact same value in the deployed LavaLust backend as `AI_SERVICE_API_KEY`. |
+
+Render supplies `PORT`; Gunicorn binds to it. Do not set `PORT` yourself.
+The backend must point `AI_SERVICE_API_URL` to
+`https://<your-service-hostname>/api/chat/` and
+`AI_SERVICE_CAPABILITIES_URL` to
+`https://<your-service-hostname>/api/capabilities/`.
+The health endpoint is protected by `AI_SERVICE_API_KEY`, so do not configure
+Render's unauthenticated health check to call `/api/health/`.
+
+The current service uses SQLite for conversation memory. On Render, local
+filesystem data is not durable across deploys or restarts unless a persistent
+disk is configured; the chatbot model and knowledge files must be included in
+the deployed repository.
+
 The LavaLust backend forwards authenticated chat requests to this service at
 `http://127.0.0.1:8001/api/chat/` by default. Override the URL with
 `AI_SERVICE_API_URL` in the backend environment if needed. If
