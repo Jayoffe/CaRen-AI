@@ -29,7 +29,26 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", DEFAULT_SECRET_KEY)
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 if not DEBUG and SECRET_KEY == DEFAULT_SECRET_KEY and "test" not in sys.argv[1:2]:
     raise ImproperlyConfigured("Set DJANGO_SECRET_KEY (a long random value) when DJANGO_DEBUG is not True.")
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost,testserver").split(",") if host.strip()]
+def _allowed_hosts():
+    configured = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost,testserver")
+    hosts = []
+    for value in configured.split(","):
+        host = value.strip().strip("\"'")
+        if not host:
+            continue
+        if "://" in host:
+            host = host.split("://", 1)[1]
+        host = host.split("/", 1)[0].split(":", 1)[0]
+        if host and host not in hosts:
+            hosts.append(host)
+
+    render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
+    if render_host and render_host not in hosts:
+        hosts.append(render_host)
+    return hosts
+
+
+ALLOWED_HOSTS = _allowed_hosts()
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
