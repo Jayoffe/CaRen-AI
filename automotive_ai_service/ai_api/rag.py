@@ -13,6 +13,7 @@ scripts/evaluate_chatbot.py.
 """
 import json
 import logging
+import os
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -39,6 +40,8 @@ class KnowledgeIndexUnavailable(RuntimeError):
 
 @lru_cache(maxsize=1)
 def load_index():
+    if os.environ.get("AI_ENABLE_KNOWLEDGE_INDEX", "true").lower() != "true":
+        raise KnowledgeIndexUnavailable("The memory-heavy retrieval index is disabled for this deployment.")
     root = Path(settings.KNOWLEDGE_INDEX_PATH)
     try:
         chunks = [json.loads(line) for line in (root / "chunks.jsonl").read_text(encoding="utf-8").splitlines() if line]

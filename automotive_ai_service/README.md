@@ -85,6 +85,7 @@ Set these variables in the Render service's **Environment** settings:
 | `DJANGO_DEBUG` | `False` |
 | `DJANGO_ALLOWED_HOSTS` | The service hostname Render assigns, without `https://` (for example, `your-ai-service.onrender.com`). |
 | `AI_SERVICE_API_KEY` | A strong random secret. Set the exact same value in the deployed LavaLust backend as `AI_SERVICE_API_KEY`. |
+| `AI_ENABLE_KNOWLEDGE_INDEX` | `False` on Render's smallest instance to avoid loading the memory-heavy 9,838-chunk index. The local chatbot and curated knowledge remain available. |
 
 Render supplies `PORT`; Gunicorn binds to it. Do not set `PORT` yourself.
 The backend must point `AI_SERVICE_API_URL` to
