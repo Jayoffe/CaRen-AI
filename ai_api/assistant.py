@@ -160,6 +160,13 @@ VEHICLE_MANAGEMENT_ANSWER = (
 UNRECORDED_POLICY = "This policy is not recorded in the system. Please confirm it with the rental team."
 CREDENTIALS_ANSWER = ("I can't share passwords, keys or other account credentials, for any account. "
                       "If you can't sign in to your own account, contact the rental team.")
+BREAKDOWN_ANSWER = (
+    "If the rental car breaks down:\n"
+    "- Move to a safe place if you can, switch on the hazard lights, and stay clear of traffic.\n"
+    "- Do not keep driving if there is smoke, a red warning light, overheating, or a brake or steering problem.\n"
+    "- Contact the rental team as soon as you can and tell them what happened and where you are; ask them before arranging any repair.\n"
+    "The system does not record a breakdown or roadside-assistance procedure, so confirm the next steps with the rental team."
+)
 # General safety steps only: the system records no accident, insurance or liability procedure.
 ACCIDENT_ANSWER = (
     "If you are in an accident:\n"
@@ -314,6 +321,8 @@ def _direct_response(kind, plan=None):
         return _with_evidence(core.build_response("permission_denied", 1.0, CREDENTIALS_ANSWER), "none", [])
     if kind == "accident_guidance":
         return _with_evidence(core.build_response("accident_guidance", 1.0, ACCIDENT_ANSWER), "none", [])
+    if kind == "breakdown_guidance":
+        return _with_evidence(core.build_response("breakdown_guidance", 1.0, BREAKDOWN_ANSWER), "none", [])
     return _with_evidence(core.build_response("permission_denied", 1.0, ADMIN_ONLY_ANSWER), "none", [])
 
 
