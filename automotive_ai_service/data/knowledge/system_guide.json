@@ -458,7 +458,13 @@
         "pickup time",
         "where do I pick up the car",
         "return the car",
-        "what happens at pickup"
+        "what happens at pickup",
+        "full tank",
+        "return with a full tank",
+        "fuel policy",
+        "fuel level",
+        "gas level",
+        "return the car with fuel"
       ],
       "text": "Each reservation records a pickup date and a return date; the return date is not counted as a rental day. The system stores no pickup or return times, no pickup location, and no fuel, cleaning or handover rules, so confirm those with the rental team. After the return, an administrator marks the confirmed reservation completed.",
       "code_references": [
