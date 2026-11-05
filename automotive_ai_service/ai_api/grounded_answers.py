@@ -522,6 +522,12 @@ def _own_bookings(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None
     upcoming = args.get("upcoming")
     purpose = plan.get("purpose") or "list"
     lines = []
+    wanted = plan.get("vehicle_names") or []
+    if wanted and rows:
+        # "When do I pick up the Vios?": only the reservations of that vehicle.
+        rows = [r for r in rows if _names_vehicle(r, wanted)]
+        if not rows:
+            return f"You have no reservation for the {_join(wanted)} on this account."
 
     def one(r):
         when = f"{r['start_date']} to {r['end_date']}"
@@ -540,18 +546,42 @@ def _own_bookings(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None
     elif purpose in ("status", "details"):
         asked = plan.get("asked_statuses") or []
         matching = [r for r in rows if r.get("status") in asked]
-        if asked and not matching and not args.get("reservation_id"):
-            lines.append(f"None of your reservations is {_join(asked)}.")
         if matching and "rejected" in asked:
             lines.append("The system does not record a reason for a rejection; the rental team can tell you why.")
         # Lead with the reservation the question is most likely about: an active or upcoming one first.
         focus = matching or [r for r in rows if r.get("is_active") or r.get("days_until_pickup") is not None] or rows[:1]
+        # "Is my booking confirmed?" when it is pending: "No, ..." and the actual status in the same sentence.
+        answer_no = asked and not matching and not args.get("reservation_id")
         for r in focus[:3]:
             meaning = STATUS_MEANINGS.get(r.get("status"))
-            lines.append(f"Your reservation #{r['id']} for the {name(r)} ({r['start_date']} to {r['end_date']}) is {r['status']}"
+            lines.append((f"No, it isn't {_join(asked)}: your" if answer_no else "Your")
+                         + f" reservation #{r['id']} for the {name(r)} ({r['start_date']} to {r['end_date']}) is {r['status']}"
                          + (f": {meaning}." if meaning else "."))
+            answer_no = False
         if purpose == "details":
             lines += [f"- {one(r)}" for r in focus[:1]]
+    elif purpose == "length":
+        # "How many days is my booking?": the open reservation first, else the latest one.
+        chosen = [r for r in rows if r.get("status") in ("pending", "confirmed")] or rows[:1]
+        for r in chosen[:3]:
+            days = r.get("rental_days")
+            lines.append(f"Your reservation #{r['id']} for the {name(r)} is {days} day{'s' if days != 1 else ''}: "
+                         f"{r['start_date']} to {r['end_date']} (the return date is not counted), status {r['status']}.")
+    elif purpose == "total":
+        asked = plan.get("asked_statuses") or []
+        chosen = [r for r in rows if r.get("status") in asked] if asked else rows
+        if not wanted and not asked:
+            # "My reservation total": the open (pending or confirmed) reservations first.
+            chosen = [r for r in rows if r.get("status") in ("pending", "confirmed")] or rows
+        if not chosen:
+            lines.append(f"You have no {_join(asked)} reservations.")
+        for r in chosen[:5]:
+            verb = "was" if r.get("status") in ("completed", "cancelled", "rejected") else "is"
+            total = money(r["total_amount"]) if r.get("total_amount") is not None else "not recorded"
+            lines.append(f"Your reservation #{r['id']} for the {name(r)} ({r['start_date']} to {r['end_date']}, {r['status']}) "
+                         f"{verb} {total} in total.")
+        if notes and chosen:
+            notes.add(lines, "no_payments")
     elif purpose == "last":
         # Past or closed reservations: neither upcoming nor in progress. Completed ones are actual rentals.
         past = sorted((r for r in rows if r.get("days_until_pickup") is None and not r.get("is_active")),
@@ -620,9 +650,25 @@ def _own_bookings(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None
     return "\n".join(lines)
 
 
+def _names_vehicle(row, wanted):
+    """True if the reservation row is for one of the named vehicles ("Vios", "Honda City")."""
+    car = name(row).casefold()
+    return any(all(part in car for part in str(item).casefold().split()) for item in wanted)
+
+
 def _reservation_summary(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None):
     data = by_tool["reservations.summary"].get("data") or {}
     rows = data.get("reservations") or []
+    wanted = plan.get("vehicle_names") or []
+    if wanted:
+        # "Who booked the Fortuner?": that vehicle's reservations, with the customer's name.
+        rows = [r for r in rows if _names_vehicle(r, wanted)]
+        if not rows:
+            return f"There are no reservations for the {_join(wanted)}."
+        lines = [f"Reservations for the {_join(wanted)}:"]
+        lines += [f"- #{r['id']} {r.get('customer_name') or 'customer'}: {r['start_date']} to {r['end_date']}, {r['status']}, "
+                  + (money(r['total_amount']) if r.get("total_amount") is not None else "no total") for r in rows[:10]]
+        return "\n".join(lines)
     counts = data.get("counts_by_status") or {}
     args = (plan.get("retrievals") or [{}])[0].get("args") or {}
     if args.get("reservation_id"):
