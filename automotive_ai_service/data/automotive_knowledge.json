@@ -1108,7 +1108,15 @@
         "air con not cold",
         "hindi malamig ang aircon",
         "walang lamig ang aircon",
-        "aircon not working"
+        "aircon not working",
+        "ac smells bad",
+        "aircon smells bad",
+        "bad smell from the aircon",
+        "musty smell from vents",
+        "ac smell",
+        "aircon smell",
+        "smelly aircon",
+        "mabaho ang aircon"
       ],
       "overview": "Cabin heating and air-conditioning depend on airflow, heat exchangers, doors and controls, and\u2014in vehicles with conventional A/C\u2014a sealed refrigerant circuit. A warm vent or weak airflow does not by itself identify a failed compressor or refrigerant leak.",
       "component_functions": [
@@ -1662,7 +1670,11 @@
         "battery light came on",
         "alternator warning light",
         "battery light while driving",
-        "charging system warning"
+        "charging system warning",
+        "charging warning light",
+        "charging light",
+        "charging light is on",
+        "charge warning light"
       ],
       "overview": "A battery-shaped warning light while the engine is running usually means the charging system is not charging, most often a failing alternator, a broken or slipping drive belt, or a loose or corroded connection, rather than a bad battery. The car is then running on battery power alone and may stall when the battery runs down.",
       "possible_causes": [
