@@ -134,7 +134,7 @@ class ReservationLookupTests(TestCase):
         _, listing = answer("how many bookings do I have", "customer", bookings_result(BOOKINGS))
         self.assertTrue(listing.startswith("You have 2 reservations:"), listing)
         _, rejected = answer("why was my reservation rejected?", "customer", bookings_result(BOOKINGS))
-        self.assertIn("None of your reservations is rejected.", rejected)
+        self.assertTrue(rejected.startswith("No, it isn't rejected: your reservation #41"), rejected)
         _, owe = answer("how much do I owe for my booking", "customer", bookings_result(BOOKINGS))
         self.assertIn("pending PHP 4,500.00", owe)
         self.assertNotIn("3,400", owe)
@@ -184,7 +184,8 @@ class SimpleQuestionRobustnessTests(TestCase):
             self.assertEqual(correct_typos(typed), fixed, typed)
 
     def test_real_words_are_not_changed(self):
-        for word in ("change", "charging", "break", "feels", "dates", "where", "price", "rented", "today", "Vios", "P0420", "2021"):
+        for word in ("change", "charging", "break", "feels", "dates", "where", "price", "rented", "today", "Vios", "P0420", "2021",
+                     "accept", "spending", "lowest"):
             self.assertEqual(correct_typos(word), word, word)
 
     def test_courtesy_words_around_a_question_are_removed(self):
@@ -215,3 +216,47 @@ class SimpleQuestionRobustnessTests(TestCase):
         result = planner.plan("how much is a Toyota Vios rental", "customer", VOCABULARY)
         self.assertEqual(tools(result), ["vehicles.search"])
         self.assertEqual(planner.plan("show Ben Cruz bookings", "customer", VOCABULARY)["direct"], "refuse_private")
+
+
+class ConfidentAnswerTests(TestCase):
+    def test_booking_questions_that_name_a_vehicle(self):
+        plan_result, text = answer("when do i pick up the vios", "customer", bookings_result(BOOKINGS))
+        self.assertEqual(plan_result["purpose"], "next")
+        self.assertIn("2026-11-05", text.split("\n")[0])
+        vocabulary = {**VOCABULARY, "makes": ["Toyota"], "models": [m for m in VOCABULARY["models"] if m["make"] == "Toyota"]}
+        plan_result, text = answer("how much did i pay for the honda city rental", "customer", bookings_result(BOOKINGS), vocabulary)
+        self.assertEqual(plan_result["purpose"], "total")
+        self.assertIn("#17 for the Honda City", text)
+        self.assertIn("PHP 3,400.00 in total", text)
+        self.assertNotIn("4,500", text)
+
+    def test_length_total_and_status_answer_first(self):
+        _, length = answer("how many days is my booking", "customer", bookings_result(BOOKINGS))
+        self.assertTrue(length.startswith("Your reservation #41 for the Toyota Vios is 3 days"), length)
+        _, total = answer("what's the total of my pending booking", "customer", bookings_result(BOOKINGS))
+        self.assertTrue(total.startswith("Your reservation #41"), total)
+        self.assertIn("PHP 4,500.00", total.split("\n")[0])
+        _, status = answer("has my reservation been approved", "customer", bookings_result(BOOKINGS))
+        self.assertTrue(status.startswith("No, it isn't confirmed"), status)
+
+    def test_who_booked_is_for_administrators_only(self):
+        self.assertEqual(planner.plan("who booked the fortuner", "customer", VOCABULARY)["direct"], "refuse_private")
+        plan_result = planner.plan("who booked the fortuner", "admin", VOCABULARY)
+        results = [{"tool": "reservations.summary", "status": "ok", "data": {"reservations": [
+            {"id": 52, "make": "Toyota", "model": "Fortuner", "customer_name": "Ben Cruz", "start_date": "2026-11-20", "end_date": "2026-11-23",
+             "status": "confirmed", "total_amount": 10500.0},
+            {"id": 41, "make": "Toyota", "model": "Vios", "customer_name": "Ana Santos", "start_date": "2026-11-05", "end_date": "2026-11-08",
+             "status": "pending", "total_amount": 4500.0}], "total_count": 2, "all_records_count": 2}}]
+        text = grounded.compose(plan_result, results, "admin", VOCABULARY)[0]
+        self.assertIn("#52 Ben Cruz", text)
+        self.assertNotIn("Ana Santos", text)
+
+    def test_lowest_mileage_is_not_cheapest(self):
+        self.assertEqual(args(planner.plan("which car has the lowest mileage", "admin", VOCABULARY))["sort"], "mileage_asc")
+        self.assertEqual(args(planner.plan("lowest price car", "customer", VOCABULARY))["sort"], "price_asc")
+
+    def test_breakdown_guidance(self):
+        response = answer_chat("what if the car breaks down during my rental", viewer_role="customer", conversation_scope="customer:2",
+                               retrieval_protocol=1, vocabulary=VOCABULARY)
+        self.assertEqual(response["intent"], "breakdown_guidance")
+        self.assertIn("rental team", response["answer"])
