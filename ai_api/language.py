@@ -100,11 +100,11 @@ leaking leak warning flashing blinking misfire starter maintenance service inspe
 monday tuesday wednesday thursday friday saturday sunday january february march april june july august september october
 november december tomorrow weekend
 toyota honda mitsubishi suzuki nissan hyundai isuzu mazda subaru chevrolet volkswagen ford
-vios fortuner hiace innova montero ertiga navara civic accent ranger everest hilux mirage sorento
+vios fortuner hiace innova montero ertiga navara civic ranger everest hilux mirage sorento
 magkano presyo sasakyan pickup return thanks salamat hello please goodbye rented conditioned airconditioned excuse number
 magbayad bayad kotse nagastos gastos promo promos fleet odometer kilometers diesel petrol
 brother sister friend friends husband allowed approval approved papers signup register question magandang charge charges gearbox
-change changes changed changing chance charged charging charger
+change changes changed changing chance charged charging charger lowest highest spend spent spending accept accepts accepted
 """.split())
 # Ordinary words that are one slip away from a domain word but mean something else.
 _NOT_TYPOS = {"break", "breaks", "broke", "dates", "carry", "where", "there", "these", "those", "other", "about",
@@ -120,8 +120,9 @@ def _one_slip(word, target):
         diff = [i for i in range(len(word)) if word[i] != target[i]]
         if len(diff) == 2 and diff[1] == diff[0] + 1 and word[diff[0]] == target[diff[1]] and word[diff[1]] == target[diff[0]]:
             return True
-        return len(diff) == 1 and len(word) >= 6
-    if abs(len(word) - len(target)) == 1 and min(len(word), len(target)) >= 6:
+        return len(diff) == 1 and len(word) >= 6 and diff[0] > 0
+    # An added, missing or changed letter never changes the first letter ("spending" is not "pending").
+    if abs(len(word) - len(target)) == 1 and min(len(word), len(target)) >= 6 and word[0] == target[0]:
         short, long_ = (word, target) if len(word) < len(target) else (target, word)
         return any(long_[:i] + long_[i + 1:] == short for i in range(len(long_)))
     return False
