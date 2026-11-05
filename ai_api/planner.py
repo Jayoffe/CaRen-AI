@@ -118,6 +118,14 @@ CAR_BRANDS = {
     "volvo", "peugeot", "renault", "jeep", "tesla", "porsche", "ferrari", "lamborghini", "foton", "jac", "gac", "changan",
     "haval", "jetour", "yamaha", "kawasaki", "lexus", "land rover", "rover", "mini", "dodge", "ram", "infiniti", "acura",
 }
+# Common model names (general knowledge, not database contents). "City" and similar ordinary words are left out.
+KNOWN_MODELS = {name.casefold(): label for name, label in (
+    ("hiace", "Toyota Hiace"), ("innova", "Toyota Innova"), ("avanza", "Toyota Avanza"), ("wigo", "Toyota Wigo"), ("raize", "Toyota Raize"),
+    ("hilux", "Toyota Hilux"), ("fortuner", "Toyota Fortuner"), ("vios", "Toyota Vios"), ("corolla", "Toyota Corolla"),
+    ("montero", "Mitsubishi Montero"), ("xpander", "Mitsubishi Xpander"), ("mirage", "Mitsubishi Mirage"), ("strada", "Mitsubishi Strada"),
+    ("navara", "Nissan Navara"), ("almera", "Nissan Almera"), ("terra", "Nissan Terra"), ("ertiga", "Suzuki Ertiga"),
+    ("civic", "Honda Civic"), ("brv", "Honda BR-V"), ("crv", "Honda CR-V"), ("ranger", "Ford Ranger"), ("everest", "Ford Everest"),
+    ("tucson", "Hyundai Tucson"), ("stargazer", "Hyundai Stargazer"), ("picanto", "Kia Picanto"))}
 BRAND_NAMES = {"bmw": "BMW", "mg": "MG", "byd": "BYD", "gac": "GAC", "jac": "JAC", "vw": "VW", "mercedes-benz": "Mercedes-Benz",
                "kia": "Kia", "mini": "MINI", "ram": "RAM", "land rover": "Land Rover"}
 # Policies and services the application has no record of; the answer says so instead of guessing.
@@ -139,6 +147,8 @@ UNRECORDED_TOPICS = [
     ("insurance", re.compile(r"\b(?:insurance|insured|insure|seguro)\b")),
     ("travel outside the area", re.compile(r"\b(?:another|other|ibang) (?:province|provinces|city|region|island|probinsya)\b|"
                                            r"\b(?:out of town|outside (?:the )?(?:city|metro manila|province|area|region)|cross[- ]country|road trip)\b")),
+    ("mileage or distance limits", re.compile(r"\b(?:mileage|distance|km|kilometer|kilometre)s? (?:limit|cap|restriction|allowance)s?\b"
+                                              r"|\bunlimited (?:mileage|km|kilometers)\b|\bhow far can (?:i|we) drive\b")),
     ("home delivery", re.compile(r"\b(?:deliver|delivery|drop[- ]?off at|bring the car to (?:me|my|our)|ihatid|i-deliver)\b")),
     ("business hours", re.compile(r"\b(?:business hours|opening hours|office hours|what time do you (?:open|close)|are you open|open (?:on|at|today)|anong oras)\b")),
     ("late returns and late fees", re.compile(r"\blate (?:return|returns|fee|fees|charge|penalty)\b|\breturn\w* (?:the car |it )?late\b|\bhuli(?:ng)? (?:pagbalik|balik)\b")),
@@ -256,6 +266,14 @@ RATE_PERIOD = re.compile(r"\b(?:weekly|monthly|per week|per month|a week rate|we
 PAST_RENTAL = re.compile(r"\b(?:did i|have i|i have|i've)\s+(?:rent|rented|book|booked|reserve|reserved|use|used)\b"
                          r"|\bi (?:rented|booked|reserved|used)\b|\blast time\b"
                          r"|\b(?:past|previous|last|recent|huling) (?:rentals?|bookings?|reservations?|trips?)\b|\brental history\b|\bnirentahan ko\b")
+# The rental car breaking down: safety steps and the rental team, not records.
+BREAKDOWN = re.compile(r"\b(?:breaks? down|broke down|broken down|breakdown|stalled on the (?:road|highway)|tumirik|nasiraan)\b")
+# The customer's own booking of a named vehicle ("how much did I pay for the Honda City rental?").
+OWN_VEHICLE_RECORD = re.compile(r"\b(?:did i pay|i paid|did i spend|cost me|did (?:my|the) .*\b(?:rental|booking|reservation) cost"
+                                r"|my (?:\w+ ){0,3}(?:rental|booking|reservation)s?\b)")
+# "Who booked the Fortuner?" (administrators).
+WHO_BOOKED = re.compile(r"\bwho (?:booked|rented|reserved|is renting|has (?:the )?(?:\w+ )?(?:reservation|booking))\b|\bbooked by\b"
+                        r"|\b(?:reservations?|bookings?) (?:for|of|on) the\b")
 OWE = re.compile(r"\b(?:owe|balance|still (?:need|have) to pay|need to pay|babayaran|bayaran ko|utang)\b")
 # Another person's records by name ("Ana Santos booking details") or by account id ("user_id=3").
 NAMED_RECORDS = re.compile(r"\b(?!My\b)[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+(?:'s)?\s+(?:bookings?|reservations?|rentals?|booking details|reservation details|account)\b")
@@ -312,6 +330,12 @@ class Understanding:
                 model = following if re.fullmatch(r"[a-z][a-z0-9-]{1,}", following) and following not in STOP_AFTER_BRAND else ""
                 brand = BRAND_NAMES.get(token, token.title())
                 self.unlisted_brands.append(f"{brand} {model.title() if not model.isupper() else model}".strip())
+        # A known model name this viewer cannot rent ("is the Hiace available?" from a customer) is named, not ignored.
+        listed_models = {str(entry.get("model", "")).casefold() for entry in vocabulary.get("models", [])}
+        named_brands = " ".join(self.unlisted_brands).casefold()
+        for token in self.tokens:
+            if token in KNOWN_MODELS and token not in listed_models and token not in named_brands:
+                self.unlisted_brands.append(KNOWN_MODELS[token])
         known = {str(category).casefold(): category for category in vocabulary.get("categories", [])}
         self.unlisted_categories = []
         for key, synonyms in CATEGORY_SYNONYMS.items():
@@ -365,14 +389,15 @@ class Understanding:
         self._price_from_budget = self.max_daily_rate is not None and "price" not in self.concepts
         if self.max_daily_rate is not None:
             self.concepts.add("price")
-        if re.search(r"\b(?:cheapest|pinakamura|lowest|least expensive|most affordable)\b", text):
-            self.sort = "price_asc"
-        elif re.search(r"\b(?:most expensive|pinakamahal|highest price|priciest)\b", text):
-            self.sort = "price_desc"
-        elif re.search(r"\b(?:highest|most|biggest|largest|pinakamataas na) (?:mileage|odometer|km|kilometers)\b|\bmost (?:driven|used km)\b", text):
+        # Mileage first: "lowest mileage" is not "lowest price".
+        if re.search(r"\b(?:highest|most|biggest|largest|pinakamataas na) (?:mileage|odometer|km|kilometers)\b|\bmost (?:driven|used km)\b", text):
             self.sort = "mileage_desc"
         elif re.search(r"\b(?:lowest|least|smallest) (?:mileage|odometer|km|kilometers)\b", text):
             self.sort = "mileage_asc"
+        elif re.search(r"\b(?:cheapest|pinakamura|lowest|least expensive|most affordable)\b", text):
+            self.sort = "price_asc"
+        elif re.search(r"\b(?:most expensive|pinakamahal|highest price|priciest)\b", text):
+            self.sort = "price_desc"
         elif re.search(r"\b(?:newest|latest model|most recent model|pinakabago)\b", text):
             self.sort = "year_desc"
         elif re.search(r"\b(?:oldest|pinakaluma)\b", text):
@@ -395,7 +420,7 @@ class Understanding:
         self.reservation_statuses = sorted({status for status in ("pending", "confirmed", "cancelled", "rejected", "completed")
                                             if re.search(rf"\b{status}\b", text)}
                                            | ({"pending"} if re.search(r"\b(?:waiting|awaiting|for|need(?:ing)?) (?:for )?approval\b|\bunapproved\b", text)
-                                              else set()))
+                                              else {"confirmed"} if re.search(r"\b(?:approved|accepted)\b", text) else set()))
         self.reservation_id = None
         match = re.search(r"(?:#|\b(?:reservation|booking)\s*(?:no\.?|number|#)?\s*)(\d{1,8})\b", text)
         if match:
@@ -500,6 +525,10 @@ def plan(message, role, vocabulary=None, memory=None):
         return _direct("refuse_credentials", u)
     if ACCIDENT.search(u.text) and not u.has("maintenance"):
         return _direct("accident_guidance", u)
+    if not admin and BREAKDOWN.search(u.text) and not re.search(r"\b(?:predict\w*|risk\w*|forecast\w*|will)\b", u.text):
+        return _direct("breakdown_guidance", u)
+    if not admin and WHO_BOOKED.search(u.text) and not u.has("own"):
+        return _direct("refuse_private", u)  # who booked a vehicle is another customer's information
     named = NAMED_RECORDS.search(u.original)
     # "Toyota Vios rental" names a vehicle, not a person.
     named_person = named and not re.search(r"\b(?:my|mine|ko)\b", u.text) and not (
@@ -510,7 +539,7 @@ def plan(message, role, vocabulary=None, memory=None):
     if u.has("other_people") and (contact or u.has("booking")) and not business_contact or other_person or named_person or ACCOUNT_ID.search(u.text):
         if not admin or contact:
             return _direct("refuse_private", u)
-        return _plan("reservation_summary", u, [("reservations.summary", {"upcoming": u.has("upcoming")})])
+        return _admin_lookup_plan(u) or _plan("reservation_summary", u, [("reservations.summary", {"upcoming": u.has("upcoming")})])
 
     if u.dtc_codes and not (admin and STORED_RECORDS.search(u.text) and not u.unlisted_brands):
         return None
@@ -550,32 +579,46 @@ def plan(message, role, vocabulary=None, memory=None):
         or OWN_PICKUP_RETURN.search(u.text) and re.search(r"\b(?:my|the) (?:car|vehicle|rental|unit)\b", u.text) and not asks_vehicle \
         or PAST_RENTAL.search(u.text) and u.has("own") \
         or u.has("own") and re.search(r"\b(?:spent|nagastos|gastos|nagbayad)\b", u.text) and not asks_vehicle
+    # "How much did I pay for the Honda City rental?" / "When do I pick up the Vios?": the customer's booking of that car.
+    named_vehicles = [entry["model"] for entry in u.models] + u.unlisted_brands
+    vehicle_record = not admin and bool(named_vehicles) and bool(
+        OWN_VEHICLE_RECORD.search(u.text) or OWN_PICKUP_RETURN.search(u.text) and not u.has("price"))
+    own_booking = own_booking or vehicle_record
     # "Show reservation 41": a customer can only look up reservations on their own account.
     numbered = not admin and u.reservation_id and re.search(r"\b(?:reservations?|bookings?)\b|#\s*\d", u.text)
-    if (own_booking or numbered) and not (u.has("price") and asks_vehicle and not numbered):
+    if (own_booking or numbered) and not (u.has("price") and asks_vehicle and not numbered and not vehicle_record):
         if admin:
             return _direct("admin_no_bookings", u)
-        # Viewing or checking bookings is not a procedure; changing them is.
+        # Viewing or checking bookings is not a procedure; changing them is ("how much did I pay" is a lookup).
         procedure = bool(re.search(r"\b(?:cancel|extend|extension|change|reschedule|modify|move|pay|payment)\b"
-                                   r"|\badd (?:more |extra )?days\b|\bmore days\b|\blonger\b", u.text))
+                                   r"|\badd (?:more |extra )?days\b|\bmore days\b|\blonger\b", u.text)) \
+            and not re.search(r"\b(?:did i pay|i paid|how much (?:did|do) i (?:pay|owe))\b", u.text)
+        asks_total = re.search(r"\b(?:total|cost|costs|paid|pay for|how much|magkano)\b", u.text)
         purpose, args = "list", {}
         if u.reservation_id:
             purpose, args = "details", {"reservation_id": u.reservation_id}
         elif re.search(r"\b(?:days? (?:are )?left|remaining|natitira|ilang araw pa)\b", u.text):
             purpose, args = "days_left", {"upcoming": True}
+        elif re.search(r"\bhow (?:many days|long) (?:is|was|will be) (?:my|the)\b|\bhow long is my\b|\bilang araw (?:ang )?(?:booking|rental|reservation)\b", u.text):
+            purpose = "length"
         elif PAST_RENTAL.search(u.text) and re.search(r"\b(?:last|previous|past|recent|huling|rented|history|before)\b", u.text) \
-                and not u.has("upcoming"):
+                and not u.has("upcoming") and not asks_total:
             purpose = "last"
+        elif vehicle_record and asks_total or asks_total and re.search(r"\b(?:my|the) (?:\w+ )?(?:booking|reservation|rental)(?:'s)? total\b"
+                                                                      r"|\btotal (?:of|for) my\b", u.text):
+            purpose = "total"
         elif re.search(r"\b(?:spent|spend|gastos|nagastos|paid|total so far|how much (?:have|did) i)\b", u.text) or OWE.search(u.text):
             purpose = "spent"
         elif re.search(r"\b(?:next|upcoming|susunod) (?:pickup|pick up|return|booking|reservation|rental|trip)\b|\bwhen is my (?:pickup|return)\b", u.text) \
                 or OWN_PICKUP_RETURN.search(u.text) or re.search(r"\bwhen\b.*\b(?:pick ?up|pickup|get)\b", u.text):
             purpose, args = "next", {"upcoming": True}
-        elif re.search(r"\b(?:status|confirmed|approved|pending|accepted|rejected|cancelled)\b", u.text) and not procedure:
+        elif re.search(r"\b(?:status|confirmed|approved|approval|pending|accepted|rejected|cancelled)\b", u.text) and not procedure:
             purpose = "status"
         elif u.has("upcoming") and not procedure:
             args = {"upcoming": True}
         result = _plan("own_bookings", u, [("bookings.mine", args)], purpose=purpose, guide=procedure)
+        if vehicle_record or named_vehicles and purpose in ("next", "total", "status"):
+            result["vehicle_names"] = named_vehicles
         if u.reservation_statuses:
             result["asked_statuses"] = u.reservation_statuses
         if OWE.search(u.text):
@@ -717,7 +760,13 @@ def _admin_lookup_plan(u):
         return result
     if re.search(r"\b(?:utili[sz]ation|utili[sz]ed|most (?:rented|booked|used)|least (?:rented|booked|used)|busiest|idle)\b", text):
         return _plan("utilization", u, [("fleet.utilization", period)])
-    if re.search(r"\b(?:maintenance|maintain|service|repair)\b", text) and re.search(r"\b(?:spent|spend|cost|costs|total|expenses?|gastos)\b", text) \
+    named = [entry["model"] for entry in u.models]
+    if WHO_BOOKED.search(text) and named:
+        # Reservations of one vehicle, with the customer's name (administrators only).
+        result = _plan("reservation_summary", u, [("reservations.summary", {})])
+        result["vehicle_names"] = named
+        return result
+    if re.search(r"\b(?:maintenance|maintain|service|repair)\b", text) and re.search(r"\b(?:spent|spend|spending|cost|costs|total|expenses?|gastos)\b", text) \
             and not re.search(r"\b(?:how much (?:is|does) (?:an?|the) )", text) and not re.search(r"\b(?:last|latest|recent|previous)\b", text):
         return _plan("maintenance_costs", u, [("maintenance.costs", {**vehicle, **period})])
     reservation_word = re.search(r"\b(?:reservations?|bookings?|rentals?|pickups?|pick-ups?|returns?)\b", text)
