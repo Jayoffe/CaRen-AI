@@ -677,7 +677,7 @@
       "message": "How do I record a component inspection?",
       "expect": {
         "must_not_contain": [
-          "Inspections and service intervals are recorded"
+          "Component records tab"
         ]
       },
       "note": "Admin-only system documents must not be retrieved for customers."
