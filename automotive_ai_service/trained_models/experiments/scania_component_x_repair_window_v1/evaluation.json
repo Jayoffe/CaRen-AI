@@ -1,0 +1,189 @@
+{
+  "model_name": "scania_component_x_repair_window_v1",
+  "model_version": "scania_component_x_repair_window_v1_20261107",
+  "task": "Repair of anonymized Component X within 48 time steps of a truck's last readout",
+  "capability": "predictive_maintenance_benchmark",
+  "dataset": "SCANIA Component X (inferred attribution; no documentation present locally)",
+  "dataset_sources": {
+    "train_readouts": "train_operational_readouts.csv",
+    "train_tte": "train_tte.csv",
+    "train_specifications": "train_specifications.csv",
+    "validation_readouts": "validation_operational_readouts.csv",
+    "validation_labels": "validation_labels.csv",
+    "validation_specifications": "validation_specifications.csv",
+    "test_readouts": "test_operational_readouts.csv",
+    "test_labels": "test_labels.csv",
+    "test_specifications": "test_specifications.csv"
+  },
+  "trained_at": "2026-11-07T08:17:23.839910+00:00",
+  "validation_status": "evaluated_rejected",
+  "eligible_for_inference": false,
+  "selected_estimator": "gradient_boosting",
+  "split": {
+    "type": "official vehicle-disjoint files (verified: no vehicle in two splits)",
+    "train_vehicles": 23550,
+    "validation_vehicles": 5046,
+    "test_vehicles": 5045,
+    "train_rows": 53784,
+    "train_positive_rows": 6718,
+    "train_readouts_without_known_outcome_excluded": 202877
+  },
+  "preprocessing": [
+    "Forward fill within each vehicle only",
+    "Each counter divided by time_step, removing dependence on vehicle age",
+    "Vehicle specifications as ordinal category codes",
+    "Censored vehicles' last 48 steps excluded: their outcome is unknown",
+    "Up to 3 positive and 2 negative readouts per vehicle"
+  ],
+  "class_imbalance": "class_weight='balanced' during fitting; threshold chosen on validation using F2 to favour recall",
+  "metrics": {
+    "prevalence_baseline": {
+      "validation": {
+        "records": 5046,
+        "positives": 136,
+        "threshold": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "pr_auc": 0.027,
+        "roc_auc": 0.5,
+        "confusion_matrix": {
+          "true_negative": 4910,
+          "false_positive": 0,
+          "false_negative": 136,
+          "true_positive": 0
+        },
+        "false_negative_rate": 1.0
+      },
+      "test": {
+        "records": 5045,
+        "positives": 142,
+        "threshold": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "pr_auc": 0.0281,
+        "roc_auc": 0.5,
+        "confusion_matrix": {
+          "true_negative": 4903,
+          "false_positive": 0,
+          "false_negative": 142,
+          "true_positive": 0
+        },
+        "false_negative_rate": 1.0,
+        "recall_by_label_window": {
+          "class_1": 0.0,
+          "class_2": 0.0,
+          "class_3": 0.0,
+          "class_4": 0.0
+        }
+      }
+    },
+    "logistic_regression": {
+      "validation": {
+        "records": 5046,
+        "positives": 136,
+        "threshold": 0.0,
+        "precision": 0.0271,
+        "recall": 0.9926,
+        "f1": 0.0527,
+        "pr_auc": 0.0219,
+        "roc_auc": 0.4258,
+        "confusion_matrix": {
+          "true_negative": 55,
+          "false_positive": 4855,
+          "false_negative": 1,
+          "true_positive": 135
+        },
+        "false_negative_rate": 0.0074
+      },
+      "test": {
+        "records": 5045,
+        "positives": 142,
+        "threshold": 0.0,
+        "precision": 0.028,
+        "recall": 0.993,
+        "f1": 0.0544,
+        "pr_auc": 0.0314,
+        "roc_auc": 0.4894,
+        "confusion_matrix": {
+          "true_negative": 2,
+          "false_positive": 4901,
+          "false_negative": 1,
+          "true_positive": 141
+        },
+        "false_negative_rate": 0.007,
+        "recall_by_label_window": {
+          "class_1": 1.0,
+          "class_2": 1.0,
+          "class_3": 1.0,
+          "class_4": 0.9833
+        }
+      }
+    },
+    "gradient_boosting": {
+      "validation": {
+        "records": 5046,
+        "positives": 136,
+        "threshold": 0.133358,
+        "precision": 0.0383,
+        "recall": 0.7059,
+        "f1": 0.0726,
+        "pr_auc": 0.0452,
+        "roc_auc": 0.6036,
+        "confusion_matrix": {
+          "true_negative": 2499,
+          "false_positive": 2411,
+          "false_negative": 40,
+          "true_positive": 96
+        },
+        "false_negative_rate": 0.2941
+      },
+      "test": {
+        "records": 5045,
+        "positives": 142,
+        "threshold": 0.133358,
+        "precision": 0.0337,
+        "recall": 0.9366,
+        "f1": 0.065,
+        "pr_auc": 0.0443,
+        "roc_auc": 0.6531,
+        "confusion_matrix": {
+          "true_negative": 1088,
+          "false_positive": 3815,
+          "false_negative": 9,
+          "true_positive": 133
+        },
+        "false_negative_rate": 0.0634,
+        "recall_by_label_window": {
+          "class_1": 0.9231,
+          "class_2": 0.8667,
+          "class_3": 0.9512,
+          "class_4": 0.95
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "benchmark_min_pr_auc_lift_over_prevalence": 2.0,
+    "test_prevalence": 0.0281,
+    "test_pr_auc_lift": 1.57,
+    "learned_signal": false,
+    "deployment_gate_passed": false
+  },
+  "deployment_blockers": [
+    "'Component X' is anonymized, so it cannot be mapped to any of the eight assessment categories.",
+    "Inputs are anonymized heavy-truck histogram counters that this fleet does not collect.",
+    "Trained on heavy trucks; not validated on the passenger cars, SUVs, vans and motorcycles in this fleet."
+  ],
+  "limitations": [
+    "Model scores are uncalibrated and are not failure probabilities.",
+    "Time steps are anonymized units, so the horizon cannot be stated in days or kilometres."
+  ],
+  "environment": {
+    "python": "3.14.5",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0"
+  }
+}
