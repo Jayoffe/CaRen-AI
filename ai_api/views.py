@@ -8,6 +8,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
+from .assessment_service import AssessmentValidationError, analyze_assessment
+from .category_models import (
+    InsufficientTrainingData, RegistryError, category_availability, category_registry,
+    promote_model, revoke_model, train_category,
+)
 from .assistant import resolve_role
 from .chatbot_service import answer_chat
 from .rag import KnowledgeIndexUnavailable, retrieve
@@ -57,6 +62,12 @@ def capabilities(request):
                 ),
             }
         ],
+        "assessment_analysis": {
+            "status": "available",
+            "endpoint": "/api/assessment/analyze/",
+            "capabilities": ["condition_based_screening", "fault_code_lookup", "symptom_guidance"],
+            "predictive_maintenance": category_availability(),
+        },
         "training_readiness": {
             "engine_fault_classification": "blocked",
             "reason": (
@@ -154,6 +165,80 @@ def predict(request):
             {"error": "Prediction failed. Check the service logs and model artifact."},
             status=500
         )
+
+
+@csrf_exempt
+@require_POST
+@require_api_key
+def assessment_analyze(request):
+    """Analyses one submitted vehicle assessment. Read-only: LavaLust stores the result."""
+    try:
+        payload = parse_json(request)
+    except ValueError as error:
+        return JsonResponse({"status": "error", "error": str(error), "errors": [str(error)]}, status=400)
+    try:
+        return JsonResponse(analyze_assessment(payload))
+    except AssessmentValidationError as error:
+        return JsonResponse({"status": "error", "error": "The assessment payload is invalid.", "errors": error.errors}, status=422)
+    except Exception:
+        logger.exception("Assessment analysis failed")
+        return JsonResponse({"status": "error", "error": "The assessment could not be analysed."}, status=500)
+
+
+@require_GET
+@require_api_key
+def training_models(request):
+    """Every category with its availability and all its model versions."""
+    availability = category_availability()
+    registry = category_registry()
+    return JsonResponse({"status": "ok", "categories": [
+        {"key": key, **state, "versions": list(reversed((registry.get(key) or {}).get("versions") or []))}
+        for key, state in availability.items()
+    ]})
+
+
+@csrf_exempt
+@require_POST
+@require_api_key
+def training_train(request):
+    """One training attempt on rows exported by LavaLust, which it re-checks. Never accepts a model."""
+    try:
+        payload = parse_json(request)
+        model = train_category(payload.get("category"), payload.get("rows"), payload.get("requested_by"))
+    except InsufficientTrainingData as error:
+        return JsonResponse({"status": "error", "error": str(error), "blockers": error.summary["blockers"]}, status=409)
+    except AssessmentValidationError as error:
+        return JsonResponse({"status": "error", "error": "The training data is invalid.", "errors": error.errors}, status=422)
+    except ValueError as error:
+        return JsonResponse({"status": "error", "error": str(error)}, status=400)
+    except Exception:
+        logger.exception("Category model training failed")
+        return JsonResponse({"status": "error", "error": "Training failed."}, status=500)
+    return JsonResponse({"status": "success", "model": model})
+
+
+@csrf_exempt
+@require_POST
+@require_api_key
+def training_promote(request):
+    try:
+        payload = parse_json(request)
+        return JsonResponse({"status": "success", "model": promote_model(payload.get("category"), payload.get("version"), payload.get("by"))})
+    except (RegistryError, ValueError) as error:
+        return JsonResponse({"status": "error", "error": str(error)}, status=409)
+
+
+@csrf_exempt
+@require_POST
+@require_api_key
+def training_revoke(request):
+    try:
+        payload = parse_json(request)
+        if not payload.get("reason"):
+            raise RegistryError("Give a reason for withdrawing this model.")
+        return JsonResponse({"status": "success", "model": revoke_model(payload.get("category"), payload["reason"], payload.get("by"))})
+    except (RegistryError, ValueError) as error:
+        return JsonResponse({"status": "error", "error": str(error)}, status=409)
 
 
 @csrf_exempt
