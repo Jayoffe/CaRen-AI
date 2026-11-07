@@ -1,14 +1,14 @@
 # Chatbot evaluation (v2)
 
-Generated 2026-11-07T21:15:09+0800 with `python scripts/evaluate_chatbot.py`. Evaluation set: `data\evaluation\chatbot_eval_v2.json` (220 author-written cases + 15 DTC questions from the held-out chat validation split). Cases are evaluation-only; the training-overlap check is below.
+Generated 2026-11-07T22:13:49+0800 with `python scripts/evaluate_chatbot.py`. Evaluation set: `data\evaluation\chatbot_eval_v2.json` (220 author-written cases + 15 DTC questions from the held-out chat validation split). Cases are evaluation-only; the training-overlap check is below.
 
 | Metric | Current router | Previous core (baseline) |
 |---|---:|---:|
-| Pass rate (all checks) | 0.9957 | 0.1532 (content checks only) |
+| Pass rate (all checks) | 1.0 | 0.1532 (content checks only) |
 | Critical-case pass rate | 1.0 | 0.2 |
 | Permission leaks | 0 of 27 | 1 of 27 |
-| Latency p50 / p95 (ms) | 160.0 / 257.4 | 144.2 / 422.1 |
-| Mean lexical groundedness (reference answers) | 0.9003 over 50 | n/a |
+| Latency p50 / p95 (ms) | 162.9 / 247.4 | 94.4 / 331.1 |
+| Mean lexical groundedness (reference answers) | 0.9006 over 50 | n/a |
 
 Baseline rows apply the same content checks (required/forbidden text, abstention, intent) but not the evidence-type or citation checks, which the old core cannot produce.
 
@@ -21,7 +21,7 @@ Cases with labelled sources: 29; recall@3 0.931, precision@3 0.3966, MRR 0.9483.
 | Role | Cases | Router pass | Baseline pass |
 |---|---:|---:|---:|
 | admin | 54 | 1.0 | 0.1111 |
-| customer | 181 | 0.9945 | 0.1657 |
+| customer | 181 | 1.0 | 0.1657 |
 
 ## By routing
 
@@ -29,7 +29,7 @@ Cases with labelled sources: 29; recall@3 0.931, precision@3 0.3966, MRR 0.9483.
 
 | Routing | Cases | Router pass | Baseline pass |
 |---|---:|---:|---:|
-| backend | 232 | 0.9957 | 0.1509 |
+| backend | 232 | 1.0 | 0.1509 |
 | diagnostic_mode | 1 | 1.0 | 1.0 |
 | direct | 2 | 1.0 | 0.0 |
 
@@ -48,12 +48,12 @@ Cases with labelled sources: 29; recall@3 0.931, precision@3 0.3966, MRR 0.9483.
 | out_of_scope | 5 | 1.0 | 1.0 |
 | parts | 1 | 1.0 | 0.0 |
 | permissions | 27 | 1.0 | 0.2222 |
-| rental | 87 | 0.9885 | 0.0115 |
+| rental | 87 | 1.0 | 0.0115 |
 | system_support | 30 | 1.0 | 0.0 |
 
-## Router failures (1)
+## Router failures (0)
 
-- `g-v05` (customer): missing 'already booked'; evidence none not in ['database_record']
+- none
 
 ## Training overlap
 

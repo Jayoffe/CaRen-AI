@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "scope": "How the DriveRent car-rental and fleet application works, written from its source code. Each entry names the code it was verified against. Update this file when the application changes.",
-  "verified_on": "2026-10-31",
+  "verified_on": "2026-11-07",
   "documents": [
     {
       "id": "sys_overview_features",
@@ -16,7 +16,7 @@
         "help",
         "how does this app work"
       ],
-      "text": "Customers can browse vehicles, view vehicle details and daily rates, create reservation requests, view active rentals and reservation history, cancel their own pending or confirmed reservations, and maintain their profile including driver's licence details and a verification photo. Administrators can additionally manage the vehicle inventory and images, approve, reject, cancel or complete reservations, record maintenance and mileage, inspect vehicle components in the 3D predictive-maintenance view, and view model-based service-need predictions when an accepted model is registered (none is accepted as of 2026-10-31). Online payment is not implemented.",
+      "text": "Customers can browse vehicles, view vehicle details and daily rates, create reservation requests, view active rentals and reservation history, cancel their own pending or confirmed reservations, and maintain their profile including driver's licence details and a verification photo. Administrators can additionally manage the vehicle inventory and images, approve, reject, cancel or complete reservations, record maintenance and mileage, complete vehicle condition assessments and review their results and 3D inspection, and view model-based service-need predictions when an accepted model is registered (none is accepted as of 2026-10-31). Online payment is not implemented.",
       "code_references": [
         "Front-End/src/App.jsx",
         "Back-End/app/config/routes.php"
@@ -347,7 +347,7 @@
     },
     {
       "id": "sys_admin_maintenance",
-      "title": "Maintenance records, 3D inspection and evidence collection (administrators)",
+      "title": "Maintenance records, vehicle assessments and 3D inspection (administrators)",
       "audience": "admin",
       "category": "fleet_management",
       "keywords": [
@@ -355,10 +355,13 @@
         "record maintenance",
         "update mileage",
         "3d inspection",
+        "vehicle assessment",
+        "condition survey",
+        "model management",
         "component inspection",
         "service interval"
       ],
-      "text": "Maintenance Records (/admin/maintenance/records) logs services with type, date, cost, status and odometer, and updates vehicle mileage. Predictive Maintenance (/admin/maintenance/predictions) opens a 3D view per vehicle where each component shows three separate results: condition from the latest manual inspection, schedule status from configured service intervals, and the model-based service-need prediction (shown as unavailable, with the reason, until a model passes acceptance). Inspections and service intervals are recorded there.",
+      "text": "Maintenance Records (/admin/maintenance/records) logs services with type, date, cost, status and odometer, and updates vehicle mileage. Predictive Maintenance (/admin/maintenance/predictions) starts by listing the fleet vehicles. Select a vehicle and complete its condition assessment across eight categories: engine, battery and electrical, brakes, transmission, suspension and steering, tires and wheels, cooling system, and air conditioning. After the assessment is submitted, the results page shows the overall condition, condition-based findings for each category, assessment history and a 3D inspection of the vehicle. A machine learning prediction appears only for a category with an accepted model. To record a component inspection or a service interval, open a vehicle's results and use the Component records tab. Model training and the model registry are on Model Management (/admin/maintenance/model-management).",
       "code_references": [
         "Back-End/app/controllers/MaintenanceController.php",
         "Back-End/app/controllers/ComponentMaintenanceController.php"
