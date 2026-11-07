@@ -1,0 +1,46 @@
+{
+  "random_state": 42,
+  "features": [
+    "TempEGR",
+    "HPCInPrs",
+    "EngRPM",
+    "ExPrs",
+    "CACOutTemp",
+    "MAF",
+    "EngTq",
+    "O2concEx",
+    "TempCoEGR",
+    "ExTemp",
+    "InThrPos",
+    "NOxconcEx",
+    "PrsEGR",
+    "HPCOutTemp",
+    "InTemp",
+    "LPTOutTemp",
+    "MAP",
+    "EGR_position_desired"
+  ],
+  "labels": [
+    "EGVClog_10",
+    "EGVClog_20",
+    "EGVClog_30",
+    "Healthy",
+    "MAFLowDrift_70",
+    "MAFLowDrift_80",
+    "MAFLowDrift_90",
+    "MAPLowDrift_70",
+    "MAPLowDrift_80",
+    "MAPLowDrift_90"
+  ],
+  "train_cycle": "Cycle_RDE_Eifel",
+  "test_cycle": "Cycle_RDE_Eifel2",
+  "row_stride": 5,
+  "estimators": {
+    "majority_baseline": "DummyClassifier(strategy='most_frequent')",
+    "logistic_regression": "Pipeline(steps=[('standardscaler', StandardScaler()),\n                ('logisticregression',\n                 LogisticRegression(class_weight='balanced', max_iter=300))])",
+    "gradient_boosting": "HistGradientBoostingClassifier(class_weight='balanced', max_iter=200,\n                               random_state=42)"
+  },
+  "source_sha256": {
+    "main_df_standardized.parquet": "b9d893843c9fb3820a1c11adadd7a5de6055186e2e0c59e97d76bf7729859dec"
+  }
+}
