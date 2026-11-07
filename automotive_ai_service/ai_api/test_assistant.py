@@ -17,8 +17,7 @@ from .rag import extract_entities, retrieve
 INDEX_BUILT = (Path(settings.KNOWLEDGE_INDEX_PATH) / "index.joblib").exists()
 ADMIN_MAINTENANCE = {"database_context": {"kind": "admin_maintenance", "records": {
     "legacy_service_records": [{"maintenanceID": 88, "vehicleID": 3, "maintenanceType": "Oil change",
-                                "description": "Secret note", "maintenanceDate": "2026-08-14", "maintenanceStatus": "Completed"}],
-    "verified_evidence_records": [], "verified_evidence_table_available": True}}}
+                                "description": "Secret note", "maintenanceDate": "2026-08-14", "maintenanceStatus": "Completed"}]}}}
 
 
 class RoleResolutionTests(TestCase):
@@ -48,8 +47,8 @@ class AssistantPermissionTests(TestCase):
         self.assertNotEqual(response["data"]["evidence"]["evidence_type"], "database_record")
 
     def test_admin_only_documents_are_not_retrieved_for_customers(self):
-        customer_ids = {item["id"] for item in retrieve("verify maintenance evidence records draft submitted", "customer", 10)}
-        admin_ids = {item["id"] for item in retrieve("verify maintenance evidence records draft submitted", "admin", 10)}
+        customer_ids = {item["id"] for item in retrieve("record maintenance service interval component inspection", "customer", 10)}
+        admin_ids = {item["id"] for item in retrieve("record maintenance service interval component inspection", "admin", 10)}
         self.assertNotIn("sys:sys_admin_maintenance", customer_ids)
         self.assertIn("sys:sys_admin_maintenance", admin_ids)
 

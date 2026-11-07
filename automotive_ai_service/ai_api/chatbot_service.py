@@ -839,9 +839,7 @@ def answer_database_context(database_context, message, rental_context):
         records = database_context.get("records")
         records = records if isinstance(records, dict) else {}
         legacy = records.get("legacy_service_records", [])
-        verified = records.get("verified_evidence_records", [])
         legacy = legacy if isinstance(legacy, list) else []
-        verified = verified if isinstance(verified, list) else []
         lines = []
         for item in legacy:
             if not isinstance(item, dict):
@@ -855,38 +853,8 @@ def answer_database_context(database_context, message, rental_context):
                 + (f"; note: {description[:300]}" if description else "")
                 + ". This is a service-log entry, not a verified fault label."
             )
-        for item in verified:
-            if not isinstance(item, dict):
-                continue
-            name = vehicle_name(item) or f"Vehicle #{item.get('vehicle_id')}"
-            details = []
-            for key, label in (
-                ("component", "component"),
-                ("symptoms", "symptoms"),
-                ("inspection_findings", "findings"),
-                ("dtc_codes", "DTCs"),
-                ("confirmed_cause", "confirmed cause"),
-                ("repair_action", "repair"),
-                ("repair_outcome", "outcome"),
-            ):
-                value = str(item.get(key) or "").strip()
-                if value:
-                    details.append(f"{label}: {value[:250]}")
-            lines.append(
-                f"Verified evidence record #{item.get('id')} for {name}: "
-                f"{item.get('record_type')} on {item.get('recorded_at')}"
-                + ("; " + "; ".join(details) if details else "")
-                + (f"; source: {str(item.get('source'))[:160]}" if item.get("source") else "")
-                + "."
-            )
-
         if lines:
             answer = "Maintenance records returned from the authorized database:\n- " + "\n- ".join(lines)
-        elif records.get("verified_evidence_table_available") is False:
-            answer = (
-                "No legacy service records were returned. The verified maintenance-evidence "
-                "table is not installed, so those records cannot be queried yet."
-            )
         else:
             answer = "No matching maintenance records were returned from the authorized database."
         return answer, {
@@ -896,11 +864,6 @@ def answer_database_context(database_context, message, rental_context):
                 item.get("maintenanceID") for item in legacy
                 if isinstance(item, dict) and item.get("maintenanceID") is not None
             ],
-            "verified_record_ids": [
-                item.get("id") for item in verified
-                if isinstance(item, dict) and item.get("id") is not None
-            ],
-            "verified_evidence_table_available": records.get("verified_evidence_table_available"),
         }
 
     return (

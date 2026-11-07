@@ -862,8 +862,7 @@ def _maintenance_due(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=N
 def _maintenance_records(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None):
     data = by_tool["maintenance.records"].get("data") or {}
     legacy = data.get("legacy_service_records") or []
-    verified = data.get("verified_evidence_records") or []
-    if not legacy and not verified:
+    if not legacy:
         return "No maintenance records are stored for the vehicles you asked about."
     lines = ["Latest maintenance records:"]
     for r in legacy:
@@ -872,12 +871,6 @@ def _maintenance_records(plan, by_tool, role, vocabulary, guide, fleet_risk, not
                      + (f", cost {money(cost)}" if cost not in (None, "") else ", cost not recorded")
                      + (f", odometer {int(r['odometerReading']):,} km" if r.get("odometerReading") not in (None, "") else "")
                      + (f" - {r['description']}" if r.get("description") else ""))
-    for r in verified:
-        lines.append(f"- #{r.get('id')} {r.get('recorded_at')} {name(r)} (verified {r.get('record_type')}): {r.get('component')}; "
-                     f"cause: {r.get('confirmed_cause') or 'not recorded'}; repair: {r.get('repair_action') or 'not recorded'}"
-                     + (f"; DTCs {r['dtc_codes']}" if r.get("dtc_codes") else ""))
-    if data.get("verified_evidence_table_available") is False:
-        lines.append("The verified maintenance-evidence table is not installed yet, so only service-log entries are shown.")
     if notes:
         notes.add(lines, "service_log")
     else:
@@ -897,23 +890,14 @@ def _maintenance_recurring(plan, by_tool, role, vocabulary, guide, fleet_risk, n
 
 def _maintenance_inspections(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None):
     inspections = ((by_tool.get("maintenance.inspections") or {}).get("data") or {}).get("inspections") or []
-    verified = ((by_tool.get("maintenance.records") or {}).get("data") or {}).get("verified_evidence_records") or []
-    if not inspections and not verified:
-        return "No component inspections or verified diagnostic records are stored for those vehicles."
-    lines = []
-    if inspections:
-        lines.append("Component inspections:")
-        lines += [f"- {i.get('inspected_on')} {name(i)}, {i.get('component') or i.get('component_key')}: condition {i.get('condition_rating')}"
-                  + (f", DTCs {i['dtc_codes']}" if i.get("dtc_codes") else ", no DTCs recorded")
-                  + (f", findings: {i['findings']}" if i.get("findings") else "")
-                  + (f", confirmed fault: {i['confirmed_fault']}" if i.get("confirmed_fault") else "")
-                  + (f", recommended: {i['recommended_action']}" if i.get("recommended_action") else "") for i in inspections]
-    coded = [r for r in verified if r.get("dtc_codes")]
-    if coded:
-        lines.append("Verified repair records with trouble codes:")
-        lines += [f"- #{r.get('id')} {r.get('recorded_at')} {name(r)}: {r['dtc_codes']}; component {r.get('component') or 'not recorded'}; "
-                  f"cause: {r.get('confirmed_cause') or 'not recorded'}; work done: {r.get('repair_action') or 'not recorded'}"
-                  + (f"; outcome: {r['repair_outcome']}" if r.get("repair_outcome") else "") for r in coded]
+    if not inspections:
+        return "No component inspections are stored for those vehicles."
+    lines = ["Component inspections:"]
+    lines += [f"- {i.get('inspected_on')} {name(i)}, {i.get('component') or i.get('component_key')}: condition {i.get('condition_rating')}"
+              + (f", DTCs {i['dtc_codes']}" if i.get("dtc_codes") else ", no DTCs recorded")
+              + (f", findings: {i['findings']}" if i.get("findings") else "")
+              + (f", confirmed fault: {i['confirmed_fault']}" if i.get("confirmed_fault") else "")
+              + (f", recommended: {i['recommended_action']}" if i.get("recommended_action") else "") for i in inspections]
     return "\n".join(lines)
 
 

@@ -24,7 +24,6 @@
   {"maintenanceID": 488, "vehicleID": 5, "maintenanceType": "Oil change", "description": "Engine oil and filter", "maintenanceDate": "2026-11-20", "cost": "2800.00", "maintenanceStatus": "Completed", "nextMaintenanceDate": null, "odometerReading": 49000, "make": "Honda", "model": "BR-V"},
   {"maintenanceID": 470, "vehicleID": 4, "maintenanceType": "Tire rotation", "description": "Rotated all tires", "maintenanceDate": "2026-10-05", "cost": "1500.00", "maintenanceStatus": "Completed", "nextMaintenanceDate": null, "odometerReading": 82000, "make": "Nissan", "model": "Navara"}
  ],
- "verified_evidence_records": [],
  "maintenance_due": [
   {"id": 1, "make": "Hyundai", "model": "Stargazer", "plate_number": "ABC 1001", "status": "available", "current_mileage": 31200, "last_service_date": "2026-12-20", "last_service_type": "Oil change", "last_service_odometer": 30000, "next_scheduled_date": null, "estimated_due_date": "2027-06-18", "service_status": "not_due", "basis": "No baseline service threshold has been reached.", "recommended_action": "Continue recording service and mileage."},
   {"id": 2, "make": "Mitsubishi", "model": "Xpander", "plate_number": "ABC 2002", "status": "available", "current_mileage": 44100, "last_service_date": "2026-09-01", "last_service_type": "General inspection", "last_service_odometer": 41000, "next_scheduled_date": null, "estimated_due_date": "2027-02-28", "service_status": "approaching", "basis": "The system baseline service date is within 30 days.", "recommended_action": "Plan the next service."},

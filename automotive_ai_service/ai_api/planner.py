@@ -961,7 +961,7 @@ def _maintenance_plan(u):
     if re.search(r"\b(?:predict\w*|risk\w*|forecast\w*|break\s?downs?|breaks down|fail\w*)\b", text):
         return _plan("maintenance_prediction", u, [("maintenance.model_inputs", {}), ("maintenance.due", dict(filters))])
     if u.dtc_codes or re.search(r"\b(?:dtc|trouble codes?|fault codes?|diagnostic\w*|inspection\w*|inspected|condition)\b", text):
-        return _plan("maintenance_inspections", u, [("maintenance.inspections", dict(filters)), ("maintenance.records", dict(filters))])
+        return _plan("maintenance_inspections", u, [("maintenance.inspections", dict(filters))])
     if re.search(r"\b(?:due|overdue|need\w*|upcoming|soon|schedule\w*|next service)\b", text):
         return _plan("maintenance_due", u, [("maintenance.due", dict(filters))])
     if re.search(r"\b(?:records?|history|histories|logs?|latest|last|recent|activit\w+|cost\w*|spent|serviced|repaired|done)\b", text):
