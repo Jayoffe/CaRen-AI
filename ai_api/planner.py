@@ -32,16 +32,17 @@ CONCEPTS = {
                   "afford", "total", "quote", "presyo", "halaga"},
         "phrases": ["how much", "per day", "a day", "daily rate", "per night"],
     },
-    "deposit": {"words": {"deposit", "deposits", "refundable", "refund", "refunds"}, "phrases": ["security deposit"]},
+    "deposit": {"words": {"deposit", "deposits", "refundable", "refund", "refunds"}, "phrases": ["security deposit", "security on", "security for the", "security of the"]},
     "availability": {
         "words": {"available", "availability", "bakante", "vacant", "free", "rentable"},
-        "phrases": ["for rent", "can i rent", "can i book", "can i reserve", "is there any", "are there any"],
+        "phrases": ["for rent", "can i rent", "can i book", "can i reserve", "is there any", "are there any", "ready to go", "be around"],
     },
     "listing": {
         "words": {"what", "which", "list", "show", "anong", "ano", "lahat", "all", "options", "choices", "meron", "offer", "units"},
         "phrases": ["do you have", "may available", "what cars", "what vehicles", "any cars", "kinds of", "see the cars",
-                    "see your cars", "see the vehicles", "see all", "see available", "your fleet", "your cars",
-                    "your vehicles", "your units", "what you have", "what do you have", "what have you got"],
+                    "see your cars", "see the vehicles", "see the car", "see all", "see available", "your fleet", "your cars",
+                    "your vehicles", "your units", "what you have", "what do you have", "what have you got", "on offer", "lineup", "line up",
+                    "choose from"],
     },
     "specs": {
         "words": {"features", "feature", "specs", "spec", "specifications", "seats", "seat", "seater", "seating", "transmission",
@@ -49,18 +50,18 @@ CONCEPTS = {
                   "color", "colour", "year", "mileage", "details", "detail", "info", "information", "describe", "model",
                   "plate", "plaka", "minimum", "kulay", "upuan", "dashcam", "camera", "bluetooth", "usb", "sunroof", "carplay",
                   "equipment", "equipped", "keyless", "touchscreen", "sensors", "navigation", "nav", "ac", "transmission",
-                  "odometer", "km", "kilometers", "conditioned", "airconditioned", "gearbox", "matic"},
+                  "odometer", "km", "kilometers", "conditioned", "airconditioned", "gearbox", "matic", "capacity", "passengers", "passenger", "riders"},
         "phrases": ["tell me about", "how many seats", "how many people", "what kind", "dash cam", "child seat", "baby seat",
                     "cruise control", "android auto", "roof rack"],
     },
     "vehicle_noun": {"words": {"car", "cars", "vehicle", "vehicles", "unit", "units", "auto", "suv", "suvs", "sedan", "sedans",
                                "van", "vans", "pickup", "truck", "rental", "rentals", "rent", "renting", "fleet"}},
-    "own": {"words": {"my", "mine", "ko", "ako", "akin", "namin", "our"},
-            "phrases": ["do i have", "have i", "i booked", "i reserved", "i rented", "did i", "i spent", "days are left", "days left"]},
+    "own": {"words": {"my", "mine", "ko", "ako", "akin", "sakin", "namin", "our"},
+            "phrases": ["do i have", "have i", "i booked", "i reserved", "i rented", "did i", "i spent", "days are left", "days left", "am i", "under me", "i have a", "have i got"]},
     "booking": {"words": {"booking", "bookings", "reservation", "reservations", "reserved", "booked", "rental", "rentals",
                           "pickup", "trip", "trips", "book"},
                 "phrases": ["rental history", "return date", "pick up", "days left", "days are left", "spent so far",
-                            "have i spent", "did i spend", "next pickup", "my pickup", "my return"]},
+                            "have i spent", "did i spend", "next pickup", "my pickup", "my return", "mine approved", "am i renting"]},
     "upcoming": {"words": {"upcoming", "next", "current", "active", "susunod", "future", "pending", "confirmed"}},
     "how_to": {"words": {"paano", "steps", "procedure", "process"},
                "phrases": ["how do i", "how can i", "how to", "can i", "where can i", "what are the steps", "is it possible"]},
@@ -79,8 +80,8 @@ CONCEPTS = {
                               "predictions", "risk", "risky", "diagnostic", "diagnostics", "dtc", "condition", "history", "records",
                               "record", "logs", "activities", "activity", "worked", "work", "maintain", "breakdown", "breakdowns"},
                     "phrases": ["trouble code", "trouble codes", "fault code", "fault codes", "needs service", "need service",
-                                "break down", "breaks down"]},
-    "status": {"words": {"status", "rented", "unavailable", "reserved", "booked", "maintenance", "utilization"},
+                                "break down", "breaks down", "been done", "done to", "work done", "was done"]},
+    "status": {"words": {"status", "rented", "unavailable", "reserved", "booked", "maintenance", "utilization", "how's"},
                "phrases": ["how many", "in maintenance", "under maintenance", "on rent", "not available", "out of service",
                            "out on rent", "in the shop", "being repaired", "under repair"]},
     "other_people": {"words": {"customers", "users", "everyone", "everybody", "others", "people's",
@@ -96,14 +97,15 @@ CONCEPTS = {
                           "tire", "tires", "tyre", "tyres", "battery", "alternator", "starter", "misfire", "misfiring", "stall",
                           "stalls", "stalling", "vibration", "vibrates", "vibrating", "shake", "shakes", "shaking", "pulls",
                           "pulling", "drifts", "steering", "wobble", "coolant", "transmission", "exhaust", "clunk", "rattle",
-                          "smell", "smells", "flashing", "blinking", "warning", "aircon", "hesitates", "jerks", "knocking"},
+                          "smell", "smells", "flashing", "blinking", "warning", "aircon", "hesitates", "jerks", "knocking", "clicks", "clicking", "wobbles"},
                 "phrases": ["won't start", "wont start", "check engine", "warning light", "does not start", "doesn't start"]},
 }
 # Words that are numbers in English or Tagalog.
 NUMBER_WORDS = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
     "isa": 1, "isang": 1, "dalawa": 2, "dalawang": 2, "tatlo": 3, "tatlong": 3, "apat": 4, "lima": 5, "limang": 5,
-    "anim": 6, "pito": 7, "pitong": 7, "walo": 8, "siyam": 9, "sampu": 10, "sampung": 10,
+    "anim": 6, "pito": 7, "pitong": 7, "walo": 8, "walong": 8, "siyam": 9, "sampu": 10, "sampung": 10,
+    "eleven": 11, "twelve": 12, "fourteen": 14, "fifteen": 15, "twenty": 20, "thirty": 30,
 }
 CATEGORY_SYNONYMS = {
     "suv": {"suv", "suvs", "crossover"}, "sedan": {"sedan", "sedans", "saloon"}, "van": {"van", "vans", "minivan", "minibus"},
@@ -125,7 +127,15 @@ KNOWN_MODELS = {name.casefold(): label for name, label in (
     ("montero", "Mitsubishi Montero"), ("xpander", "Mitsubishi Xpander"), ("mirage", "Mitsubishi Mirage"), ("strada", "Mitsubishi Strada"),
     ("navara", "Nissan Navara"), ("almera", "Nissan Almera"), ("terra", "Nissan Terra"), ("ertiga", "Suzuki Ertiga"),
     ("civic", "Honda Civic"), ("brv", "Honda BR-V"), ("crv", "Honda CR-V"), ("ranger", "Ford Ranger"), ("everest", "Ford Everest"),
-    ("tucson", "Hyundai Tucson"), ("stargazer", "Hyundai Stargazer"), ("picanto", "Kia Picanto"))}
+    ("tucson", "Hyundai Tucson"), ("stargazer", "Hyundai Stargazer"), ("picanto", "Kia Picanto"), ("rush", "Toyota Rush"), ("veloz", "Toyota Veloz"),
+    ("zenix", "Toyota Innova Zenix"), ("yaris", "Toyota Yaris"), ("camry", "Toyota Camry"), ("traviz", "Isuzu Traviz"), ("dmax", "Isuzu D-Max"), ("mux", "Isuzu mu-X"),
+    ("jimny", "Suzuki Jimny"), ("swift", "Suzuki Swift"), ("dzire", "Suzuki Dzire"), ("celerio", "Suzuki Celerio"), ("creta", "Hyundai Creta"), ("accent", "Hyundai Accent"),
+    ("seltos", "Kia Seltos"), ("stonic", "Kia Stonic"), ("soluto", "Kia Soluto"), ("sorento", "Kia Sorento"), ("coolray", "Geely Coolray"), ("tiggo", "Chery Tiggo"),
+    ("livina", "Nissan Livina"), ("kicks", "Nissan Kicks"), ("patrol", "Nissan Patrol"), ("jazz", "Honda Jazz"), ("brio", "Honda Brio"), ("hrv", "Honda HR-V"),
+    ("raptor", "Ford Raptor"), ("territory", "Ford Territory"), ("forester", "Subaru Forester"), ("cx5", "Mazda CX-5"), ("supra", "Toyota Supra"))}
+# Model names that are also ordinary words: without a rental signal in the message they are not read as a vehicle.
+ORDINARY_MODEL_WORDS = {"city", "accent", "mirage", "ranger", "everest", "territory", "fit", "jazz", "swift", "rush", "patrol", "forester", "kicks", "focus",
+                        "escape", "explorer", "soul", "pilot", "element", "cross", "sport", "terra", "strada", "almera"}
 BRAND_NAMES = {"bmw": "BMW", "mg": "MG", "byd": "BYD", "gac": "GAC", "jac": "JAC", "vw": "VW", "mercedes-benz": "Mercedes-Benz",
                "kia": "Kia", "mini": "MINI", "ram": "RAM", "land rover": "Land Rover"}
 # Policies and services the application has no record of; the answer says so instead of guessing.
@@ -134,24 +144,29 @@ UNRECORDED_TOPICS = [
     ("which licence types are accepted", re.compile(
         r"\b(?:student|learner'?s?|foreign|international|provisional|temporary)\s+(?:driving\s+|driver'?s?\s+)?(?:permit|license|licence)\b")),
     ("a driver or chauffeur service", re.compile(
-        r"\bchauffeur\w*\b|\bdriver service\b|\b(?:with|include|includes|including|provide|provides|offer|offers|hire|rent) (?:a |an |your )?(?:own )?driver\b"
+        r"\bchauffeur\w*\b|\bdriver service\b|\bdriver for hire\b|\b(?:with|include|includes|including|provide|provides|offer|offers|hire|rent|have) (?:a |an |your )?(?:own )?driver\b(?!'s|s)"
         r"|\bmay (?:kasamang )?driver\b|\bkasama(?:ng)? driver\b")),
     ("smoking in the vehicle", re.compile(
-        r"\b(?:can|may) (?:i|we) (?:smoke|vape)\b|\b(?:smoking|vaping) (?:allowed|policy|inside|in the (?:car|vehicle))\b|\bno smoking\b"
+        r"\b(?:can|may) (?:i|we) (?:smoke|vape)\b|\b(?:smoking|vaping) (?:ok\b|okay\b|fine\b|allowed|policy|inside|in the (?:car|vehicle))\b|\bno smoking\b"
+        r"|\b(?:is|are) (?:smoking|vaping)\b"
         r"|\b(?:is it ok|allowed) to (?:smoke|vape)\b|\b(?:pwede|bawal)(?: ba)?(?: mag)?(?:-| )?(?:yosi|manigarilyo|smoke|vape)\b"
         r"|\b(?:manigarilyo|magsigarilyo|magyosi|mag yosi|mag-yosi)\b")),
     ("pets in the vehicle", re.compile(
         r"\b(?:bring|take|travel with|allowed|pwede|isakay|isama)\b.*\b(?:pets?|dogs?|cats?|aso|pusa)\b"
+        r"|\b(?:pets?|dogs?|cats?)\b.*\b(?:ride|come|along|join)\b"
         r"|\b(?:pets?|dogs?|cats?) (?:are |is )?(?:allowed|friendly|policy|ok|okay|welcome)\b")),
     ("additional drivers", re.compile(r"\b(?:someone else|another person|another driver|additional drivers?|second driver|other drivers?|my (?:friend|wife|husband|brother|sister|kapatid|asawa)|ibang (?:tao|driver))\b.*\b(?:drive|driver|magmaneho|mag-drive)\b|\badditional drivers?\b")),
     ("insurance", re.compile(r"\b(?:insurance|insured|insure|seguro)\b")),
-    ("travel outside the area", re.compile(r"\b(?:another|other|ibang) (?:province|provinces|city|region|island|probinsya)\b|"
+    ("travel outside the area", re.compile(r"\b(?:drive|take|bring) (?:it|the car|the vehicle|the unit) to (?!my\b|me\b|our\b|the\b|a\b|your\b)[a-z]+\b|"
+                                           r"\bdrive\b.*\b(?:province|provinces|probinsya)\b|\b(?:another|other|ibang) (?:province|provinces|city|region|island|probinsya)\b|"
                                            r"\b(?:out of town|outside (?:the )?(?:city|metro manila|province|area|region)|cross[- ]country|road trip)\b")),
     ("mileage or distance limits", re.compile(r"\b(?:mileage|distance|km|kilometer|kilometre)s? (?:limit|cap|restriction|allowance)s?\b"
+                                              r"|\b(?:limit|cap)s? (?:on|to|for) (?:the )?(?:mileage|distance|km|kilometers?|kilometres?)\b"
                                               r"|\bunlimited (?:mileage|km|kilometers)\b|\bhow far can (?:i|we) drive\b")),
-    ("home delivery", re.compile(r"\b(?:deliver|delivery|drop[- ]?off at|bring the car to (?:me|my|our)|ihatid|i-deliver)\b")),
-    ("business hours", re.compile(r"\b(?:business hours|opening hours|office hours|what time do you (?:open|close)|are you open|open (?:on|at|today)|anong oras)\b")),
-    ("late returns and late fees", re.compile(r"\blate (?:return|returns|fee|fees|charge|penalty)\b|\breturn\w* (?:the car |it )?late\b|\bhuli(?:ng)? (?:pagbalik|balik)\b")),
+    ("home delivery", re.compile(r"\b(?:deliver|delivery|drop[- ]?off at|drop the car (?:at|to|off)|bring the car to (?:me|my|our)|ihatid|i-deliver)\b")),
+    ("business hours", re.compile(r"\b(?:business hours|opening hours|office hours|what time do you (?:open|close)|are you open|open ba kayo|open kayo|open (?:on|at|today|sa)|anong oras)\b")),
+    ("late returns and late fees", re.compile(r"\blate (?:return|returns|fee|fees|charge|penalty)\b|\breturn\w* (?:the car |it )?late\b|\bhuli(?:ng)? (?:pagbalik|balik)\b"
+                                              r"|\bpenalt(?:y|ies)\b.*\b(?:late|return\w*)\b|\bif i'?m late\b")),
     ("contact details", re.compile(r"\b(?:contact (?:you|the rental team|number|details|info)|your (?:phone|number|email|address)|how (?:do|can) i (?:contact|reach|call)|hotline|where are you located|your location)\b")),
 ]
 VEHICLE_STATUS_WORDS = {"rented": "rented", "maintenance": "maintenance", "repair": "maintenance", "unavailable": "unavailable",
@@ -174,7 +189,7 @@ MONTHS = {name: number for number, names in enumerate([
     ("december", "dec", "disyembre")], start=1) for name in names}
 WEEKDAYS = {name: index for index, names in enumerate([("monday", "lunes"), ("tuesday", "martes"), ("wednesday", "miyerkules"),
             ("thursday", "huwebes"), ("friday", "biyernes"), ("saturday", "sabado"), ("sunday", "linggo")]) for name in names}
-YES_NO = re.compile(r"^(?:does|do|is|are|has|have|may|meron|can)\b|\b(?:ba|po ba)\b|\b(?:is|does) it\b"
+YES_NO = re.compile(r"^(?:does|do|is|are|has|have|may|meron|can|would|could|with)\b|\b(?:ba|po ba|right)\b|\b(?:is|does) it\b|\bcome with\b|\binclude\b"
                     r"|\b(?:gps|navigation|aircon|a/c|ac|automatic|manual|diesel|gasoline)\s*\?"
                     r"|\b(?:has|have|with|got)\s+(?:a |an )?(?:gps|navigation|nav|ac|a/c|aircon|air ?con\w*|air[- ]?condition\w*)\b")
 # Words that ask for a broader list, so the question is not about the vehicle discussed before.
@@ -183,15 +198,16 @@ ELLIPTICAL = re.compile(r"^(?:and|what about|how about|eh|yung|paano yung|e di|s
 PRONOUN = re.compile(r"\b(?:it(?! (?:true|possible|ok|okay|allowed|safe|normal|required)\b)|this one|that one|this car|that car|yan|iyan|yun|iyon|ito"
                      r"|(?:the )?(?:vehicle|car|one) i (?:selected|chose|picked|clicked)|selected (?:vehicle|car))\b")
 # Questions about the assistant's own access are answered from the guide.
-ABOUT_ASSISTANT = re.compile(r"\bcan (?:the )?(?:chatbot|assistant|bot|ai|you) (?:see|access|view|read|show)\b")
+ABOUT_ASSISTANT = re.compile(r"\bcan (?:the )?(?:chatbot|assistant|bot|ai|you) (?:see|access|view|read|show)\b(?!.*\b(?:my|mine|ko|cars?|vehicles?|units?)\b)")
 # Price questions about repairs or services, not rentals.
 SERVICE_COST = re.compile(r"\b(?:oil change|repair|repairs|servicing|replacement|replace|parts?|tune[- ]?up|alignment|labou?r|fix|fixing)\b")
 OFF_TOPIC = re.compile(r"\b(?:stock|shares?|stock market|net worth|ceo|founder|headquarters|weather|news|election|joke|jokes|poem|poems|song|songs"
-                       r"|sing|movie|movies|bitcoin|crypto\w*|recipe|cook|cooking|basketball|football|lotto|horoscope)\b")
+                       r"|sing|movie|movies|bitcoin|crypto\w*|recipe|cook|cooking|bake|baking|basketball|football|lotto|horoscope|nba|laptop|ulam|president"
+                       r"|capital of|essay|love letter)\b")
 BARE_ATTRIBUTES = [
     ("transmission", re.compile(r"\btransmission\b|\bgear ?box\b")),
-    ("color", re.compile(r"\bcolou?rs?\b|\bkulay\b")),
-    ("seating_capacity", re.compile(r"\bseating(?: capacity)?\b|\bcapacity\b|\bseats?\b|\bpassengers?\b|\bupuan\b")),
+    ("color", re.compile(r"\bcolou?r(?:s|'s)?\b|\bkulay\b|\bpaint\b")),
+    ("seating_capacity", re.compile(r"\bseating(?: capacity)?\b|\bcapacity\b|\bseats?\b|\bpassengers?\b|\bupuan\b|\bseater\b")),
     ("fuel_type", re.compile(r"\bfuel\b")),
     ("year", re.compile(r"\byear\b")),
     ("current_mileage", re.compile(r"\bmileage\b|\bodometer\b|\bkilomet(?:er|re)s?\b|\bkm\b")),
@@ -203,16 +219,30 @@ POLICY_FEE = re.compile(r"\b(?:cancel\w*|late|penalty|penalties|change|changing|
                         r"|\b(?:fee|fees|charge|charges)\b.*\b(?:cancel\w*|late|chang\w*)\b")
 # "What do I need to rent a car?" asks for the requirements.
 NEEDS_TO_RENT = re.compile(r"\bwhat (?:\w+ )?(?:do|does|would) (?:i|one|we|you) need\b(?!.*\b(?:\d+|people|persons|seats?|seater)\b)"
-                           r"|\brequirements? (?:for|to) (?:rent|book|reserv)\w*")
+                           r"|\brequirements? (?:for|to) (?:rent|book|reserv)\w*|\bneed\b.*\b(?:to|para|sa|the)\s+(?:rent|book|reserve)\b|\brequired to (?:rent|book|reserve)\b")
 # Asking how to do something in the system, as opposed to asking for records.
 HOW_TO_DO = re.compile(r"\b(?:how (?:do|can|should|would) (?:i|we|an admin)|how to|steps|procedure|paano|how do i)\b")
 # Asking about the fleet's records rather than describing one's own car ("DTC stored: P0999").
 STORED_RECORDS = re.compile(r"\b(?:in (?:the|our) (?:records|fleet|system)|which (?:vehicles|cars|units)|our (?:vehicles|cars|fleet|units)"
                             r"|for (?:the|our|all) (?:vehicles|cars|units)|fleet|maintenance records?|service records?"
                             r"|(?:vehicle|car|unit)\s*(?:id\s*)?#?\s*\d+)\b")
-OWN_PICKUP_RETURN = re.compile(r"\bwhen (?:do|should|must|will) i (?:return|pick up|pickup|get)\b")
+OWN_PICKUP_RETURN = re.compile(r"\bwhen (?:do|should|must|will|can|am) i (?:have to |need to )?(?:return|pick up|pickup|picking up|get|collect|give|bring)\b"
+                               r"|\bwhen ko (?:return|pick up)\b|\bwhen pick up\b|\bwhen return\b"
+                               r"|\b(?:what|which) (?:day|date) (?:do|will|can|should) i (?:get|pick up|pickup|collect|return|bring)\b"
+                               r"|\b(?:what|which) (?:day|date) is (?:the|my) (?:car|vehicle|unit|rental) due\b"
+                               r"|\bwhen(?:'s| is| does| will) (?:the|my) (?:car|vehicle|unit|rental)\b.*\b(?:due|back|return)\b"
+                               r"|\bwhen will i pick\b|\bwhen do i bring\b")
 OTHER_PERSON_RECORDS = re.compile(r"\b(?!(?:my|what|that|it|where|who|how|here|there|when|which|let)'s\b)(?!my\b)[a-z]+'s\s+"
                                   r"(?:bookings?|reservations?|rentals?|records?|details|account)\b")
+DEPOSIT_REFUND = re.compile(r"\bdeposits?\b.*\b(?:back|return(?:ed)?|refund\w*)\b|\b(?:back|return(?:ed)?|refund\w*)\b.*\bdeposits?\b")
+# Company money. Only administrators may see it, however it is worded.
+COMPANY_REVENUE = re.compile(r"\b(?:revenue|income|earnings?|sales|kita|kinita)\b|\bhow much (?:money )?(?:have|did|do) (?:you|the business|the company)(?: \w+)? (?:make|made|earn|earned)\b"
+                             r"|\b(?:the business|the company)\b.*\b(?:make|made|earn|earned)\b")
+# Asking what something would cost is a quote, not a look-up of an existing booking ("how much would 5 days with the Vios cost me").
+HYPOTHETICAL = re.compile(r"\b(?:would|will|if i|kung|going to|gonna|planning|thinking|suppose|supposing|say i|i'?ll|might|could i)\b")
+# "Do you have ...?", "May Stargazer ba kayo?": is this vehicle in stock.
+STOCK_QUESTION = re.compile(r"\b(?:do|did) (?:you|u)(?: guys| all)?(?: still)? (?:have|carry|got|stock|offer|rent out)\b|\b(?:have|got) you\b|\byou(?: guys)? (?:have|got)\b|\bgot (?:any|a|an|anything)\b"
+                            r"|^anything\b|\blooking for an?\b|\bi (?:need|want|prefer) an? \w+\b|\bnaghahanap\b|\bmeron\b|^any\b|^may\b.*\b(?:ba|po|kayo)\b|\bkayong?\b|\bis there an?\b|\bany \w+(?: \w+)? available\b|\bany (?:\w+ )?for rent\b")
 # "How can I reserve the Vios?" asks for the booking steps, even with a vehicle named.
 HOW_TO_BOOK = re.compile(r"\bhow (?:can|do|to|would|should) (?:i |we )?(?:book|reserve|rent|make a (?:booking|reservation))\b"
                          r"|\b(?:process|steps|procedure) (?:to|for) (?:book|reserv|rent)\w*")
@@ -225,7 +255,7 @@ SQL_TEXT = re.compile(r"\b(?:select\s+[\w*,\s]+\s+from|insert\s+into|update\s+\w
 # Rental rules that share words with car symptoms ("can I smoke in the car?" is not about exhaust smoke).
 SYMPTOM_SAFE_TOPICS = {"smoking in the vehicle", "pets in the vehicle"}
 # Being in an accident: general safety steps, not company procedures.
-ACCIDENT = re.compile(r"\b(?:accident|accidents|crash|crashed|collision|collided|fender bender|naaksidente|aksidente|nabangga|bumangga|banggaan)\b")
+ACCIDENT = re.compile(r"\b(?:accident|accidents|crash|crashed|collision|collided|fender bender|naaksidente|aksidente|nabangga|bumangga|banggaan|hit (?:a|an|the|another) \w+)\b")
 # Someone's password or other credentials (not "how do I change my password?").
 CREDENTIALS = re.compile(r"\b(?:password|passwords|passcode|credentials?|login details|api key|secret key|access token)\b")
 OWN_CREDENTIAL_HELP = re.compile(r"\b(?:my|change|reset|forgot|forgotten|update|new)\b")
@@ -247,33 +277,48 @@ EQUIPMENT = {
 }
 # One requested attribute of a vehicle record ("what year is the Fortuner?").
 ATTRIBUTES = [
-    ("plate_number", re.compile(r"\bplate(?:\s*(?:number|no\.?|#))?\b|\bplaka\b|\bregistration (?:number|no\.?)\b|\blicen[cs]e plate\b")),
+    ("plate_number", re.compile(r"\bplate(?:\s*(?:number|no\.?|#))?\b|\bplaka\b|\bregistration(?: (?:number|no\.?|of))?\b|\blicen[cs]e plate\b")),
     ("minimum_rental_duration", re.compile(r"\bminimum (?:rental|rent|number of days|days?|duration|period|booking|stay)\b|\bmin(?:imum)? days?\b"
                                            r"|\bshortest (?:rental|booking|period)\b|\bat least how many days\b|\bminimum na araw\b|\bilang araw (?:ang )?minimum\b")),
-    ("year", re.compile(r"\bwhat year\b|\bwhich year\b|\byear model\b|\bmodel year\b|\banong taon\b")),
-    ("color", re.compile(r"\bwhat colou?r\b|\bwhich colou?r\b|\bcolou?r (?:of|is)\b|\bkulay\b")),
-    ("seating_capacity", re.compile(r"\bhow many (?:seats|people|passengers|persons|pax)\b|\bseating capacity\b|\bilang (?:ang )?(?:upuan|tao|katao|seats)\b"
-                                    r"|\bhow many (?:can|could|will) (?:ride|fit|sit|go)\b|\bnumber of (?:seats|passengers)\b|\bkasya\b")),
-    ("fuel_type", re.compile(r"\b(?:diesel|gasoline|gas|petrol) or (?:diesel|gasoline|gas|petrol)\b|\bwhat (?:kind of |type of )?fuel\b|\bfuel type\b|\banong (?:gas|fuel)\b")),
-    ("transmission", re.compile(r"\b(?:manual|automatic) or (?:manual|automatic)\b|\bwhat (?:kind of |type of )?transmission\b|\btransmission type\b")),
+    ("year", re.compile(r"\bwhat year(?:'s)?\b|\bwhich (?:model )?year\b|\byear model\b|\bmodel year\b|\banong (?:model )?(?:taon|year)\b|\btaon\b|\bhow (?:old|new)\b|\byears? old\b"
+                        r"|\byear of\b|\bage of\b|\bwhat model year\b")),
+    ("color", re.compile(r"\bwhat colou?r\b|\bwhich colou?r\b|\bcolou?r (?:of|is)\b|\bcolou?r's\b|\bkulay\b")),
+    ("seating_capacity", re.compile(r"\bhow many (?:\w+ )?(?:seats?|people|passengers|persons|pax|riders)\b|\b(?:seating|seat|passenger) (?:capacity|count)\b|\bilan[g]? (?:ang )?(?:upuan|tao|katao|seats?|seater|passengers|maisasakay)\b"
+                                    r"|\bhow many (?:can|could|will|does|do)\b.*\b(?:ride|fit|sit|go|seat|hold|carry|take)\b|\bnumber of (?:seats|passengers)\b|\bkasya\b(?!.*\d)|\bseats? how many\b"
+                                    r"|\b\d{1,2}(?:\s*-?\s*seaters?)?\s+or\s+(?:an?\s+)?\d{1,2}\s*-?\s*seaters?\b|\btotal seats\b|\bhow many are\b")),
+    ("fuel_type", re.compile(r"\b(?:diesel|gasoline|gas|petrol) or (?:diesel|gasoline|gas|petrol)\b|\b(?:what|which) (?:kind of |type of )?(?:fuel|gas|gasoline)\b|\bfuel (?:type|of)\b"
+                             r"|\b(?:run|runs|running) on\b|\bwhat do i fill\b|\bfill .* with\b|\btakes? what fuel\b|\bwhat (?:gas|fuel) does\b|\buses? what\b")),
+    ("transmission", re.compile(r"\b(?:manual|automatic|stick(?: shift)?) or (?:a |an )?(?:manual|automatic|stick(?: shift)?)\b|\b(?:what|anong) (?:kind of |type of )?(?:transmission|gearbox)\b|\btransmission type\b")),
 ]
 # "Which car has the most seats?" / "best for a big family": rank the listed cars by seating capacity.
 SEATS_RANKING = re.compile(r"\b(?:most|more|biggest|largest|maximum) (?:seats|seating|people|passengers|space)\b|\bbig(?:gest)? (?:family|group)\b"
-                           r"|\b(?:family|group|barkada) (?:trip|outing|car)\b|\bpinakamaluwag\b|\bmaraming (?:tao|upuan)\b|\bbiggest car\b|\blargest car\b")
+                           r"|\b(?:family|group|barkada) (?:trip|outing|car)\b|\bpinakamaluwag\b|\bpinakamalaki\b|\bmaraming (?:tao|upuan)\b|\bbiggest\b|\blargest\b"
+                           r"|\b(?:holds?|carr(?:y|ies)|fits?|takes?) the most\b")
 # Weekly or monthly rates (only daily rates are stored).
 RATE_PERIOD = re.compile(r"\b(?:weekly|monthly|per week|per month|a week rate|week rates?|month rates?|lingguhan|buwanan)\b")
+HOURLY = re.compile(r"\b(?:hourly|per hour|an hour|\d+\s*(?:hours?|hrs?|oras)|(?:one|two|three|four|five|six|few|couple of) hours?)\b")
 # The customer's own past rentals.
 PAST_RENTAL = re.compile(r"\b(?:did i|have i|i have|i've)\s+(?:rent|rented|book|booked|reserve|reserved|use|used)\b"
                          r"|\bi (?:rented|booked|reserved|used)\b|\blast time\b"
-                         r"|\b(?:past|previous|last|recent|huling) (?:rentals?|bookings?|reservations?|trips?)\b|\brental history\b|\bnirentahan ko\b")
+                         r"|\b(?:past|previous|last|recent|huling|dati) (?:rentals?|bookings?|reservations?|trips?)\b|\brental history\b|\bnirentahan ko\b")
 # The rental car breaking down: safety steps and the rental team, not records.
-BREAKDOWN = re.compile(r"\b(?:breaks? down|broke down|broken down|breakdown|stalled on the (?:road|highway)|tumirik|nasiraan)\b")
+BREAKDOWN = re.compile(r"\b(?:breaks? down|broke down|broken down|breakdown|stalled on the (?:road|highway)|tumirik|nasiraan|(?:rental|rented) (?:car |unit |vehicle )?(?:stopped working|isn't working|not working)|stopped working)\b")
 # The customer's own booking of a named vehicle ("how much did I pay for the Honda City rental?").
-OWN_VEHICLE_RECORD = re.compile(r"\b(?:did i pay|i paid|did i spend|cost me|did (?:my|the) .*\b(?:rental|booking|reservation) cost"
+OWN_VEHICLE_RECORD = re.compile(r"\b(?:did i pay|i paid|did i spend|did \w+ .*\bcost me|did (?:my|the) .*\b(?:rental|booking|reservation) cost"
                                 r"|my (?:\w+ ){0,3}(?:rental|booking|reservation)s?\b)")
 # "Who booked the Fortuner?" (administrators).
-WHO_BOOKED = re.compile(r"\bwho (?:booked|rented|reserved|is renting|has (?:the )?(?:\w+ )?(?:reservation|booking))\b|\bbooked by\b"
+WHO_BOOKED = re.compile(r"\bwho(?! can\b| may\b| could\b| should\b| do\b| is allowed\b)(?:'s| is| has| have)?\s+(?:got\s+)?(?:the\s+)?(?:[\w-]+\s+){0,3}?(?:booked|book|rented|rent|reserved|reserve|renting|renter|booking|reservation)\b"
+                        r"|\bwhose\b.*\b(?:booked|book|booking|reservation|reserved|rented|renting)\b|\bbooked by\b"
+                        r"|\b(?:customer|renter|person)\b.*\b(?:booked|reserved|renting|rented)\b|\b(?:customer|renter) (?:of|on) the\b"
+                        r"|\b(?:booked|reserved|rented)\b.*\bwho\b|\banyone (?:booked|reserved|renting)\b"
                         r"|\b(?:reservations?|bookings?) (?:for|of|on) the\b")
+# Words that are never a customer's name in "bookings of ...".
+NOT_A_NAME = {"the", "my", "our", "all", "today", "tomorrow", "this", "next", "week", "pending", "approval", "confirmation", "now", "me", "us", "review", "later", "reservations",
+              "reservation", "bookings", "booking", "rentals", "rental", "vehicles", "cars", "units", "price", "rate", "maintenance", "what", "who", "that", "it", "there", "here", "where", "how",
+              "when", "which", "let", "system", "everyone", "customers", "approving", "me", "completed", "cancelled", "confirmed", "rejected"}
+# A reservation of a named status, in any common wording.
+NEEDS_APPROVAL = re.compile(r"\b(?:should|do|must|need to) i (?:approve|review)\b|\bi (?:need|have) to (?:approve|review)\b|\b(?:waiting|awaiting)\b|\bneed\w* (?:\w+ )?(?:approv\w*|review\w*)\b|\bfor approval\b|\b(?:to|for) (?:approve|review)\b|\bunapproved\b"
+                            r"|\bnot (?:yet )?(?:been )?approved\b|\b(?:haven'?t|have not|hasn'?t) (?:been )?approved\b|\bhindi pa (?:na)?approved\b|\bpending approval\b")
 OWE = re.compile(r"\b(?:owe|balance|still (?:need|have) to pay|need to pay|babayaran|bayaran ko|utang)\b")
 # Another person's records by name ("Ana Santos booking details") or by account id ("user_id=3").
 NAMED_RECORDS = re.compile(r"\b(?!My\b)[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+(?:'s)?\s+(?:bookings?|reservations?|rentals?|booking details|reservation details|account)\b")
@@ -284,9 +329,14 @@ class Understanding:
     def __init__(self, message, vocabulary):
         self.original = message
         # "air-conditioned" is the aircon, not the maintenance word "condition".
-        self.text = re.sub(r"\bair[- ]?condition(?:ed|ing|er)?\b", "aircon", normalize_message(message).casefold())
+        self.text = re.sub(r"\bair[- ]?condition(?:ed|ing|er)?\b|\bair[- ]con\b", "aircon", normalize_message(message).casefold())
         self.tokens = TOKEN.findall(self.text)
         self.concepts = {name for name, lexicon in CONCEPTS.items() if self._matches(lexicon)}
+        if re.search(r"\b(?:battery|alternator|baterya)\b", self.text) and not re.search(r"\b(?:how much|magkano|price|cost|rent|rental)\b", self.text):
+            self.concepts.discard("price")
+        self.stock_question = bool(STOCK_QUESTION.search(self.text))
+        if self.stock_question:
+            self.concepts.add("listing")
         self.dtc_codes = extract_entities(message)["dtc_codes"]
         self._numbers()
         self._vehicles(vocabulary or {})
@@ -320,22 +370,28 @@ class Understanding:
             if _names_word(make, self.tokens, joined):
                 self.makes.append(make)
         for entry in vocabulary.get("models", []):
-            if _names_word(entry.get("model", ""), self.tokens, joined):
+            if _names_word(entry.get("model", ""), self.tokens, joined) or _names_first_word(entry.get("model", ""), self.tokens):
                 self.models.append(entry)
         listed_makes = {str(make).casefold() for make in vocabulary.get("makes", [])}
         self.unlisted_brands = []
         for index, token in enumerate(self.tokens):
             if token in CAR_BRANDS and token not in listed_makes:
-                following = self.tokens[index + 1] if index + 1 < len(self.tokens) else ""
-                model = following if re.fullmatch(r"[a-z][a-z0-9-]{1,}", following) and following not in STOP_AFTER_BRAND else ""
+                # The word after the brand, with its hyphen kept ("Isuzu mu-X", "Mazda CX-5").
+                after = re.search(rf"\b{re.escape(token)}\s+([a-z0-9][a-z0-9-]*)", self.text)
+                following = after.group(1) if after else ""
+                model = following if re.fullmatch(r"[a-z0-9][a-z0-9-]{1,}", following) and not following.isdigit() and following not in STOP_AFTER_BRAND else ""
                 brand = BRAND_NAMES.get(token, token.title())
                 self.unlisted_brands.append(f"{brand} {model.title() if not model.isupper() else model}".strip())
         # A known model name this viewer cannot rent ("is the Hiace available?" from a customer) is named, not ignored.
-        listed_models = {str(entry.get("model", "")).casefold() for entry in vocabulary.get("models", [])}
+        listed_models = {word for entry in vocabulary.get("models", []) for word in TOKEN.findall(str(entry.get("model", "")).casefold())}
+        listed_models |= {"".join(TOKEN.findall(str(entry.get("model", "")).casefold())) for entry in vocabulary.get("models", [])}
         named_brands = " ".join(self.unlisted_brands).casefold()
-        for token in self.tokens:
-            if token in KNOWN_MODELS and token not in listed_models and token not in named_brands:
-                self.unlisted_brands.append(KNOWN_MODELS[token])
+        squeezed = self.tokens + re.findall(r"\b([a-z]{2}-[a-z0-9]+)\b", self.text)
+        for token in squeezed:
+            token = token.replace("-", "")
+            if token in KNOWN_MODELS and token not in listed_models and token not in named_brands and KNOWN_MODELS[token].casefold() not in named_brands:
+                if token not in ORDINARY_MODEL_WORDS or self.stock_question or self.has("price", "availability"):
+                    self.unlisted_brands.append(KNOWN_MODELS[token])
         known = {str(category).casefold(): category for category in vocabulary.get("categories", [])}
         self.unlisted_categories = []
         for key, synonyms in CATEGORY_SYNONYMS.items():
@@ -347,37 +403,50 @@ class Understanding:
         for key, category in known.items():
             if category not in self.categories and _names_word(category, self.tokens, joined):
                 self.categories.append(category)
-        # A model name can be an ordinary word ("City"); without a make, a vehicle word or a
-        # rental question it is not a vehicle reference.
+        # A model name can be an ordinary word ("City"), and "my Vios is overheating" is a car problem. Without a make, a vehicle
+        # word or a rental question, such a mention is not a question about the listed vehicle.
         signal = (self.makes or self.has("price", "deposit", "availability", "specs", "vehicle_noun", "booking", "status", "maintenance")
                   or len(self.tokens) <= 3 or self.start_date or self.rental_days or len(self.models) >= 2
                   or self.equipment or self.attribute or self.colors or self.fuel_types or self.transmissions
+                  or self.stock_question or self.min_seats
                   or re.match(r"(?:and|what about|how about|eh|yung|e ang|paano ang)\b", self.text))
-        if not signal:
+        if self.models and re.search(r"\b(?:open|taken)\b", self.text):
+            self.concepts.add("availability")
+        if not signal and (self.has("symptom") or any(str(entry.get("model", "")).casefold() in ORDINARY_MODEL_WORDS for entry in self.models)):
             self.models = []
 
     def _numbers(self):
         text = self.text
         self.rental_days = None
-        match = re.search(r"\b(\d{1,3})\s*(?:-\s*)?(?:days?|nights?|d)\b", text)
+        match = re.search(r"\b(\d{1,3})\s*(?:-\s*)?(?:days?|nights?|d)\b", text.replace(",", " "))
         if match:
             self.rental_days = int(match.group(1))
         else:
-            match = re.search(r"\b(" + "|".join(NUMBER_WORDS) + r")\s+(?:na\s+)?(?:days?|nights?)\b", text)
+            match = re.search(r"\b(" + "|".join(NUMBER_WORDS) + r")[\s-]+(?:na\s+)?(?:days?|nights?)\b", text)
             if match:
                 self.rental_days = NUMBER_WORDS[match.group(1)]
-        weeks = re.search(r"\b(\d{1,2}|" + "|".join(NUMBER_WORDS) + r")\s+weeks?\b", text)
+        weeks = re.search(r"\b(\d{1,2}|" + "|".join(NUMBER_WORDS) + r")[\s-]+(?:na\s+)?(?:weeks?|linggo)\b", text)
         if self.rental_days is None and weeks:
             value = weeks.group(1)
             self.rental_days = 7 * (int(value) if value.isdigit() else NUMBER_WORDS[value])
         dates = re.findall(r"\b\d{4}-\d{2}-\d{2}\b", self.original)
         self.start_date, self.end_date = (dates[0], dates[1]) if len(dates) >= 2 else (None, None)
         self.single_date = dates[0] if len(dates) == 1 else None
-        seats = (re.search(r"\b(\d{1,2})\s*(?:-\s*)?(?:people|persons|passengers|pax|seats?|seater|katao|tao)\b", text)
-                 or re.search(r"\b(?:group|family|party|barkada) of (\d{1,2})\b|\bwe are (\d{1,2})\b", text))
-        self.min_seats = int(next(g for g in seats.groups() if g)) if seats else None
+        count = r"(\d{1,2}|" + "|".join(NUMBER_WORDS) + r")"
+        seats = (re.search(rf"\b{count}\s*(?:-\s*)?(?:na\s+)?(?:people|persons?|passengers|pax|seats?|seaters?|katao|tao|kami|of us)\b", text)
+                 or re.search(rf"\b(?:group|family|party|barkada) of {count}\b|\bwe(?:'re| are) {count}\b|\bseats? {count}\b|\bseating {count}\b|\bfits? {count}\b"
+                              rf"|\bfor {count}(?: people)?\s*$|\bgood for {count}\b(?!\s*(?:-\s*)?(?:na\s+)?(?:days?|nights?|weeks?|araw|linggo))|\bkasya(?: ba)?(?: ang| the)? {count}\b|\broom for {count}\b", text))
+        value = next((g for g in seats.groups() if g), None) if seats else None
+        self.min_seats = (int(value) if value.isdigit() else NUMBER_WORDS[value]) if value else None
+        # "A 5 or 7 seater?" asks which one it is, so neither number is a requirement.
+        self.seat_choice = bool(re.search(r"\b\d{1,2}(?:\s*-?\s*seaters?)?\s+or\s+(?:an?\s+)?\d{1,2}\s*-?\s*seaters?\b", text))
+        if self.seat_choice:
+            self.min_seats = None
         money = r"(?:php|p|₱)?\s*([\d][\d,]{2,})(?:\s*(?:php|pesos?))?"
-        budget = (re.search(r"\b(?:under|below|less than|at most|max(?:imum)?|budget(?: of| is| ko| ay)?|badyet(?: ko)?|hanggang|not more than|only have|i have|meron akong|may)\s*" + money, text)
+        budget = (re.search(r"\b(?:under|below|less than|at most|max(?:imum)?|budget(?: of| is| ko| ay)?|badyet(?: ko)?|hanggang|not more than|only have|i have|meron akong|up to|spend)\s*(?:up to\s*)?" + money, text)
+                  or re.search(money + r"\s*(?:pesos?\s*)?(?:pababa|or less|or below|or under|and below|and under|or cheaper)\b", text)
+                  or re.search(r"\banything for\s*" + money, text)
+                  or re.search(r"\bsa\s*" + money + r"\s*(?:na\s*)?(?:budget|badyet)\b", text)
                   or re.search(money + r"\s*(?:budget|badyet|ang budget|lang)\b", text)
                   or re.search(money + r"\s*(?:ako|lang ako)\b", text)
                   or (re.search(r"\b(?:with|for)\s*" + money + r"\s*(?:pesos?\s*)?(?:per day|a day|/day|daily|kada araw)\b", text)
@@ -385,7 +454,7 @@ class Understanding:
         self.max_daily_rate = float(budget.group(1).replace(",", "")) if budget else None
         self._year_like_budget = bool(budget and "," not in budget.group(1) and 1990 <= self.max_daily_rate <= 2035
                                       and not re.search(r"\b(?:budget|badyet|php|pesos?|under|below|less than|at most|max\w*|hanggang"
-                                                        r"|only have|i have)\b|₱", text))
+                                                        r"|only have|i have|pababa|up to|spend|or less)\b|₱", text))
         self._price_from_budget = self.max_daily_rate is not None and "price" not in self.concepts
         if self.max_daily_rate is not None:
             self.concepts.add("price")
@@ -394,13 +463,13 @@ class Understanding:
             self.sort = "mileage_desc"
         elif re.search(r"\b(?:lowest|least|smallest) (?:mileage|odometer|km|kilometers)\b", text):
             self.sort = "mileage_asc"
-        elif re.search(r"\b(?:cheapest|pinakamura|lowest|least expensive|most affordable)\b", text):
+        elif re.search(r"\b(?:cheapest|pinakamura\w*|pinaka ?mura|lowest|least expensive|least costly|most affordable|most budget friendly|costs? the least)\b", text):
             self.sort = "price_asc"
-        elif re.search(r"\b(?:most expensive|pinakamahal|highest price|priciest)\b", text):
+        elif re.search(r"\b(?:most expensive|most costly|pinakamahal\w*|pinaka ?mahal|highest (?:price|priced|rate|daily rate)|priciest|top priced|costs? the most)\b", text):
             self.sort = "price_desc"
-        elif re.search(r"\b(?:newest|latest model|most recent model|pinakabago)\b", text):
+        elif re.search(r"\b(?:newest|latest model|most recent model|pinakabago\w*)\b", text):
             self.sort = "year_desc"
-        elif re.search(r"\b(?:oldest|pinakaluma)\b", text):
+        elif re.search(r"\b(?:oldest|pinakaluma\w*)\b", text):
             self.sort = "year_asc"
         else:
             self.sort = None
@@ -415,23 +484,35 @@ class Understanding:
         self.attribute = next((key for key, pattern in ATTRIBUTES if pattern.search(text)), None)
         self.seats_ranking = bool(SEATS_RANKING.search(text))
         self.rate_period = bool(RATE_PERIOD.search(text))
+        self.hourly = bool(HOURLY.search(text))
         year = re.search(r"\b(20[0-3]\d|19[89]\d)\s*(?:or )?(?:newer|and (?:newer|up|above)|pataas|onwards)\b", text)
         self.min_year = int(year.group(1)) if year else None
+        self.needs_approval = bool(NEEDS_APPROVAL.search(text))
         self.reservation_statuses = sorted({status for status in ("pending", "confirmed", "cancelled", "rejected", "completed")
                                             if re.search(rf"\b{status}\b", text)}
-                                           | ({"pending"} if re.search(r"\b(?:waiting|awaiting|for|need(?:ing)?) (?:for )?approval\b|\bunapproved\b", text)
-                                              else {"confirmed"} if re.search(r"\b(?:approved|accepted)\b", text) else set()))
+                                           | ({"cancelled"} if re.search(r"\bcanceled\b", text) else set())
+                                           | ({"rejected"} if re.search(r"\b(?:declined|denied)\b", text) else set())
+                                           | ({"completed"} if re.search(r"\b(?:finished|(?:are|is|were) done|done (?:reservations?|bookings?|rentals?))\b", text) else set())
+                                           | ({"pending"} if self.needs_approval
+                                              else {"confirmed"} if re.search(r"\b(?:approved|accepted)\b|\b(?:did we|we) (?:confirm|approve)\b", text) else set()))
+        if self.needs_approval:
+            self.reservation_statuses = sorted(set(self.reservation_statuses) - {"confirmed"})
         self.reservation_id = None
-        match = re.search(r"(?:#|\b(?:reservation|booking)\s*(?:no\.?|number|#)?\s*)(\d{1,8})\b", text)
+        match = re.search(r"(?:#\s*|\b(?:reservation|booking)s?\s*(?:no\.?|number|#)?\s*)(\d{1,8})\b", text) or re.search(r"\b(\d{1,8})\s+(?:reservation|booking)\b", text)
         if match:
             self.reservation_id = int(match.group(1))
         self._dates()
         self.vehicle_ids = [int(value) for value in re.findall(r"\b(?:vehicle|car|unit)\s*(?:id)?\s*#?\s*(\d{1,6})\b", text)][:5]
         self.vehicle_statuses = sorted({status for word, status in VEHICLE_STATUS_WORDS.items()
-                                        if re.search(rf"\b{word}\b", text) and word != "available"}
-                                       | ({"rented"} if re.search(r"\b(?:on rent|out on rent|currently rented|nirentahan)\b", text) else set())
-                                       | ({"maintenance"} if re.search(r"\b(?:in the (?:shop|garage)|being (?:repaired|serviced|fixed)|under repair"
+                                        if re.search(rf"\b{word}\b", re.sub(r"\b(?:i|we) rented\b", "", text)) and word != "available"}
+                                       | ({"rented"} if re.search(r"\b(?:on rent|out on rent|currently rented|nirentahan|rented out|on hire|out right now|units? out|(?:is|are) out|currently out|what'?s out|naka-rent)\b", text)
+                                          and not re.search(r"\bthe [\w-]+ out\b", text) else set())
+                                       | ({"maintenance"} if re.search(r"\b(?:(?:in|at) the (?:shop|garage)|being (?:repaired|serviced|fixed)|under repair"
                                                                        r"|out of service)\b", text) else set()))
+        if self.vehicle_statuses:
+            self.concepts.add("status")
+        elif re.search(r"\b(?:i|we) rented\b", text):
+            self.concepts.discard("status")
         # A bare field name next to a vehicle name ("Fortuner color?", "vios transmission").
         self.bare_attribute = next((key for key, pattern in BARE_ATTRIBUTES if pattern.search(text)), None)
 
@@ -453,7 +534,9 @@ class Understanding:
         elif re.search(r"\b(?:today|ngayon|ngayong araw)\b", text) and self.has("availability", "price", "booking"):
             start = today
         else:
-            weekday = re.search(r"\b(?:next|this|on|sa|ngayong|sa susunod na)?\s*(" + "|".join(WEEKDAYS) + r")\b", text)
+            # "dalawang linggo" is two weeks, not a Sunday.
+            without_weeks = re.sub(r"\b(?:\d{1,2}|" + "|".join(NUMBER_WORDS) + r")[\s-]+(?:na\s+)?linggo\b", " ", text)
+            weekday = re.search(r"\b(?:next|this|on|sa|ngayong|sa susunod na)?\s*(" + "|".join(WEEKDAYS) + r")\b", without_weeks)
             months = "|".join(sorted(MONTHS, key=len, reverse=True))
             named = (re.search(rf"\b({months})\.?\s+(\d{{1,2}})(?:st|nd|rd|th)?\s*(?:-|to|until|hanggang)\s*(?:({months})\.?\s+)?(\d{{1,2}})(?:st|nd|rd|th)?\b", text)
                      or re.search(rf"\b(\d{{1,2}})\s*(?:-|to|until|hanggang)\s*(\d{{1,2}})\s+({months})\b", text)
@@ -508,6 +591,12 @@ def _names_word(name, tokens, joined):
         token[:1] == words[0][:1] and difflib.SequenceMatcher(None, token, words[0]).ratio() >= 0.8 for token in tokens if len(token) >= 4)
 
 
+def _names_first_word(name, tokens):
+    """The first word of a longer model name ("montero" for "Montero Sport"), unless it is an ordinary word."""
+    words = TOKEN.findall(str(name).casefold())
+    return len(words) > 1 and len(words[0]) >= 4 and words[0] not in ORDINARY_MODEL_WORDS and words[0] in tokens
+
+
 def plan(message, role, vocabulary=None, memory=None):
     """A retrieval plan, a direct answer type, or None (answered from the guide and references)."""
     u = Understanding(message, vocabulary)
@@ -518,6 +607,10 @@ def plan(message, role, vocabulary=None, memory=None):
     contact = re.search(r"\b(?:phone|phones|email|emails|address|addresses|contact|contacts|personal information)\b", u.text)
     other_person = OTHER_PERSON_RECORDS.search(u.text) and not re.search(r"\b(?:my|mine|ko)\b", u.text)
     if ABOUT_ASSISTANT.search(u.text) or OFF_TOPIC.search(u.text):
+        return None
+    if not admin and COMPANY_REVENUE.search(u.text) and not u.has("own"):
+        return _direct("admin_only", u)
+    if DEPOSIT_REFUND.search(u.text) and not (u.makes or u.models or u.reservation_id):
         return None
     if SQL_TEXT.search(u.original):
         return _direct("refuse_sql", u)
@@ -545,6 +638,8 @@ def plan(message, role, vocabulary=None, memory=None):
         return None
 
     for topic, pattern in UNRECORDED_TOPICS:
+        if topic == "business hours" and (u.models or u.makes):
+            continue
         if pattern.search(u.text) and (not u.has("symptom") or topic in SYMPTOM_SAFE_TOPICS):
             result = _direct("policy_unrecorded", u)
             result["topic"] = topic
@@ -555,12 +650,14 @@ def plan(message, role, vocabulary=None, memory=None):
         if admin_plan:
             return admin_plan
 
-    known_vehicle = bool(u.makes or u.models or u.categories or u.min_seats or u.max_daily_rate or u.sort
+    known_vehicle = bool(u.makes or u.models or u.categories or u.min_seats or u.max_daily_rate is not None or u.sort or u.seats_ranking
                          or ((u.fuel_types or u.transmissions or u.has_gps is not None) and u.has("vehicle_noun", "listing")))
     unlisted = bool(u.unlisted_brands or u.unlisted_categories)
     rental_question = u.has("price", "deposit", "availability") or known_vehicle
     # A brand or type the fleet does not have is only a rental question when renting is asked about.
     asks_vehicle = known_vehicle or unlisted and u.has("price", "deposit", "availability", "listing", "specs", "vehicle_noun")
+    if unlisted and asks_vehicle and not re.search(r"\b(?:my|ko|problem|issue|noise|leak\w*|overheat\w*|smok\w*|won't|slipping|shifting)\b", u.text):
+        rental_question = True
     if u.has("symptom") and not rental_question and not (admin and u.has("maintenance", "status")):
         return None
     if CARE_AMOUNT.search(u.text) and not asks_vehicle:
@@ -581,9 +678,14 @@ def plan(message, role, vocabulary=None, memory=None):
         or u.has("own") and re.search(r"\b(?:spent|nagastos|gastos|nagbayad)\b", u.text) and not asks_vehicle
     # "How much did I pay for the Honda City rental?" / "When do I pick up the Vios?": the customer's booking of that car.
     named_vehicles = [entry["model"] for entry in u.models] + u.unlisted_brands
+    hypothetical = bool(HYPOTHETICAL.search(u.text)) or bool(u.rental_days)
     vehicle_record = not admin and bool(named_vehicles) and bool(
-        OWN_VEHICLE_RECORD.search(u.text) or OWN_PICKUP_RETURN.search(u.text) and not u.has("price"))
-    own_booking = own_booking or vehicle_record
+        OWN_VEHICLE_RECORD.search(u.text) and not hypothetical or OWN_PICKUP_RETURN.search(u.text) and not u.has("price"))
+    # "Previous bookings", "When do I bring back the car?": first-person questions about a rental that need no vehicle named.
+    own_booking = own_booking or vehicle_record or (not admin and not asks_vehicle and not u.has("deposit") and (
+        PAST_RENTAL.search(u.text) or OWN_PICKUP_RETURN.search(u.text) or re.search(r"\buntil when\b.*\b(?:my|booking|reservation|rental)\b", u.text)))
+    if own_booking and hypothetical and (u.has("price") or u.rental_days or re.search(r"\bpay\b", u.text)) and not vehicle_record and not re.search(r"\b(?:my|mine|ko)\b", u.text):
+        own_booking = False
     # "Show reservation 41": a customer can only look up reservations on their own account.
     numbered = not admin and u.reservation_id and re.search(r"\b(?:reservations?|bookings?)\b|#\s*\d", u.text)
     if (own_booking or numbered) and not (u.has("price") and asks_vehicle and not numbered and not vehicle_record):
@@ -605,11 +707,13 @@ def plan(message, role, vocabulary=None, memory=None):
                 and not u.has("upcoming") and not asks_total:
             purpose = "last"
         elif vehicle_record and asks_total or asks_total and re.search(r"\b(?:my|the) (?:\w+ )?(?:booking|reservation|rental)(?:'s)? total\b"
-                                                                      r"|\btotal (?:of|for) my\b", u.text):
+                                                                      r"|\btotal (?:of|for) my\b|\bmy (?:\w+ )?(?:booking|reservation|rental)\b", u.text) \
+                and not re.search(r"\b(?:spent|spend|gastos|nagastos|owe)\b", u.text):
             purpose = "total"
         elif re.search(r"\b(?:spent|spend|gastos|nagastos|paid|total so far|how much (?:have|did) i)\b", u.text) or OWE.search(u.text):
             purpose = "spent"
-        elif re.search(r"\b(?:next|upcoming|susunod) (?:pickup|pick up|return|booking|reservation|rental|trip)\b|\bwhen is my (?:pickup|return)\b", u.text) \
+        elif re.search(r"\b(?:next|upcoming|susunod) (?:pickup|pick up|return|booking|reservation|rental|trip)\b|\bwhen(?:'s| is) my (?:pickup|return)\b"
+                       r"|\b(?:pickup|pick up|return|start|end) date\b|\bwhen (?:does|will) my\b|\bwhen am i\b|\buntil when\b", u.text) \
                 or OWN_PICKUP_RETURN.search(u.text) or re.search(r"\bwhen\b.*\b(?:pick ?up|pickup|get)\b", u.text):
             purpose, args = "next", {"upcoming": True}
         elif re.search(r"\b(?:status|confirmed|approved|approval|pending|accepted|rejected|cancelled)\b", u.text) and not procedure:
@@ -628,7 +732,9 @@ def plan(message, role, vocabulary=None, memory=None):
     # Fleet-wide status for administrators ("fleet status", "how many cars do we have").
     if admin and not u.has("maintenance") and (
             re.search(r"\bfleet\b", u.text) and (u.has("status") or re.search(r"\b(?:overview|summary|size|status|how many)\b", u.text))
-            or re.search(r"\bhow many (?:cars|vehicles|units)\b|\bnumber of (?:cars|vehicles|units)\b|\bhow big is (?:our|the) fleet\b", u.text)):
+            or re.search(r"\bfleet (?:count|size)\b|\bhow big is (?:our|the) fleet\b", u.text)
+            or not u.vehicle_statuses and not u.has("availability") and not u.models and re.search(
+                r"\bhow many\b.*\b(?:cars?|vehicles?|units?)\b|\b(?:number|count) of (?:cars|vehicles|units)\b|\b(?:cars?|vehicles?|units?) (?:count|total)\b|\btotal (?:number of )?(?:cars|vehicles|units)\b", u.text)):
         return _plan("fleet_status", u, [("fleet.status_counts", {})])
 
     # Fleet and maintenance records.
@@ -647,23 +753,32 @@ def plan(message, role, vocabulary=None, memory=None):
     if (u.has("policy") or u.has("how_to") and u.has("action")) and not asks_vehicle:
         return None
 
+    # "My car is using too much gas" is about the customer's own car, not the rental listings.
+    if not (u.makes or u.models or u.categories) and not u.has("price", "deposit") and re.search(r"\bmy (?:car|vehicle|engine|auto)\b|\bcar ko\b", u.text):
+        return None
+
     filters = _vehicle_filters(u)
     follow_up = False
     elliptical = ELLIPTICAL.search(u.text) or PRONOUN.search(u.text) or len(u.tokens) <= 6
-    if not asks_vehicle and memory.get("last_vehicles") and (u.rental_days or u.has("price", "deposit", "specs")) \
+    if not asks_vehicle and memory.get("last_vehicles") and (u.rental_days or u.has("price", "deposit", "specs", "availability") or u.start_date) \
             and elliptical and not BROADER_LIST.search(u.text):
         # "How much for 3 days?" after asking about a vehicle refers to that vehicle.
         filters["makes"] = sorted({item["make"] for item in memory["last_vehicles"] if item.get("make")})
         filters["models"] = sorted({item["model"] for item in memory["last_vehicles"] if item.get("model")})
         follow_up = True
 
-    if not asks_vehicle and not follow_up and PRONOUN.search(u.text) and u.has("price", "deposit", "specs"):
+    if not asks_vehicle and not follow_up and PRONOUN.search(u.text) and u.has("price", "deposit", "specs") and not u.rental_days:
         # "How much is it?" with nothing discussed before: ask which vehicle instead of guessing.
         return _direct("clarify_vehicle", u)
+    if not asks_vehicle and not follow_up and u.has("price") and not (u.rental_days or u.start_date or u.has("deposit") or u.rate_period) \
+            and not re.search(r"\b(?:cars|vehicles|units|rates|prices|fleet|all|each|every|list|lahat|daily)\b", u.text):
+        # "How much?" or "Can you calculate the total?": neither the vehicle nor the days are known yet.
+        return _direct("clarify_quote", u)
 
     if not (asks_vehicle or follow_up or u.has("price", "deposit", "availability") or u.rental_days
             or u.has("vehicle_noun") and u.has("listing", "specs") or u.equipment and u.has("vehicle_noun", "listing")
-            or re.search(r"^(?:show me |so )?what (?:do )?you have(?: available| for rent)?\W*$", u.text)):
+            or re.search(r"^(?:show me |so )?what (?:do )?you have(?: available| for rent)?\W*$", u.text)
+            or re.search(r"\b(?:on offer|lineup|line up|choose from|what have you got|got anything)\b", u.text)):
         return None
 
     if u.start_date:
@@ -687,7 +802,11 @@ def plan(message, role, vocabulary=None, memory=None):
         result = _plan("vehicles", u, [("vehicles.search", filters)], purpose="attribute", follow_up=follow_up)
         result["attribute"] = u.attribute
         return result
-    elif u.models and YES_NO.search(u.text) and not u.has("price", "deposit", "availability"):
+    elif (u.models or follow_up) and u.min_seats and not (u.has("price", "deposit", "availability") or u.rental_days or u.start_date):
+        # "Is the Vios a 7 seater?" / "Can 7 people fit in the Vios?": a question about this car, not a filter that hides it.
+        filters.pop("min_seats", None)
+        feature_check = {"feature": "seats", "value": u.min_seats}
+    elif (u.models or follow_up) and (YES_NO.search(u.text) or u.has_gps is not None or u.has_aircon is not None) and not u.has("price", "deposit", "availability"):
         # "Does the Vios have GPS?" / "Automatic ba ang Fortuner?": answer yes or no for the named car.
         for key, value in (("has_gps", u.has_gps), ("has_aircon", u.has_aircon), ("transmissions", u.transmissions),
                            ("fuel_types", u.fuel_types), ("colors", u.colors)):
@@ -701,7 +820,7 @@ def plan(message, role, vocabulary=None, memory=None):
         result = _plan("vehicles", u, [("vehicles.search", filters)], purpose="attribute", follow_up=follow_up)
         result["attribute"] = u.bare_attribute
         return result
-    if feature_check is None and len(u.models) >= 2 and re.search(r"\b(?:or|vs\.?|versus|compare\w*|difference|mas|than|kaysa)\b", u.text):
+    if feature_check is None and len(u.models) >= 2 and re.search(r"\b(?:or|o|vs\.?|versus|compare\w*|difference|differ|mas|than|kaysa)\b", u.text):
         purpose = "compare"
     elif feature_check:
         purpose = "feature_check"
@@ -715,7 +834,7 @@ def plan(message, role, vocabulary=None, memory=None):
         purpose = "price"
     elif u.has("availability"):
         purpose = "availability"
-    elif u.has("specs") or u.min_seats:
+    elif u.has("specs") or u.min_seats or (len(u.models) == 1 and not u.has("listing")) or (u.models and u.has("explain")):
         purpose = "details"
     else:
         purpose = "listing"
@@ -732,8 +851,14 @@ def plan(message, role, vocabulary=None, memory=None):
         result["include_deposit"] = True
     if purpose in ("price", "listing") and u.rate_period:
         result["rate_period"] = True
+    if u.hourly and not u.rental_days:
+        result["hourly"] = True
+        if purpose in ("listing", "availability", "details"):
+            result["purpose"] = "price"
+    if u.stock_question and u.models and purpose in ("price", "listing", "details"):
+        result["stock_check"] = True
     if purpose == "compare":
-        result["compare"] = {"by": "price" if u.has("price") or re.search(r"\b(?:expensive|cheaper|mahal|mura)\b", u.text)
+        result["compare"] = {"by": "price" if u.has("price") or re.search(r"\b(?:expensive|cheaper|pricier|costs? more|costs? less|mahal|mura)\b", u.text)
                              else "seats" if re.search(r"\b(?:bigger|larger|seats?|more people|maluwag)\b", u.text) else "all"}
     if getattr(u, "relative_period", False):
         result["period_from_words"] = True
@@ -752,8 +877,9 @@ def _admin_lookup_plan(u):
         vehicle["vehicle_ids"] = u.vehicle_ids
     period = {k: v for k, v in (("from", u.start_date), ("to", u.end_date)) if v}
     period.update(_report_period(text))
-    if re.search(r"\b(?:revenue|income|earnings?|earned|sales|kita|kinita)\b|\bbook(?:ed|ing|ings)? (?:value|amount|total)\b"
-                 r"|\b(?:bookings|reservations) (?:are )?worth\b|\bvalue of (?:all )?(?:the )?(?:bookings|reservations)\b", text):
+    if re.search(r"\b(?:revenue|income|earnings?|earn|earned|sales|kita|kinita)\b|\bbook(?:ed|ing|ings)? (?:value|amount|total)\b"
+                 r"|\b(?:bookings|reservations) (?:are )?worth\b|\bvalue of (?:all )?(?:the )?(?:bookings|reservations)\b"
+                 r"|\bhow much (?:money )?(?:have|did|do) (?:we|the business|the company)(?: \w+)? (?:make|made|earn|earned)\b|\bmoney (?:have |did )?we (?:make|made|earn|earned)\b", text):
         result = _plan("revenue", u, [("reservations.revenue", period)])
         if u.reservation_statuses:
             result["focus_statuses"] = u.reservation_statuses
@@ -766,14 +892,19 @@ def _admin_lookup_plan(u):
         result = _plan("reservation_summary", u, [("reservations.summary", {})])
         result["vehicle_names"] = named
         return result
-    if re.search(r"\b(?:maintenance|maintain|service|repair)\b", text) and re.search(r"\b(?:spent|spend|spending|cost|costs|total|expenses?|gastos)\b", text) \
+    spending = re.search(r"\b(?:spent|spend|spending|cost|costs|total|expenses?|gastos|nagastos|bill|paying|pay|paid)\b", text)
+    if spending and re.search(r"\b(?:maintenance|maintain|services?|repairs?|fix|fixing|fixes)\b", text) \
             and not re.search(r"\b(?:how much (?:is|does) (?:an?|the) )", text) and not re.search(r"\b(?:last|latest|recent|previous)\b", text):
         return _plan("maintenance_costs", u, [("maintenance.costs", {**vehicle, **period})])
-    reservation_word = re.search(r"\b(?:reservations?|bookings?|rentals?|pickups?|pick-ups?|returns?)\b", text)
+    # "What have we spent on the Hiace?": money spent on a named car is its maintenance cost.
+    if named and re.search(r"\b(?:spent|spend|nagastos|gastos)\b", text):
+        return _plan("maintenance_costs", u, [("maintenance.costs", {**vehicle, **period})])
+    reservation_word = re.search(r"\b(?:reservations?|bookings?|pickups?|pick-ups?|returns?)\b|^what(?:'s| is) booked\b", text) or (
+        re.search(r"\brentals?\b", text) and not (u.has("price", "deposit") or u.models))  # "rental price of the Vios" is a vehicle's price
     # "My reservations" from an administrator is about their own (none), handled by the bookings rule.
     # "What's pending?" from an administrator asks about reservations.
     status_only = u.reservation_statuses and not (u.models or u.makes or u.has("maintenance"))
-    if (reservation_word or status_only) and not re.search(r"\b(?:my|mine|ko|akin)\b", text) and not u.has("explain"):
+    if (reservation_word or status_only) and not re.search(r"\b(?:my|mine|ko|akin)\b(?! approv)", text) and not u.has("explain") and not u.has("policy"):
         args = {}
         if u.reservation_statuses:
             args["statuses"] = u.reservation_statuses
@@ -790,13 +921,12 @@ def _admin_lookup_plan(u):
             args.update({"from": u.start_date, "to": u.end_date})
         name = re.search(r"\b(?:of|for|by|ni|ng customer)\s+([a-z][a-z]+(?:\s+[a-z][a-z]+)?)\s*(?:'s)?\s*$", text) \
             or re.search(r"\b([a-z]+(?:\s+[a-z]+)?)'s\s+(?:reservations?|bookings?)", text)
-        if name and name.group(1) not in {"the", "my", "our", "all", "today", "tomorrow", "this week", "next week", "pending",
-                                          "approval", "confirmation", "now", "me", "us", "review", "later"}:
+        # A vehicle or an ordinary word is not a person ("rental price of the Vios", "what's reservation 52", "complete list of reservations").
+        if name and not set(TOKEN.findall(name.group(1))) & NOT_A_NAME and not u.models and not u.makes and not u.reservation_id:
             args["customer_name"] = name.group(1).title()
-        if args or re.search(r"\b(?:all|show|list|any|are there|which)\b", text):
-            return _plan("reservation_summary", u, [("reservations.summary", args)])
-    asks_status = re.search(r"\b(?:status|where is|how is|mileage|odometer|km|kilometers|kilometres|last (?:service|serviced|maintenance)|next (?:service|maintenance)"
-                            r"|currently (?:booked|rented)|is (?:it|the \w+) (?:booked|rented|available)|kumusta|nasaan)\b", text)
+        return _plan("reservation_summary", u, [("reservations.summary", args)])
+    asks_status = re.search(r"\b(?:status|where is|where's|how is|how's|how far|mileage|odometer|km|kilometers|kilometres|kilometro|last (?:service|serviced|maintenance)|next (?:service|maintenance)"
+                            r"|currently (?:booked|rented)|is (?:it|the [\w-]+(?: [\w-]+){0,2}) (?:booked|rented|available|out|in the shop)|kumusta|nasaan)\b", text)
     if (u.models or u.vehicle_ids) and asks_status and not u.has("price", "deposit") and not u.sort:
         return _plan("vehicle_status", u, [("vehicles.status", vehicle)])
     return None
@@ -874,7 +1004,7 @@ def _vehicle_filters(u):
 
 def _requested(u):
     return {"makes": list(u.makes), "models": [entry["model"] for entry in u.models], "categories": list(u.categories),
-            "unknown_names": _unknown_names(u) + list(u.unlisted_brands) + list(u.unlisted_categories)}
+            "unknown_names": list(dict.fromkeys(_unknown_names(u) + list(u.unlisted_brands) + list(u.unlisted_categories)))}
 
 
 def _unknown_names(u):
@@ -927,7 +1057,11 @@ def plan_message(message, role, vocabulary=None, memory=None):
     parts = [] if INSTRUCTION.search(message) else split_questions(message)
     if len(parts) < 2:
         return _with_remembered_period(plan(message, role, vocabulary, memory), message, memory)
-    sub_plans = [_with_remembered_period(plan(part, role, vocabulary, memory), part, memory) for part in parts]
+    sub_plans = []
+    for part in parts:
+        named_before = [{"model": name} for sub in sub_plans for name in ((sub or {}).get("requested") or {}).get("models", [])]
+        context = {**(memory or {}), "last_vehicles": named_before} if named_before else memory
+        sub_plans.append(_with_remembered_period(plan(part, role, vocabulary, context), part, memory))
     intents = {(sub or {}).get("intent") for sub in sub_plans}
     if len(intents) < 2 and all(sub and sub.get("retrievals") for sub in sub_plans):
         # Same kind of question twice ("price of the Vios and the Fortuner") is one question.
