@@ -47,36 +47,43 @@ FREE_TEXT_SOURCES = {"system_documentation", "pid_reference", "curated_reference
 SPECIFIC_SOURCE_MIN_SUPPORT = 0.60
 ASKS_FOR_CODE = re.compile(r"\b(?:this|that|the|my)\s+(?:dtc|code|fault code|error code|trouble code)\b", re.IGNORECASE)
 GREETING = re.compile(
-    r"^(?:hi+|hiya|hello+|hey+|heya|good\s+(?:morning|afternoon|evening|day)|greetings|kumusta|kamusta"
-    r"|magandang\s+(?:umaga|hapon|gabi|araw))\b(?P<rest>.*)$",
+    r"^(?:hi+|hiya|hello+|hey+|heya|good\s+(?:morning|afternoon|evening|day|noon|am|pm)|greetings|kumusta|kamusta|musta|yo+|sup|wassup|what'?s\s+up"
+    r"|magandang\s+(?:umaga|hapon|gabi|araw|tanghali))\b(?P<rest>.*)$",
     re.IGNORECASE,
 )
 # Words that may follow a greeting without turning it into a question ("Hiya, quick question for you").
 GREETING_FILLER = {
     "there", "po", "again", "quick", "question", "questions", "for", "you", "can", "could", "would", "help", "me",
     "i", "ask", "a", "something", "have", "got", "how", "are", "please", "hope", "doing", "well", "ok", "okay",
-    "the", "assistant", "bot", "team", "everyone", "just", "wanted", "to", "one", "little", "need", "some",
+    "the", "assistant", "bot", "team", "everyone", "just", "wanted", "to", "one", "little", "need", "some", "kayo", "ka",
 }
 # Greetings and fillers around a question ("Good morning, how much is the Vios po?") are not part of it.
 COURTESY_LEAD = re.compile(
-    r"^\s*(?:hi+|hiya|hello+|hey+|heya|good\s+(?:morning|afternoon|evening|day)|magandang\s+(?:umaga|hapon|gabi|araw)|kumusta|kamusta"
-    r"|excuse\s+me|quick\s+question|question|ask\s+ko\s+lang|tanong\s+(?:ko\s+)?lang|tanong|uh+m*|um+|uh+|ah+|po|pls|plz|please|sir"
+    r"^\s*(?:hi+|hiya|hello+|hey+|heya|good\s+(?:morning|afternoon|evening|day|noon|am|pm)|magandang\s+(?:umaga|hapon|gabi|araw|tanghali)|(?:kumusta|kamusta)(?!\s+(?:ang|yung|ng|na)\b)"
+    r"|excuse\s+me|quick\s+question|question|ask\s+ko\s+lang|tanong\s+(?:ko\s+)?lang|tanong|uh+m*|um+|uh+|ah+|po|pls\s+help|please\s+help|pa\s+help|pls|plz|please|sir"
+    r"|can\s+i\s+ask|may\s+i\s+ask|could\s+i\s+ask"
     r"|ma'?am|kuya|ate|boss|ok(?:ay)?|so|yo)"
     r"(?:\s*[,:;.!?-]+\s*|\s+)",
     re.IGNORECASE,
 )
-COURTESY_WORDS = {"hi", "hello", "hey", "hiya", "heya", "good", "morning", "afternoon", "evening", "day", "magandang", "umaga", "hapon",
-                  "gabi", "araw", "kumusta", "kamusta", "excuse", "uhm", "um", "uh", "pls", "plz", "please", "sir", "ma'am", "maam",
-                  "kuya", "ate", "boss", "yo"}
-THANKS_WORDS = {"thanks", "thank", "you", "u", "thx", "ty", "salamat", "lot", "so", "much", "naman", "sana", "lang"}
-FILLER_LEAD = re.compile(r"^\s*(?:(?:uh+m*|um+|uh+|ah+|po|pls|plz|please|ok(?:ay)?|so|excuse\s+me|quick\s+question|question|ask\s+ko\s+lang"
+COURTESY_WORDS = {"hi", "hello", "hey", "hiya", "heya", "good", "morning", "afternoon", "evening", "day", "noon", "am", "pm", "magandang", "umaga", "hapon",
+                  "tanghali", "gabi", "araw", "kumusta", "kamusta", "musta", "excuse", "uhm", "um", "uh", "pls", "plz", "please", "sir", "ma'am", "maam",
+                  "kuya", "ate", "boss", "yo", "sup", "wassup", "asap", "help"}
+THANKS_WORDS = {"thanks", "thank", "you", "u", "thx", "tnx", "ty", "salamat", "maraming", "marami", "many", "lot", "so", "much", "naman", "sana", "lang", "again"}
+# A message made only of these acknowledges or closes the chat; it asks for nothing, so no records or references are looked up.
+ACK_WORDS = {"ok", "okay", "okey", "k", "kk", "sige", "noted", "got", "it", "understood", "alright", "cool", "nice", "great", "perfect", "awesome", "fine",
+             "copy", "gotcha", "good", "ayos", "oo", "yes", "yup", "yep", "that", "that's", "helps", "helped", "for", "the", "help", "your", "time", "all", "ng", "po", "and", "one", "very"}
+GOODBYE_WORDS = {"bye", "goodbye", "paalam", "ingat", "see", "ya", "later", "soon", "take", "care", "now", "byebye"}
+FILLER_LEAD = re.compile(r"^\s*(?:(?:uh+m*|um+|uh+|ah+|po|pls\s+help|please\s+help|pls|plz|please|ok(?:ay)?|so|excuse\s+me|quick\s+question|question|ask\s+ko\s+lang|can\s+i\s+ask|may\s+i\s+ask"
                          r"|tanong\s+(?:ko\s+)?lang|sir|ma'?am|kuya|ate|boss)(?:\s*[,:;.!?-]+\s*|\s+))+", re.IGNORECASE)
-COURTESY_TAIL = re.compile(r"(?:[\s,]+(?:please|pls|plz|po|thanks|thank\s+you|thank\s+u|thx|ty|salamat|naman|sana|lang))+\s*([?!.]*)\s*$",
+COURTESY_TAIL = re.compile(r"(?:[\s,]+(?:please|pls|plz|po|thanks|thank\s+you|thank\s+u|thx|tnx|ty|salamat|naman|sana|lang|asap))+\s*([?!.]*)\s*$",
                            re.IGNORECASE)
 
 
 def strip_courtesy(message):
     """The question without greetings or fillers around it; a message that is only a greeting or thanks is kept as typed."""
+    if _small_talk_close(message):
+        return message
     text = message
     while True:
         match = COURTESY_LEAD.match(text)
@@ -183,6 +190,11 @@ OUT_OF_SCOPE_ANSWER = (
     "your own booking records, how to use the system, diagnostic trouble codes, maintenance and symptoms, and "
     "(for administrators) fleet maintenance records and model-based service-need predictions."
 )
+
+
+ACK_ANSWER = "You're welcome! Is there anything else I can help you with?"
+OKAY_ANSWER = "Alright! Is there anything else I can help you with?"
+GOODBYE_ANSWER = "Goodbye, and thank you! Message me anytime you need help with a rental."
 
 
 def resolve_role(viewer_role=None, conversation_scope=None):
@@ -307,6 +319,10 @@ def _direct_response(kind, plan=None):
         return _with_evidence(core.build_response("permission_denied", 1.0,
             "I can't run database queries. I can only look up your own reservations and the vehicles available for rent, "
             "through the application's checks. Ask your question in words, for example \"What are my reservations?\""), "none", [])
+    if kind == "clarify_quote":
+        return _with_evidence(core.build_response("clarification_needed", 1.0,
+            "Which vehicle do you mean, and for how many days? Tell me both (for example Toyota Vios for 3 days) and I'll work out the estimate from its current rate."),
+            "none", [], clarification="vehicle_and_days")
     if kind == "clarify_vehicle":
         return _with_evidence(core.build_response("clarification_needed", 1.0,
             "Which vehicle do you mean? Tell me the make or model (for example Toyota Vios), and I'll look up its current rate."),
@@ -336,6 +352,11 @@ def _route(message, entities, role, vehicle, vehicles, rental_context, diagnosti
 
     if not isinstance(database_context, dict) and not diagnostic_context and _is_greeting(message):
         return _with_evidence(core.build_response("greeting", 1.0, GREETING_ANSWERS[role]), "general_guidance", [])
+    closing = _small_talk_close(message) if not isinstance(database_context, dict) and not diagnostic_context else None
+    if closing:
+        # Both use the existing "goodbye" intent, which the rest of the service already treats as small talk.
+        return _with_evidence(core.build_response("goodbye", 1.0, GOODBYE_ANSWER if closing == "goodbye" else ACK_ANSWER if re.search(
+            r"\b(?:thanks?|thx|tnx|ty|salamat)\b", message, re.IGNORECASE) else OKAY_ANSWER), "general_guidance", [])
     help_request = HELP_REQUEST.match(message.strip()) if not isinstance(database_context, dict) else None
     if help_request:
         topic = (help_request.group("topic") or "").casefold()
@@ -503,6 +524,17 @@ def _is_greeting(message):
         return False
     rest = re.findall(r"[a-z']+", match.group("rest").casefold())
     return all(word in GREETING_FILLER | COURTESY_WORDS | THANKS_WORDS for word in rest)
+
+
+def _small_talk_close(message):
+    """ "goodbye" or "acknowledgement" for a message that only thanks, acknowledges or says goodbye ("Got it, thanks.", "sige po"); else None."""
+    words = re.findall(r"[a-z']+", message.casefold())
+    if not words or not all(word in ACK_WORDS | GOODBYE_WORDS | THANKS_WORDS for word in words):
+        return None
+    # "you" or "it" alone is not an acknowledgement.
+    if not set(words) & (ACK_WORDS | GOODBYE_WORDS | {"thanks", "thank", "thx", "tnx", "ty", "salamat"}) - {"it", "that", "that's", "for", "the", "your", "all", "ng", "po", "and", "time", "help", "one", "very"}:
+        return None
+    return "goodbye" if set(words) & GOODBYE_WORDS - {"now", "soon", "take"} else "acknowledgement"
 
 
 def _is_guide_question(message):
