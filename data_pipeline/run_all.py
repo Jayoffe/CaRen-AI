@@ -33,6 +33,13 @@ STEPS = ("inventory", "service_need", "experiments", "knowledge")
 
 # Finer-grained use of individual files inside a dataset (fnmatch on lower-cased path).
 FILE_ROLES = [
+    ("*_operational_readouts.csv", "used", "SCANIA Component X benchmark (data_pipeline/pm_models.py); evaluated, not served."),
+    ("*_specifications*.csv", "used", "SCANIA Component X vehicle specifications for the benchmark; not served."),
+    ("train_tte.csv", "used", "SCANIA Component X time-to-repair labels for the benchmark; not served."),
+    ("*_labels.csv", "used", "SCANIA Component X holdout labels for the benchmark; not served."),
+    ("main_df_standardized.parquet", "used", "Diesel air-path fault classifier (data_pipeline/pm_models.py); research only, not served."),
+    ("metadata.json", "used", "Signal and fault-class definitions for main_df_standardized.parquet."),
+    ("cycles.json", "used", "Drive-cycle definitions for main_df_standardized.parquet."),
     ("vehicle maintenance- service records.csv", "used", "Training/evaluation rows for the service-need model; service statistics indexed for the chatbot."),
     ("train.csv", "used", "Engine-condition experiment training split (evaluation only, not served)."),
     ("test.csv", "used", "Engine-condition experiment test split (evaluation only, not served)."),
