@@ -153,8 +153,7 @@ Customers can ask about their own reservation records; the backend scopes
 those queries to the authenticated account and does not send customer contact
 details. Fleet status and maintenance records are only sent for administrator
 questions. Legacy maintenance entries are described as service logs, not
-verified fault labels. The newer maintenance evidence is included only when
-its table is installed and only for records marked verified. A rule-based
+verified fault labels. A rule-based
 service estimate or an anomaly score is not presented as a confirmed fault or
 future component-failure prediction. Chat cannot create, cancel, or confirm
 bookings.

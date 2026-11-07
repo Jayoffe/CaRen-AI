@@ -16,7 +16,7 @@
         "help",
         "how does this app work"
       ],
-      "text": "Customers can browse vehicles, view vehicle details and daily rates, create reservation requests, view active rentals and reservation history, cancel their own pending or confirmed reservations, and maintain their profile including driver's licence details and a verification photo. Administrators can additionally manage the vehicle inventory and images, approve, reject, cancel or complete reservations, record maintenance and mileage, inspect vehicle components in the 3D predictive-maintenance view, collect and verify maintenance evidence records, and view model-based service-need predictions when an accepted model is registered (none is accepted as of 2026-10-31). Online payment is not implemented.",
+      "text": "Customers can browse vehicles, view vehicle details and daily rates, create reservation requests, view active rentals and reservation history, cancel their own pending or confirmed reservations, and maintain their profile including driver's licence details and a verification photo. Administrators can additionally manage the vehicle inventory and images, approve, reject, cancel or complete reservations, record maintenance and mileage, inspect vehicle components in the 3D predictive-maintenance view, and view model-based service-need predictions when an accepted model is registered (none is accepted as of 2026-10-31). Online payment is not implemented.",
       "code_references": [
         "Front-End/src/App.jsx",
         "Back-End/app/config/routes.php"
@@ -286,7 +286,7 @@
         "who can see",
         "what data can the chatbot see"
       ],
-      "text": "Your role is taken from your signed-in account on the server, never from what you type. Customers' chat can use public vehicle listings and that customer's own bookings only. Administrators' chat can also use fleet status counts, maintenance records, verified maintenance evidence and model-based service-need predictions. The assistant never returns other customers' bookings or personal details, passwords, tokens or API keys, and it cannot create, change or delete records.",
+      "text": "Your role is taken from your signed-in account on the server, never from what you type. Customers' chat can use public vehicle listings and that customer's own bookings only. Administrators' chat can also use fleet status counts, maintenance records and model-based service-need predictions. The assistant never returns other customers' bookings or personal details, passwords, tokens or API keys, and it cannot create, change or delete records.",
       "code_references": [
         "Back-End/app/controllers/ChatController.php::chat, rentalContext"
       ]
@@ -356,15 +356,12 @@
         "update mileage",
         "3d inspection",
         "component inspection",
-        "service interval",
-        "maintenance data collection",
-        "verify evidence"
+        "service interval"
       ],
-      "text": "Maintenance Records (/admin/maintenance/records) logs services with type, date, cost, status and odometer, and updates vehicle mileage. Predictive Maintenance (/admin/maintenance/predictions) opens a 3D view per vehicle where each component shows three separate results: condition from the latest manual inspection, schedule status from configured service intervals, and the model-based service-need prediction (shown as unavailable, with the reason, until a model passes acceptance). Inspections and service intervals are recorded there. Maintenance Data Collection (/admin/maintenance/data) holds evidence records (symptoms, DTCs, confirmed cause, repair outcome) that move from draft to submitted to verified; only verified records are treated as confirmed evidence.",
+      "text": "Maintenance Records (/admin/maintenance/records) logs services with type, date, cost, status and odometer, and updates vehicle mileage. Predictive Maintenance (/admin/maintenance/predictions) opens a 3D view per vehicle where each component shows three separate results: condition from the latest manual inspection, schedule status from configured service intervals, and the model-based service-need prediction (shown as unavailable, with the reason, until a model passes acceptance). Inspections and service intervals are recorded there.",
       "code_references": [
         "Back-End/app/controllers/MaintenanceController.php",
-        "Back-End/app/controllers/ComponentMaintenanceController.php",
-        "Back-End/app/controllers/MaintenanceDataController.php"
+        "Back-End/app/controllers/ComponentMaintenanceController.php"
       ]
     },
     {

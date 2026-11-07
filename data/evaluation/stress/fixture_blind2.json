@@ -23,7 +23,6 @@
   {"maintenanceID": 601, "vehicleID": 17, "maintenanceType": "Radiator replacement", "description": "Radiator leaking", "maintenanceDate": "2027-06-01", "cost": "12500.00", "maintenanceStatus": "In Progress", "nextMaintenanceDate": null, "odometerReading": 99100, "make": "Mazda", "model": "BT-50"},
   {"maintenanceID": 590, "vehicleID": 13, "maintenanceType": "Brake pad replacement", "description": "Front pads", "maintenanceDate": "2027-02-11", "cost": "4100.00", "maintenanceStatus": "Completed", "nextMaintenanceDate": null, "odometerReading": 148000, "make": "Toyota", "model": "Hilux"}
  ],
- "verified_evidence_records": [],
  "maintenance_due": [
   {"id": 13, "make": "Toyota", "model": "Hilux", "plate_number": "XYZ 1300", "status": "available", "current_mileage": 150300, "last_service_date": "2027-02-11", "last_service_type": "Brake pad replacement", "last_service_odometer": 148000, "next_scheduled_date": null, "estimated_due_date": "2027-08-10", "service_status": "not_due", "basis": "No threshold reached.", "recommended_action": "Continue recording."},
   {"id": 12, "make": "Suzuki", "model": "Ertiga", "plate_number": "XYZ 1200", "status": "available", "current_mileage": 40200, "last_service_date": "2026-11-15", "last_service_type": "Oil change", "last_service_odometer": 36000, "next_scheduled_date": null, "estimated_due_date": "2027-05-14", "service_status": "overdue", "basis": "Date passed.", "recommended_action": "Service it."}

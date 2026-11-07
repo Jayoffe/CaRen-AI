@@ -526,7 +526,7 @@ class DatabaseChatContextTests(TestCase):
         self.assertIn("PHP 3,000.00 stored total", answer)
         self.assertEqual(data["reservation_ids"], [42])
 
-    def test_admin_maintenance_answer_separates_legacy_logs_from_verified_evidence(self):
+    def test_admin_maintenance_answer_labels_legacy_logs(self):
         answer, data = answer_database_context(
             {
                 "kind": "admin_maintenance",
@@ -543,17 +543,6 @@ class DatabaseChatContextTests(TestCase):
                             "description": "Routine service",
                         }
                     ],
-                    "verified_evidence_records": [
-                        {
-                            "id": 9,
-                            "make": "Honda",
-                            "model": "City",
-                            "record_type": "mechanic_confirmed_fault",
-                            "recorded_at": "2026-06-02 10:00:00",
-                            "confirmed_cause": "Worn belt",
-                        }
-                    ],
-                    "verified_evidence_table_available": True,
                 },
             },
             "Show maintenance history",
@@ -561,10 +550,7 @@ class DatabaseChatContextTests(TestCase):
         )
         self.assertIn("Legacy service log #3", answer)
         self.assertIn("not a verified fault label", answer)
-        self.assertIn("Verified evidence record #9", answer)
-        self.assertIn("confirmed cause: Worn belt", answer)
         self.assertEqual(data["legacy_record_ids"], [3])
-        self.assertEqual(data["verified_record_ids"], [9])
 
 
 class AutomotiveKnowledgeTests(TestCase):

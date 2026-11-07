@@ -120,26 +120,7 @@
               "make": "Honda",
               "model": "City"
             }
-          ],
-          "verified_evidence_records": [
-            {
-              "id": 5,
-              "vehicle_id": 3,
-              "record_type": "repair",
-              "recorded_at": "2026-09-20",
-              "component": "Catalytic converter",
-              "symptoms": "Check engine light",
-              "inspection_findings": "Rear O2 sensor signal mirrors front",
-              "dtc_codes": "P0420",
-              "confirmed_cause": "Catalyst efficiency low",
-              "repair_action": "Replaced catalytic converter",
-              "repair_outcome": "Code cleared",
-              "source": "Workshop invoice",
-              "make": "Honda",
-              "model": "City"
-            }
-          ],
-          "verified_evidence_table_available": true
+          ]
         }
       }
     },
@@ -693,10 +674,10 @@
       "role": "customer",
       "category": "permissions",
       "critical": true,
-      "message": "How do I verify maintenance evidence records?",
+      "message": "How do I record a component inspection?",
       "expect": {
         "must_not_contain": [
-          "draft to submitted"
+          "Inspections and service intervals are recorded"
         ]
       },
       "note": "Admin-only system documents must not be retrieved for customers."
@@ -906,9 +887,7 @@
           "database_record"
         ],
         "must_contain": [
-          "#88",
-          "#5",
-          "Catalytic converter"
+          "#88"
         ],
         "backend_kind": [
           "maintenance"
@@ -939,32 +918,16 @@
       "id": "adm-004",
       "role": "admin",
       "category": "admin_operations",
-      "message": "How do I verify maintenance evidence records?",
+      "message": "How do I record a component inspection?",
       "expect": {
         "evidence_type": [
           "reference"
         ],
         "must_contain": [
-          "verified"
+          "inspection"
         ],
         "sources": [
           "sys:sys_admin_maintenance"
-        ]
-      }
-    },
-    {
-      "id": "adm-005",
-      "role": "admin",
-      "category": "admin_operations",
-      "message": "Vehicle 3 maintenance record shows P0420, what was done?",
-      "context": "admin_maintenance",
-      "expect": {
-        "evidence_type": [
-          "database_record"
-        ],
-        "must_contain": [
-          "Catalytic converter",
-          "P0420"
         ]
       }
     },
@@ -3271,8 +3234,7 @@
           "maintenance"
         ],
         "must_contain": [
-          "C0035",
-          "P0420"
+          "C0035"
         ]
       }
     },
