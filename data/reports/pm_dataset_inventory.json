@@ -1,0 +1,713 @@
+{
+  "generated_at": "2026-11-07T08:59:17.064615+00:00",
+  "files_discovered": 480,
+  "unclassified_files": [],
+  "datasets": [
+    {
+      "dataset_id": "ai4i_2020",
+      "name": "AI4I 2020 Predictive Maintenance (UCI)",
+      "source": "UCI ML Repository, documented as synthetic industrial data.",
+      "license": "CC BY 4.0.",
+      "data_nature": "synthetic",
+      "files": 1,
+      "unique_files": 1,
+      "exact_duplicate_files": 0,
+      "bytes": 522048,
+      "formats": {
+        "delimited": 1
+      },
+      "records": 10000,
+      "largest_table": {
+        "path": "ai4i+2020+predictive+maintenance+dataset/ai4i2020.csv",
+        "rows": 10000,
+        "columns": 14
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "Product ID",
+      "real_outcomes": "No. Documented as synthetic.",
+      "components_named": [],
+      "suitable_for": "Not used.",
+      "reason": "Synthetic milling-machine failures. Machine tool wear is not interchangeable with vehicle components."
+    },
+    {
+      "dataset_id": "auto_repair_orders",
+      "name": "Auto repair orders, parts and invoices (relational, v1)",
+      "source": "Customer e-mails use the reserved example.org domain and names are generator output; treated as a synthetic relational sample.",
+      "license": "Not documented locally.",
+      "data_nature": "synthetic",
+      "files": 7,
+      "unique_files": 7,
+      "exact_duplicate_files": 0,
+      "bytes": 53125,
+      "formats": {
+        "delimited": 7
+      },
+      "records": 976,
+      "largest_table": {
+        "path": "auto-repair-orders-parts-and-invoices-dataset-v1-csv-order_parts.csv",
+        "rows": 323,
+        "columns": 6
+      },
+      "missing_values": 48,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "Vehicle and order IDs, on a generated sample",
+      "real_outcomes": "No. Service completion in a generated sample.",
+      "components_named": [],
+      "suitable_for": "A schema reference for outcome tables, nothing else.",
+      "reason": "238 orders with reserved example.org emails and generated names. A completed work order does not confirm a component failure."
+    },
+    {
+      "dataset_id": "automotive_fault_flowcharts",
+      "name": "Automotive fault diagnosis flowcharts (AKTC/oBike et al.)",
+      "source": "Compiled diagnostic flowcharts; source attribution in the file name only.",
+      "license": "Not documented locally.",
+      "data_nature": "reference",
+      "files": 5,
+      "unique_files": 5,
+      "exact_duplicate_files": 0,
+      "bytes": 297697,
+      "formats": {
+        "json": 1,
+        "image": 4
+      },
+      "records": 99,
+      "largest_table": {
+        "path": "automotive_faults_aktc_obike_et_al.json",
+        "rows": 99,
+        "columns": 4
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "diagnostic_knowledge",
+      "identifiers": "None",
+      "real_outcomes": "Not applicable: diagnostic steps.",
+      "components_named": [
+        "Engine",
+        "Battery and Electrical",
+        "Brakes",
+        "Transmission",
+        "Suspension and Steering",
+        "Tires and Wheels",
+        "Cooling System",
+        "Air Conditioning"
+      ],
+      "suitable_for": "Symptom guidance, shown as unverified reference.",
+      "reason": "99 symptom-to-steps entries including Air Conditioning (8) and Cooling (8). Diagnostic instructions are not fault records. Its source is not verified locally, so results are labelled as such. Coverage of suspension (steering only) and tires (3 entries) is thin."
+    },
+    {
+      "dataset_id": "carobd_toyota_etios",
+      "name": "carOBD Toyota Etios OBD-II telemetry",
+      "source": "github.com/eron93br/carOBD",
+      "license": "README asks for citation; no formal licence.",
+      "data_nature": "observed",
+      "files": 153,
+      "unique_files": 153,
+      "exact_duplicate_files": 0,
+      "bytes": 89330334,
+      "formats": {
+        "metadata": 3,
+        "documentation": 9,
+        "code": 12,
+        "delimited": 129
+      },
+      "records": 304299,
+      "largest_table": {
+        "path": "carOBD-master/obdiidata/long2.csv",
+        "rows": 7516,
+        "columns": 27
+      },
+      "missing_values": 295424,
+      "duplicate_rows": 42537,
+      "problem_files": [],
+      "category": "unsuitable",
+      "identifiers": "File and session; one vehicle",
+      "real_outcomes": "No fault or repair labels.",
+      "components_named": [],
+      "suitable_for": "Unsupervised sensor anomaly research (existing experiment, not served).",
+      "reason": "Real telemetry from one 2014 Toyota Etios with no outcomes. Unusual sensor readings are not confirmed faults, so it supports none of the four AI tasks in production."
+    },
+    {
+      "dataset_id": "cvffad",
+      "name": "Chinese Vehicle Fleet Fault Association Dataset (CVFFAD)",
+      "source": "Its own records carry source='generated'; the README DOI is a placeholder and the referenced licence file is absent. Root copies are byte-identical to the folder copies.",
+      "license": "README claims CC BY-NC-SA 4.0; licence file absent.",
+      "data_nature": "synthetic",
+      "files": 10,
+      "unique_files": 6,
+      "exact_duplicate_files": 4,
+      "bytes": 52108258,
+      "formats": {
+        "delimited": 8,
+        "documentation": 1,
+        "zip": 1
+      },
+      "records": 60363,
+      "largest_table": {
+        "path": "fault_events.csv",
+        "rows": 29431,
+        "columns": 33
+      },
+      "missing_values": 33208,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "vehicle_id and dates, on generated records",
+      "real_outcomes": "No. Its records carry source='generated'.",
+      "components_named": [
+        "Engine",
+        "Battery and Electrical",
+        "Brakes",
+        "Transmission",
+        "Suspension and Steering",
+        "Tires and Wheels",
+        "Cooling System",
+        "Air Conditioning"
+      ],
+      "suitable_for": "Experiment only (existing, not served).",
+      "reason": "Fault events look like failure history, but they are generated. Its README DOI is a placeholder and its licence file is absent. Using it would present fabricated histories as evidence."
+    },
+    {
+      "dataset_id": "diesel_obd_pid_dtc",
+      "name": "Diesel Vehicle OBD-II PID Dataset (ANCEL ELITE 610)",
+      "source": "README documents 8 named vehicles; DTC columns are constant per vehicle, so they identify the vehicle rather than a time-varying fault state.",
+      "license": "README claims CC BY 4.0; no separate licence file.",
+      "data_nature": "observed",
+      "files": 21,
+      "unique_files": 11,
+      "exact_duplicate_files": 10,
+      "bytes": 29726652,
+      "formats": {
+        "code": 12,
+        "binary_log": 2,
+        "excel": 4,
+        "documentation": 2,
+        "zip": 1
+      },
+      "records": 152315,
+      "largest_table": {
+        "path": "OBD-Dataset-main/MASTER_TRAIN_X.xlsx",
+        "rows": 118477,
+        "columns": 26
+      },
+      "missing_values": 0,
+      "duplicate_rows": 116937,
+      "problem_files": [],
+      "category": "fault_classification",
+      "identifiers": "No per-row vehicle column; README lists 8 vehicles",
+      "real_outcomes": "Stored fault codes per vehicle, not repairs. Codes are constant per vehicle, so they identify the vehicle rather than a changing fault state.",
+      "components_named": [
+        "Engine"
+      ],
+      "suitable_for": "Experiment only (existing, not served).",
+      "reason": "A model would learn which vehicle a row came from. Over three quarters of workbook rows are exact duplicates per the earlier inventory."
+    },
+    {
+      "dataset_id": "dtc_chat_sft",
+      "name": "DTC diagnostic chat examples (train/validation parquet)",
+      "source": "No source documentation. Assistant answers are templated and contain truncated, unrelated 'technical context' text, so they are not used as reference answers; only user questions are used.",
+      "license": "Not documented locally.",
+      "data_nature": "synthetic",
+      "files": 2,
+      "unique_files": 2,
+      "exact_duplicate_files": 0,
+      "bytes": 91700,
+      "formats": {
+        "parquet": 2
+      },
+      "records": 100,
+      "largest_table": {
+        "path": "train-00000-of-00001.parquet",
+        "rows": 85,
+        "columns": 6
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "None",
+      "real_outcomes": "No.",
+      "components_named": [],
+      "suitable_for": "User questions only, as chat routing test cases.",
+      "reason": "Templated instruction-tuning conversations. Answers contain unrelated text and are not used."
+    },
+    {
+      "dataset_id": "engine_condition_tables",
+      "name": "Engine condition sensor tables (raw_data/train/test)",
+      "source": "No source documentation. raw_data.csv is the exact union of train.csv and test.csv.",
+      "license": "Not documented locally.",
+      "data_nature": "unverified",
+      "files": 3,
+      "unique_files": 3,
+      "exact_duplicate_files": 0,
+      "bytes": 2584168,
+      "formats": {
+        "delimited": 3
+      },
+      "records": 39070,
+      "largest_table": {
+        "path": "raw_data.csv",
+        "rows": 19535,
+        "columns": 7
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "fault_classification",
+      "identifiers": "None",
+      "real_outcomes": "Unknown: a binary label whose meaning is undocumented.",
+      "components_named": [
+        "Engine"
+      ],
+      "suitable_for": "Experiment only (existing, not served).",
+      "reason": "No source, licence, units or engine grouping. raw_data.csv is the union of train.csv and test.csv. The existing experiment barely beats its baseline."
+    },
+    {
+      "dataset_id": "enginefaultdb",
+      "name": "EngineFaultDB",
+      "source": "Laboratory engine test bench repository.",
+      "license": "GPL-3.0 licence file present.",
+      "data_nature": "observed",
+      "files": 3,
+      "unique_files": 3,
+      "exact_duplicate_files": 0,
+      "bytes": 5375171,
+      "formats": {
+        "delimited": 1,
+        "documentation": 2
+      },
+      "records": 55999,
+      "largest_table": {
+        "path": "EngineFaultDB-main/EngineFaultDB-main/EngineFaultDB_Final.csv",
+        "rows": 55999,
+        "columns": 15
+      },
+      "missing_values": 0,
+      "duplicate_rows": 1,
+      "problem_files": [],
+      "category": "fault_classification",
+      "identifiers": "None: no acquisition-run identifier",
+      "real_outcomes": "Laboratory fault classes on one engine; numeric class meanings are not documented locally.",
+      "components_named": [
+        "Engine"
+      ],
+      "suitable_for": "Nothing until run identifiers and class names are obtained.",
+      "reason": "Labelled, but any split would mix rows from one run, which leaks, and the classes cannot be named. Not trained."
+    },
+    {
+      "dataset_id": "ev_predictive_maintenance_15min",
+      "name": "EV Predictive Maintenance Dataset (15-minute)",
+      "source": "No source documentation. Columns are statistically independent of each other and of the labels (|r| < 0.005, lag-1 autocorrelation 0), which indicates independently generated random values.",
+      "license": "Not documented locally.",
+      "data_nature": "synthetic",
+      "files": 1,
+      "unique_files": 1,
+      "exact_duplicate_files": 0,
+      "bytes": 92897837,
+      "formats": {
+        "delimited": 1
+      },
+      "records": 175393,
+      "largest_table": {
+        "path": "EV_Predictive_Maintenance_Dataset_15min.csv",
+        "rows": 175393,
+        "columns": 30
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "Timestamps, but columns are statistically independent",
+      "real_outcomes": "No. The failure and RUL columns are independent of the signals.",
+      "components_named": [
+        "Battery and Electrical",
+        "Brakes",
+        "Tires and Wheels"
+      ],
+      "suitable_for": "Nothing beyond the earlier signal audit.",
+      "reason": "Named after predictive maintenance and has the right column names, but the earlier audit found no learnable signal (|r| < 0.005 and no autocorrelation), which indicates generated values."
+    },
+    {
+      "dataset_id": "experimental_energy",
+      "name": "Experimental Energy Characterization (NEDC/WLTP)",
+      "source": "No accompanying documentation.",
+      "license": "Not documented locally.",
+      "data_nature": "unverified",
+      "files": 8,
+      "unique_files": 8,
+      "exact_duplicate_files": 0,
+      "bytes": 1656347,
+      "formats": {
+        "delimited": 8
+      },
+      "records": 31418,
+      "largest_table": {
+        "path": "Experimental Energy Characterization/WLTP URBAN 2.csv",
+        "rows": 6233,
+        "columns": 14
+      },
+      "missing_values": 270070,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "unsuitable",
+      "identifiers": "None",
+      "real_outcomes": "No.",
+      "components_named": [],
+      "suitable_for": "Not used.",
+      "reason": "No documented vehicle, units, labels, source or licence, and substantial missing values."
+    },
+    {
+      "dataset_id": "honda_motorcycle_masterparts",
+      "name": "Honda (AHM) motorcycle master parts list, Sep 2025 update 19",
+      "source": "Dealer price-list style export; no licence file.",
+      "license": "Not documented locally.",
+      "data_nature": "reference",
+      "files": 1,
+      "unique_files": 1,
+      "exact_duplicate_files": 0,
+      "bytes": 1873770,
+      "formats": {
+        "excel": 1
+      },
+      "records": 61970,
+      "largest_table": {
+        "path": "masterparts.xlsx",
+        "rows": 61970,
+        "columns": 3
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "diagnostic_knowledge",
+      "identifiers": "Part number",
+      "real_outcomes": "No.",
+      "components_named": [],
+      "suitable_for": "Exact part-number lookup in chat.",
+      "reason": "A parts list for one motorcycle brand. It says nothing about condition or failure."
+    },
+    {
+      "dataset_id": "hyundai_component_readings",
+      "name": "Hyundai component readings (cars_hyundai.csv)",
+      "source": "No source documentation. Values are uniformly distributed and uncorrelated with the anomaly label.",
+      "license": "Not documented locally.",
+      "data_nature": "synthetic",
+      "files": 1,
+      "unique_files": 1,
+      "exact_duplicate_files": 0,
+      "bytes": 80145,
+      "formats": {
+        "delimited": 1
+      },
+      "records": 1100,
+      "largest_table": {
+        "path": "cars_hyundai.csv",
+        "rows": 1100,
+        "columns": 5
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "No stable identifier",
+      "real_outcomes": "No. The anomaly flag is uncorrelated with the readings.",
+      "components_named": [
+        "Engine",
+        "Brakes",
+        "Tires and Wheels"
+      ],
+      "suitable_for": "Nothing beyond the earlier signal audit.",
+      "reason": "Has brake pad thickness and tire pressure columns, but values are uniform and unrelated to the labels. Naming these components does not give predictive capability."
+    },
+    {
+      "dataset_id": "kit_obd_seat_leon",
+      "name": "KIT Automotive OBD-II Dataset (Seat Leon)",
+      "source": "doi:10.35097/1130 (KIT); Automotive_Diagnostics-main is a notebook repository bundling the same CSVs.",
+      "license": "CC BY 4.0 per descriptive metadata.",
+      "data_nature": "observed",
+      "files": 102,
+      "unique_files": 99,
+      "exact_duplicate_files": 3,
+      "bytes": 186190926,
+      "formats": {
+        "documentation": 9,
+        "zip": 1,
+        "code": 10,
+        "image": 1,
+        "delimited": 81
+      },
+      "records": 2693824,
+      "largest_table": {
+        "path": "Automotive_Diagnostics-main/Automotive_Diagnostics-main/OBD-II-Dataset/2018-03-29_Seat_Leon_KA_RT_Stau.csv",
+        "rows": 86654,
+        "columns": 11
+      },
+      "missing_values": 3653,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "unsuitable",
+      "identifiers": "File and session; one vehicle",
+      "real_outcomes": "No. Tags describe road and traffic conditions.",
+      "components_named": [],
+      "suitable_for": "Not used.",
+      "reason": "Real, well documented telemetry from one Seat Leon, without any fault or maintenance outcome."
+    },
+    {
+      "dataset_id": "levin_open_data",
+      "name": "LEVIN open data (documentation only)",
+      "source": "Repository without the raw measurement export.",
+      "license": "Data CC BY-NC-SA per README; code MIT.",
+      "data_nature": "documentation",
+      "files": 13,
+      "unique_files": 13,
+      "exact_duplicate_files": 0,
+      "bytes": 584011,
+      "formats": {
+        "metadata": 1,
+        "code": 7,
+        "documentation": 5
+      },
+      "records": 0,
+      "largest_table": null,
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "unsuitable",
+      "identifiers": "Not available",
+      "real_outcomes": "Not available.",
+      "components_named": [],
+      "suitable_for": "Not used.",
+      "reason": "Documentation and notebooks only. The measurement export is not present locally."
+    },
+    {
+      "dataset_id": "main_df_standardized",
+      "name": "Diesel engine air-path fault set (main_df_standardized, metadata.json, cycles.json)",
+      "source": "metadata.json defines the 18 signals and all 10 fault_type values and cycles.json defines the drive cycles (the signal names and fault values match the parquet columns). Faults are injected, e.g. 'manipulated when MAF fault is active', on a standardized signal set; no source, author or licence is present locally.",
+      "license": "Not documented locally.",
+      "data_nature": "unverified",
+      "files": 3,
+      "unique_files": 3,
+      "exact_duplicate_files": 0,
+      "bytes": 103590755,
+      "formats": {
+        "json": 2,
+        "parquet": 1
+      },
+      "records": 1572245,
+      "largest_table": {
+        "path": "main_df_standardized.parquet",
+        "rows": 1572243,
+        "columns": 21
+      },
+      "missing_values": 1572210,
+      "duplicate_rows": 136,
+      "problem_files": [],
+      "category": "fault_classification",
+      "identifiers": "drive_cycle only; no vehicle identifier, no timestamp",
+      "real_outcomes": "No. Faults are injected (sensor drift, valve clog), not failures that occurred.",
+      "components_named": [
+        "Engine"
+      ],
+      "suitable_for": "Research classification of injected air-path faults.",
+      "reason": "Correction to the earlier audit, which called these labels undocumented: metadata.json and cycles.json at the root of data/raw define every fault class and drive cycle. Labels are usable, but they are injected on data with no named source, all faults share one route, and the inputs are standardized signals an inspection does not record."
+    },
+    {
+      "dataset_id": "nasa_battery",
+      "name": "NASA Li-ion Battery Aging Datasets",
+      "source": "NASA Ames Prognostics Center of Excellence.",
+      "license": "No licence statement in the local bundle.",
+      "data_nature": "observed",
+      "files": 48,
+      "unique_files": 43,
+      "exact_duplicate_files": 5,
+      "bytes": 209671599,
+      "formats": {
+        "matlab": 38,
+        "documentation": 10
+      },
+      "records": 0,
+      "largest_table": null,
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "predictive_maintenance",
+      "identifiers": "Cell ID and cycle number; byte-identical copies must not cross splits",
+      "real_outcomes": "Yes, for laboratory 18650 cells: capacity fade to a documented end-of-life threshold.",
+      "components_named": [],
+      "suitable_for": "Laboratory cell degradation research.",
+      "reason": "Real outcomes, but for small laboratory cells under controlled cycling. It does not represent a 12 V starter battery, an alternator or a vehicle environment, so it gives no predictive capability for Battery and Electrical."
+    },
+    {
+      "dataset_id": "navarra_motorcycle_telemetry",
+      "name": "Kawasaki Ninja 400 track telemetry (Circuito de Navarra)",
+      "source": "Depositor README (CC BY 4.0, Electronics 15(12):2604).",
+      "license": "CC BY 4.0 per README.",
+      "data_nature": "observed",
+      "files": 41,
+      "unique_files": 36,
+      "exact_duplicate_files": 5,
+      "bytes": 200801817,
+      "formats": {
+        "code": 3,
+        "json": 8,
+        "delimited": 6,
+        "binary_log": 22,
+        "empty": 1,
+        "documentation": 1
+      },
+      "records": 1924110,
+      "largest_table": {
+        "path": "updates.csv",
+        "rows": 821492,
+        "columns": 6
+      },
+      "missing_values": 360,
+      "duplicate_rows": 0,
+      "problem_files": [
+        {
+          "path": "navarra_telemetry-raw/navarra_telemetry/raw/LOG00010.MBL",
+          "issue": "File is zero bytes."
+        }
+      ],
+      "category": "unsuitable",
+      "identifiers": "boot_id; one motorcycle; no calendar dates",
+      "real_outcomes": "No.",
+      "components_named": [],
+      "suitable_for": "Not used.",
+      "reason": "Race-track telemetry from one prepared motorcycle. It cannot be used to infer road-fleet maintenance. One raw log (LOG00010.MBL) is empty, as its README documents."
+    },
+    {
+      "dataset_id": "obdex",
+      "name": "OBDex generic OBD-II DTC and PID reference",
+      "source": "github.com/foerbsnavi/obdex",
+      "license": "Data CC0 1.0 (LICENSE-DATA); code MIT.",
+      "data_nature": "reference",
+      "files": 45,
+      "unique_files": 45,
+      "exact_duplicate_files": 0,
+      "bytes": 21975289,
+      "formats": {
+        "metadata": 10,
+        "documentation": 9,
+        "yaml": 9,
+        "json": 4,
+        "code": 13
+      },
+      "records": 9669,
+      "largest_table": {
+        "path": "OBDex-main/data/generic/P0xxx_enriched.yaml",
+        "rows": 3705,
+        "columns": 0
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "diagnostic_knowledge",
+      "identifiers": "Fault code",
+      "real_outcomes": "Not applicable: reference data.",
+      "components_named": [
+        "Engine",
+        "Battery and Electrical",
+        "Brakes",
+        "Transmission",
+        "Suspension and Steering",
+        "Tires and Wheels",
+        "Cooling System",
+        "Air Conditioning"
+      ],
+      "suitable_for": "Exact fault-code lookup. In production use through the knowledge index.",
+      "reason": "CC0 reference of generic fault codes with causes and symptoms. It explains a code; it does not establish that a vehicle has that fault or predict anything. Tire coverage is thin because few codes concern tires."
+    },
+    {
+      "dataset_id": "scania_component_x",
+      "name": "SCANIA Component X (operational readouts, specifications, time-to-event, labels)",
+      "source": "No documentation file is present locally. File names, columns and split sizes match the published SCANIA Component X dataset (Lindgren et al., 2024), but that attribution is inferred, not stated by these files.",
+      "license": "Not documented locally; verify against the original publication before redistribution.",
+      "data_nature": "observed",
+      "files": 10,
+      "unique_files": 9,
+      "exact_duplicate_files": 1,
+      "bytes": 1651899438,
+      "formats": {
+        "delimited": 10
+      },
+      "records": 1584101,
+      "largest_table": {
+        "path": "train_operational_readouts.csv",
+        "rows": 1122452,
+        "columns": 107
+      },
+      "missing_values": 481376,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "predictive_maintenance",
+      "identifiers": "vehicle_id and time_step; splits are vehicle-disjoint (verified)",
+      "real_outcomes": "Yes: time to repair of one component (train_tte) and class labels by time window. Heavy trucks.",
+      "components_named": [],
+      "suitable_for": "A predictive maintenance benchmark only.",
+      "reason": "The only local dataset with real time-to-event repair outcomes per vehicle. 'Component X' is anonymized, so it cannot be claimed for any of the eight categories, and its inputs are anonymized truck counters this fleet does not collect. Provenance is inferred: no documentation or licence is in the folder."
+    },
+    {
+      "dataset_id": "vehicle_diagnostic_sample",
+      "name": "Generated vehicle diagnostic samples (VehicleDiagnosticSample.txt)",
+      "source": "Self-described generator output with random measurements; fault codes are not consistent with the stated systems.",
+      "license": "Not documented locally.",
+      "data_nature": "synthetic",
+      "files": 1,
+      "unique_files": 1,
+      "exact_duplicate_files": 0,
+      "bytes": 1143805,
+      "formats": {
+        "documentation": 1
+      },
+      "records": 0,
+      "largest_table": null,
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "unsuitable",
+      "identifiers": "None",
+      "real_outcomes": "No.",
+      "components_named": [],
+      "suitable_for": "Not used.",
+      "reason": "Self-described generated diagnostics with random measurements. Indexing it would present fabricated results as reference facts."
+    },
+    {
+      "dataset_id": "vehicle_service_records",
+      "name": "Vehicle Maintenance - Service Records (Honda/Toyota, India)",
+      "source": "Public Kaggle-style export; no local source or licence file. Records are internally consistent with manufacturer service schedules (e.g. 60,000 km major service).",
+      "license": "Not documented locally; verify before redistribution.",
+      "data_nature": "observed",
+      "files": 1,
+      "unique_files": 1,
+      "exact_duplicate_files": 0,
+      "bytes": 97707,
+      "formats": {
+        "delimited": 1
+      },
+      "records": 1139,
+      "largest_table": {
+        "path": "Vehicle Maintenance- Service Records.csv",
+        "rows": 1139,
+        "columns": 24
+      },
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "problem_files": [],
+      "category": "supplementary_synthetic",
+      "identifiers": "slno is a row number, not a vehicle; no dates",
+      "real_outcomes": "No. It records service items done at a visit, not failures.",
+      "components_named": [
+        "Engine",
+        "Brakes",
+        "Transmission"
+      ],
+      "suitable_for": "Service-item statistics only.",
+      "reason": "Recorded workshop data, not synthetic, and the closest thing to maintenance history, but it holds no condition ratings, with no vehicle identity or chronology, and a service visit does not establish a failure. service_need_v1, v2 and v3 were trained on it and all failed their acceptance criteria."
+    }
+  ]
+}
