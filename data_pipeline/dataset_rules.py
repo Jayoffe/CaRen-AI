@@ -22,6 +22,8 @@ CVFFAD_EXPERIMENT = "cvffad_fault_system_experiment"
 DIESEL_DTC = "diesel_dtc_presence_experiment"
 CAROBD_ANOMALY = "carobd_sensor_anomaly_v1"
 NASA_RUL = "nasa_battery_cell_rul_1p4ah"
+AIRPATH_FAULT = "diesel_airpath_fault_classifier_v1"
+SCANIA_COMPONENT_X = "scania_component_x_repair_window_v1"
 KNOWLEDGE = "knowledge_index"
 CHATBOT_INTENTS = "chatbot_intent_training"
 
@@ -121,6 +123,7 @@ DATASET_RULES = [
         "name": "Chinese Vehicle Fleet Fault Association Dataset (CVFFAD)",
         "patterns": [
             "chinese vehicle fleet fault association dataset/*",
+            "chinese vehicle fleet fault association dataset.zip",
             "fault_events.csv", "vehicle_fleet.csv", "knowledge_graph_triples.csv", "ner_annotations.csv",
         ],
         "data_nature": "synthetic",
@@ -238,7 +241,7 @@ DATASET_RULES = [
         "name": "Kawasaki Ninja 400 track telemetry (Circuito de Navarra)",
         "patterns": [
             "navarra*", "navarra*/*", "samples.csv", "updates.csv", "ingest_mbl.py",
-            "metadata.json", "raw_manifest.json", "readme.md",
+            "raw_manifest.json", "readme.md",
         ],
         "data_nature": "observed",
         "purpose": "95 ECU/datalogger channels from one race-prepared motorcycle, two track days.",
@@ -250,15 +253,29 @@ DATASET_RULES = [
     },
     {
         "dataset_id": "main_df_standardized",
-        "name": "Standardized engine/EGR parquet (main_df_standardized)",
-        "patterns": ["main_df_standardized.parquet"],
+        "name": "Diesel engine air-path fault set (main_df_standardized, metadata.json, cycles.json)",
+        "patterns": ["main_df_standardized.parquet", "metadata.json", "cycles.json"],
         "data_nature": "unverified",
-        "purpose": "Diesel engine air-path signals with drive_cycle and fault_type columns.",
-        "pipelines": [],
-        "provenance": "No accompanying documentation; values are pre-standardized so physical units are lost.",
+        "purpose": "Diesel engine air-path signals per drive cycle with injected MAF/MAP sensor drift and EGR-valve clog fault classes.",
+        "pipelines": [AIRPATH_FAULT],
+        "provenance": "metadata.json defines the 18 signals and all 10 fault_type values and cycles.json defines the drive cycles (the signal names and fault values match the parquet columns). Faults are injected, e.g. 'manipulated when MAF fault is active', on a standardized signal set; no source, author or licence is present locally.",
         "license": "Not documented locally.",
-        "vehicle_types": ["engine simulation or test bench"],
-        "exclusion_reason": "fault_type values and the standardization reference are undocumented; there is no group identifier for a leakage-free split.",
+        "vehicle_types": ["diesel engine simulation or test bench"],
+    },
+    {
+        "dataset_id": "scania_component_x",
+        "name": "SCANIA Component X (operational readouts, specifications, time-to-event, labels)",
+        "patterns": [
+            "train_operational_readouts.csv", "validation_operational_readouts.csv", "test_operational_readouts.csv",
+            "train_specifications.csv", "validation_specifications*.csv", "test_specifications.csv",
+            "train_tte.csv", "validation_labels.csv", "test_labels.csv",
+        ],
+        "data_nature": "observed",
+        "purpose": "Anonymized heavy-truck operational histograms per vehicle over time, with time-to-repair of one anonymized component ('Component X').",
+        "pipelines": [SCANIA_COMPONENT_X],
+        "provenance": "No documentation file is present locally. File names, columns and split sizes match the published SCANIA Component X dataset (Lindgren et al., 2024), but that attribution is inferred, not stated by these files.",
+        "license": "Not documented locally; verify against the original publication before redistribution.",
+        "vehicle_types": ["heavy truck"],
     },
     {
         "dataset_id": "ai4i_2020",
