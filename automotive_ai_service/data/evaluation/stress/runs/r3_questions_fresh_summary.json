@@ -1,0 +1,1233 @@
+{
+ "questions": 10000,
+ "correct": 9996,
+ "accuracy_percent": 99.96,
+ "wrong": 0,
+ "unanswered": 4,
+ "crashes": 0,
+ "distinct_wordings": 10000,
+ "accuracy_per_wording_percent": 99.96,
+ "false_positives": 0,
+ "false_negatives": 4,
+ "intent_accuracy_percent": null,
+ "intent_scored": 0,
+ "retrieval_accuracy_percent": null,
+ "retrieval_scored": 0,
+ "security_violations": 0,
+ "security_detail": [],
+ "latency_ms": {
+  "mean": 11.7,
+  "p50": 2.1,
+  "p95": 48.2,
+  "max": 1411.4
+ },
+ "seconds": 121,
+ "today": "2026-11-01",
+ "fixture": "chat_fixture_db.json",
+ "by_group": {
+  "admin_all": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_available": {
+   "n": 18,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_completed": {
+   "n": 19,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_confirmed": {
+   "n": 13,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_cost": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_cost_car": {
+   "n": 9,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_count": {
+   "n": 30,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_due": {
+   "n": 28,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_highest_km": {
+   "n": 8,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_inspection": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_km": {
+   "n": 87,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_lowest_km": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_maint": {
+   "n": 19,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_maint_hist": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_pending": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_plate": {
+   "n": 69,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_price": {
+   "n": 69,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_rented": {
+   "n": 22,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_reservation": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_revenue": {
+   "n": 22,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "admin_who": {
+   "n": 33,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "aircon": {
+   "n": 162,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "avail": {
+   "n": 218,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "biggest": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "budget": {
+   "n": 146,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "budget_none": {
+   "n": 57,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "category": {
+   "n": 50,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "cheapest": {
+   "n": 52,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "color": {
+   "n": 163,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "deposit": {
+   "n": 311,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "details": {
+   "n": 215,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "dtc": {
+   "n": 655,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "emergency": {
+   "n": 28,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_all": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_available": {
+   "n": 18,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_completed": {
+   "n": 19,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_confirmed": {
+   "n": 13,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_cost": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_cost_car": {
+   "n": 9,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_count": {
+   "n": 30,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_due": {
+   "n": 28,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_highest_km": {
+   "n": 8,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_inspection": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_km": {
+   "n": 87,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_lowest_km": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_maint": {
+   "n": 19,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_maint_hist": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_pending": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_plate": {
+   "n": 69,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_price": {
+   "n": 69,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_rented": {
+   "n": 22,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_reservation": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_revenue": {
+   "n": 22,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:admin_who": {
+   "n": 33,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:aircon": {
+   "n": 162,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:avail": {
+   "n": 218,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:biggest": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:budget": {
+   "n": 146,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:budget_none": {
+   "n": 57,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:category": {
+   "n": 50,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:cheapest": {
+   "n": 52,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:color": {
+   "n": 163,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:deposit": {
+   "n": 311,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:details": {
+   "n": 215,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:dtc": {
+   "n": 655,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:emergency": {
+   "n": 28,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:filter_auto": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:filter_diesel": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:fuel": {
+   "n": 218,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:gps": {
+   "n": 47,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:greet": {
+   "n": 31,
+   "accuracy_percent": 96.77,
+   "wrong": 0,
+   "unanswered": 1,
+   "crash": 0
+  },
+  "family:group": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_book": {
+   "n": 44,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_cancel": {
+   "n": 27,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_deposit": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_login": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_pay": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_register": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:guide_req": {
+   "n": 27,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:listing": {
+   "n": 64,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:min_days": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_car": {
+   "n": 20,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_list": {
+   "n": 56,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_number": {
+   "n": 77,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_pickup": {
+   "n": 29,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_return": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_status": {
+   "n": 32,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_total": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:newest": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:not_rentable": {
+   "n": 29,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:off_topic": {
+   "n": 76,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:price": {
+   "n": 586,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:priciest": {
+   "n": 38,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:quote": {
+   "n": 3953,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:quote_week": {
+   "n": 114,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:seats": {
+   "n": 349,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:security": {
+   "n": 134,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_ac": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_battery": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_brake_noise": {
+   "n": 19,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_brake_soft": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_cel": {
+   "n": 22,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_cel_flash": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_flat": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_fuel_eco": {
+   "n": 9,
+   "accuracy_percent": 77.78,
+   "wrong": 0,
+   "unanswered": 2,
+   "crash": 0
+  },
+  "family:sym_leak": {
+   "n": 36,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_maint": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_nostart": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_overheat": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_pull": {
+   "n": 9,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_rough_idle": {
+   "n": 18,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_smoke": {
+   "n": 35,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_steering": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:sym_transmission": {
+   "n": 13,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:thanks": {
+   "n": 31,
+   "accuracy_percent": 96.77,
+   "wrong": 0,
+   "unanswered": 1,
+   "crash": 0
+  },
+  "family:trans": {
+   "n": 176,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:unlisted": {
+   "n": 322,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:unrecorded": {
+   "n": 64,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:year": {
+   "n": 214,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "filter_auto": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "filter_diesel": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "fuel": {
+   "n": 218,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "gps": {
+   "n": 47,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "greet": {
+   "n": 31,
+   "accuracy_percent": 96.77,
+   "wrong": 0,
+   "unanswered": 1,
+   "crash": 0
+  },
+  "group": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_book": {
+   "n": 44,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_cancel": {
+   "n": 27,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_deposit": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_login": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_pay": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_register": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "guide_req": {
+   "n": 27,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "listing": {
+   "n": 64,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "min_days": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_car": {
+   "n": 20,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_list": {
+   "n": 56,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_number": {
+   "n": 77,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_pickup": {
+   "n": 29,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_return": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_status": {
+   "n": 32,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "my_total": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "newest": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "not_rentable": {
+   "n": 29,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "off_topic": {
+   "n": 76,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "price": {
+   "n": 586,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "priciest": {
+   "n": 38,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "quote": {
+   "n": 3953,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "quote_week": {
+   "n": 114,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "seats": {
+   "n": 349,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "security": {
+   "n": 134,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_ac": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_battery": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_brake_noise": {
+   "n": 19,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_brake_soft": {
+   "n": 17,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_cel": {
+   "n": 22,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_cel_flash": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_flat": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_fuel_eco": {
+   "n": 9,
+   "accuracy_percent": 77.78,
+   "wrong": 0,
+   "unanswered": 2,
+   "crash": 0
+  },
+  "sym_leak": {
+   "n": 36,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_maint": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_nostart": {
+   "n": 23,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_overheat": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_pull": {
+   "n": 9,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_rough_idle": {
+   "n": 18,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_smoke": {
+   "n": 35,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_steering": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "sym_transmission": {
+   "n": 13,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "thanks": {
+   "n": 31,
+   "accuracy_percent": 96.77,
+   "wrong": 0,
+   "unanswered": 1,
+   "crash": 0
+  },
+  "trans": {
+   "n": 176,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "unlisted": {
+   "n": 322,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "unrecorded": {
+   "n": 64,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "year": {
+   "n": 214,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  }
+ }
+}
