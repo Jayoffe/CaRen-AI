@@ -239,6 +239,786 @@
         }
       },
       "updated_at": "2026-10-31T08:55:50.028089+00:00"
+    },
+    "diesel_airpath_fault_classifier_v1": {
+      "status": "research_only_not_deployable",
+      "model_name": "diesel_airpath_fault_classifier_v1",
+      "model_version": "diesel_airpath_fault_classifier_v1_20261107",
+      "task": "Classify ten documented air-path conditions (healthy, MAF drift, MAP drift, EGR valve clog) from one row of signals",
+      "capability": "fault_classification_research",
+      "dataset": "main_df_standardized.parquet with metadata.json and cycles.json",
+      "dataset_sources": {
+        "signals": "main_df_standardized.parquet",
+        "label_definitions": "metadata.json",
+        "cycle_definitions": "cycles.json"
+      },
+      "trained_at": "2026-11-07T08:14:29.497384+00:00",
+      "eligible_for_inference": false,
+      "validation_status": "research_only_not_deployable",
+      "metrics": {
+        "majority_baseline": {
+          "test_records": 130942,
+          "accuracy": 0.1,
+          "macro_f1": 0.0182,
+          "per_class": {
+            "EGVClog_10": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "EGVClog_20": {
+              "precision": 0.1,
+              "recall": 1.0,
+              "f1-score": 0.1818
+            },
+            "EGVClog_30": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "Healthy": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAFLowDrift_70": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAFLowDrift_80": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAFLowDrift_90": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAPLowDrift_70": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAPLowDrift_80": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAPLowDrift_90": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            }
+          },
+          "confusion_matrix": {
+            "labels": [
+              "EGVClog_10",
+              "EGVClog_20",
+              "EGVClog_30",
+              "Healthy",
+              "MAFLowDrift_70",
+              "MAFLowDrift_80",
+              "MAFLowDrift_90",
+              "MAPLowDrift_70",
+              "MAPLowDrift_80",
+              "MAPLowDrift_90"
+            ],
+            "rows": [
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13095,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13095,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ]
+          },
+          "fault_missed_as_healthy_rate": 0.0,
+          "false_alarm_rate_on_held_out_healthy_cycles": 1.0,
+          "held_out_healthy_records": 46965
+        },
+        "logistic_regression": {
+          "test_records": 130942,
+          "accuracy": 0.7419,
+          "macro_f1": 0.7363,
+          "per_class": {
+            "EGVClog_10": {
+              "precision": 0.7889,
+              "recall": 0.8583,
+              "f1-score": 0.8222
+            },
+            "EGVClog_20": {
+              "precision": 0.563,
+              "recall": 0.526,
+              "f1-score": 0.5439
+            },
+            "EGVClog_30": {
+              "precision": 0.4142,
+              "recall": 0.3204,
+              "f1-score": 0.3613
+            },
+            "Healthy": {
+              "precision": 0.4609,
+              "recall": 0.4684,
+              "f1-score": 0.4646
+            },
+            "MAFLowDrift_70": {
+              "precision": 0.8818,
+              "recall": 0.9159,
+              "f1-score": 0.8985
+            },
+            "MAFLowDrift_80": {
+              "precision": 0.794,
+              "recall": 0.8089,
+              "f1-score": 0.8014
+            },
+            "MAFLowDrift_90": {
+              "precision": 0.6633,
+              "recall": 0.7164,
+              "f1-score": 0.6888
+            },
+            "MAPLowDrift_70": {
+              "precision": 0.9772,
+              "recall": 0.969,
+              "f1-score": 0.9731
+            },
+            "MAPLowDrift_80": {
+              "precision": 0.9365,
+              "recall": 0.9467,
+              "f1-score": 0.9416
+            },
+            "MAPLowDrift_90": {
+              "precision": 0.8483,
+              "recall": 0.8888,
+              "f1-score": 0.8681
+            }
+          },
+          "confusion_matrix": {
+            "labels": [
+              "EGVClog_10",
+              "EGVClog_20",
+              "EGVClog_30",
+              "Healthy",
+              "MAFLowDrift_70",
+              "MAFLowDrift_80",
+              "MAFLowDrift_90",
+              "MAPLowDrift_70",
+              "MAPLowDrift_80",
+              "MAPLowDrift_90"
+            ],
+            "rows": [
+              [
+                11239,
+                429,
+                784,
+                262,
+                0,
+                15,
+                121,
+                9,
+                71,
+                164
+              ],
+              [
+                946,
+                6888,
+                2496,
+                1638,
+                0,
+                28,
+                763,
+                1,
+                14,
+                321
+              ],
+              [
+                882,
+                2449,
+                4195,
+                3922,
+                14,
+                80,
+                1199,
+                0,
+                3,
+                350
+              ],
+              [
+                858,
+                1708,
+                2250,
+                6133,
+                64,
+                142,
+                1457,
+                4,
+                4,
+                474
+              ],
+              [
+                6,
+                15,
+                10,
+                9,
+                11993,
+                947,
+                100,
+                0,
+                1,
+                13
+              ],
+              [
+                19,
+                98,
+                62,
+                62,
+                1202,
+                10593,
+                1000,
+                3,
+                2,
+                54
+              ],
+              [
+                108,
+                353,
+                230,
+                1173,
+                168,
+                1374,
+                9380,
+                2,
+                2,
+                304
+              ],
+              [
+                1,
+                104,
+                9,
+                0,
+                9,
+                0,
+                0,
+                12688,
+                276,
+                7
+              ],
+              [
+                7,
+                7,
+                10,
+                1,
+                29,
+                1,
+                0,
+                248,
+                12396,
+                395
+              ],
+              [
+                180,
+                183,
+                82,
+                108,
+                122,
+                162,
+                122,
+                29,
+                468,
+                11638
+              ]
+            ]
+          },
+          "fault_missed_as_healthy_rate": 0.0609,
+          "false_alarm_rate_on_held_out_healthy_cycles": 0.5232,
+          "held_out_healthy_records": 46965
+        },
+        "gradient_boosting": {
+          "test_records": 130942,
+          "accuracy": 0.8562,
+          "macro_f1": 0.8545,
+          "per_class": {
+            "EGVClog_10": {
+              "precision": 0.8812,
+              "recall": 0.9249,
+              "f1-score": 0.9025
+            },
+            "EGVClog_20": {
+              "precision": 0.7218,
+              "recall": 0.7607,
+              "f1-score": 0.7407
+            },
+            "EGVClog_30": {
+              "precision": 0.6086,
+              "recall": 0.5182,
+              "f1-score": 0.5598
+            },
+            "Healthy": {
+              "precision": 0.5707,
+              "recall": 0.585,
+              "f1-score": 0.5777
+            },
+            "MAFLowDrift_70": {
+              "precision": 0.9679,
+              "recall": 0.9756,
+              "f1-score": 0.9718
+            },
+            "MAFLowDrift_80": {
+              "precision": 0.9286,
+              "recall": 0.937,
+              "f1-score": 0.9328
+            },
+            "MAFLowDrift_90": {
+              "precision": 0.8923,
+              "recall": 0.8927,
+              "f1-score": 0.8925
+            },
+            "MAPLowDrift_70": {
+              "precision": 0.9953,
+              "recall": 0.997,
+              "f1-score": 0.9961
+            },
+            "MAPLowDrift_80": {
+              "precision": 0.9886,
+              "recall": 0.9905,
+              "f1-score": 0.9895
+            },
+            "MAPLowDrift_90": {
+              "precision": 0.9817,
+              "recall": 0.9808,
+              "f1-score": 0.9812
+            }
+          },
+          "confusion_matrix": {
+            "labels": [
+              "EGVClog_10",
+              "EGVClog_20",
+              "EGVClog_30",
+              "Healthy",
+              "MAFLowDrift_70",
+              "MAFLowDrift_80",
+              "MAFLowDrift_90",
+              "MAPLowDrift_70",
+              "MAPLowDrift_80",
+              "MAPLowDrift_90"
+            ],
+            "rows": [
+              [
+                12110,
+                475,
+                280,
+                222,
+                0,
+                0,
+                1,
+                0,
+                0,
+                6
+              ],
+              [
+                609,
+                9961,
+                1095,
+                1334,
+                5,
+                5,
+                77,
+                0,
+                0,
+                9
+              ],
+              [
+                505,
+                1841,
+                6785,
+                3652,
+                7,
+                15,
+                276,
+                0,
+                0,
+                13
+              ],
+              [
+                453,
+                1401,
+                2769,
+                7660,
+                21,
+                68,
+                644,
+                0,
+                0,
+                78
+              ],
+              [
+                2,
+                1,
+                3,
+                8,
+                12775,
+                267,
+                21,
+                0,
+                0,
+                17
+              ],
+              [
+                10,
+                12,
+                22,
+                59,
+                315,
+                12270,
+                381,
+                1,
+                1,
+                24
+              ],
+              [
+                46,
+                74,
+                162,
+                457,
+                53,
+                577,
+                11689,
+                0,
+                4,
+                32
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                13055,
+                35,
+                4
+              ],
+              [
+                1,
+                4,
+                0,
+                0,
+                4,
+                1,
+                0,
+                58,
+                12969,
+                57
+              ],
+              [
+                7,
+                31,
+                32,
+                31,
+                18,
+                10,
+                11,
+                3,
+                109,
+                12842
+              ]
+            ]
+          },
+          "fault_missed_as_healthy_rate": 0.0489,
+          "false_alarm_rate_on_held_out_healthy_cycles": 0.4274,
+          "held_out_healthy_records": 46965
+        }
+      },
+      "reason": "Faults are injected, on data with no documented source, so scores do not establish real-world performance. Inputs are standardized with an unknown reference and include EGR and turbo signals an inspection does not record. All faulted runs share one route, so the holdout does not test generalization to other routes.",
+      "known_limitations": [
+        "Faults are injected, on data with no documented source, so scores do not establish real-world performance.",
+        "Inputs are standardized with an unknown reference and include EGR and turbo signals an inspection does not record.",
+        "All faulted runs share one route, so the holdout does not test generalization to other routes.",
+        "cycles.json states that Cycle_RDE_Eifel2 drives the same route as Cycle_RDE_Eifel, so test results overstate performance on new routes.",
+        "If the supplied standardization used test rows, a small amount of leakage cannot be excluded."
+      ],
+      "artifact_path": "trained_models/experiments/diesel_airpath_fault_classifier_v1/pipeline.joblib",
+      "artifact_sha256": "4921c2741be854832c4a828a8473b3b07e416025c7b7c2e23b590517399787f0",
+      "evaluation_report_path": "trained_models/experiments/diesel_airpath_fault_classifier_v1/evaluation.json",
+      "evaluation_report_sha256": "57620823baee90f563169e7f5d475d859166f13dfebc395b4dd1745440383b24"
+    },
+    "scania_component_x_repair_window_v1": {
+      "status": "evaluated_rejected",
+      "model_name": "scania_component_x_repair_window_v1",
+      "model_version": "scania_component_x_repair_window_v1_20261107",
+      "task": "Repair of anonymized Component X within 48 time steps of a truck's last readout",
+      "capability": "predictive_maintenance_benchmark",
+      "dataset": "SCANIA Component X (inferred attribution; no documentation present locally)",
+      "dataset_sources": {
+        "train_readouts": "train_operational_readouts.csv",
+        "train_tte": "train_tte.csv",
+        "train_specifications": "train_specifications.csv",
+        "validation_readouts": "validation_operational_readouts.csv",
+        "validation_labels": "validation_labels.csv",
+        "validation_specifications": "validation_specifications.csv",
+        "test_readouts": "test_operational_readouts.csv",
+        "test_labels": "test_labels.csv",
+        "test_specifications": "test_specifications.csv"
+      },
+      "trained_at": "2026-11-07T08:17:23.839910+00:00",
+      "eligible_for_inference": false,
+      "validation_status": "evaluated_rejected",
+      "metrics": {
+        "prevalence_baseline": {
+          "validation": {
+            "records": 5046,
+            "positives": 136,
+            "threshold": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "pr_auc": 0.027,
+            "roc_auc": 0.5,
+            "confusion_matrix": {
+              "true_negative": 4910,
+              "false_positive": 0,
+              "false_negative": 136,
+              "true_positive": 0
+            },
+            "false_negative_rate": 1.0
+          },
+          "test": {
+            "records": 5045,
+            "positives": 142,
+            "threshold": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "pr_auc": 0.0281,
+            "roc_auc": 0.5,
+            "confusion_matrix": {
+              "true_negative": 4903,
+              "false_positive": 0,
+              "false_negative": 142,
+              "true_positive": 0
+            },
+            "false_negative_rate": 1.0,
+            "recall_by_label_window": {
+              "class_1": 0.0,
+              "class_2": 0.0,
+              "class_3": 0.0,
+              "class_4": 0.0
+            }
+          }
+        },
+        "logistic_regression": {
+          "validation": {
+            "records": 5046,
+            "positives": 136,
+            "threshold": 0.0,
+            "precision": 0.0271,
+            "recall": 0.9926,
+            "f1": 0.0527,
+            "pr_auc": 0.0219,
+            "roc_auc": 0.4258,
+            "confusion_matrix": {
+              "true_negative": 55,
+              "false_positive": 4855,
+              "false_negative": 1,
+              "true_positive": 135
+            },
+            "false_negative_rate": 0.0074
+          },
+          "test": {
+            "records": 5045,
+            "positives": 142,
+            "threshold": 0.0,
+            "precision": 0.028,
+            "recall": 0.993,
+            "f1": 0.0544,
+            "pr_auc": 0.0314,
+            "roc_auc": 0.4894,
+            "confusion_matrix": {
+              "true_negative": 2,
+              "false_positive": 4901,
+              "false_negative": 1,
+              "true_positive": 141
+            },
+            "false_negative_rate": 0.007,
+            "recall_by_label_window": {
+              "class_1": 1.0,
+              "class_2": 1.0,
+              "class_3": 1.0,
+              "class_4": 0.9833
+            }
+          }
+        },
+        "gradient_boosting": {
+          "validation": {
+            "records": 5046,
+            "positives": 136,
+            "threshold": 0.133358,
+            "precision": 0.0383,
+            "recall": 0.7059,
+            "f1": 0.0726,
+            "pr_auc": 0.0452,
+            "roc_auc": 0.6036,
+            "confusion_matrix": {
+              "true_negative": 2499,
+              "false_positive": 2411,
+              "false_negative": 40,
+              "true_positive": 96
+            },
+            "false_negative_rate": 0.2941
+          },
+          "test": {
+            "records": 5045,
+            "positives": 142,
+            "threshold": 0.133358,
+            "precision": 0.0337,
+            "recall": 0.9366,
+            "f1": 0.065,
+            "pr_auc": 0.0443,
+            "roc_auc": 0.6531,
+            "confusion_matrix": {
+              "true_negative": 1088,
+              "false_positive": 3815,
+              "false_negative": 9,
+              "true_positive": 133
+            },
+            "false_negative_rate": 0.0634,
+            "recall_by_label_window": {
+              "class_1": 0.9231,
+              "class_2": 0.8667,
+              "class_3": 0.9512,
+              "class_4": 0.95
+            }
+          }
+        }
+      },
+      "reason": "'Component X' is anonymized, so it cannot be mapped to any of the eight assessment categories. Inputs are anonymized heavy-truck histogram counters that this fleet does not collect. Trained on heavy trucks; not validated on the passenger cars, SUVs, vans and motorcycles in this fleet.",
+      "known_limitations": [
+        "'Component X' is anonymized, so it cannot be mapped to any of the eight assessment categories.",
+        "Inputs are anonymized heavy-truck histogram counters that this fleet does not collect.",
+        "Trained on heavy trucks; not validated on the passenger cars, SUVs, vans and motorcycles in this fleet.",
+        "Model scores are uncalibrated and are not failure probabilities.",
+        "Time steps are anonymized units, so the horizon cannot be stated in days or kilometres."
+      ],
+      "artifact_path": "trained_models/experiments/scania_component_x_repair_window_v1/pipeline.joblib",
+      "artifact_sha256": "4ba935c0c04697e8a86e2c9349f562e8dae48d77676b58472318b067f2c15595",
+      "evaluation_report_path": "trained_models/experiments/scania_component_x_repair_window_v1/evaluation.json",
+      "evaluation_report_sha256": "473d95b88f516a7667cd3368c8aea81991e8a3ce971f17b7cf6767d2fc7c8bca"
     }
   }
 }
