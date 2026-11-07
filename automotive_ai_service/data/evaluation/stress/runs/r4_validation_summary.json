@@ -1,0 +1,575 @@
+{
+ "questions": 656,
+ "correct": 656,
+ "accuracy_percent": 100.0,
+ "wrong": 0,
+ "unanswered": 0,
+ "crashes": 0,
+ "distinct_wordings": 301,
+ "accuracy_per_wording_percent": 100.0,
+ "false_positives": 0,
+ "false_negatives": 0,
+ "intent_accuracy_percent": 99.78,
+ "intent_scored": 464,
+ "retrieval_accuracy_percent": 98.83,
+ "retrieval_scored": 512,
+ "security_violations": 0,
+ "security_detail": [],
+ "latency_ms": {
+  "mean": 8.2,
+  "p50": 1.4,
+  "p95": 31.7,
+  "max": 1131.0
+ },
+ "seconds": 7,
+ "today": "2026-11-01",
+ "fixture": "chat_fixture_db.json",
+ "by_group": {
+  "admin": {
+   "n": 173,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "availability": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "booking_retrieval": {
+   "n": 26,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "brief": {
+   "n": 28,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "conversation": {
+   "n": 28,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:aircon": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:all": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:biggest": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:book": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:brief": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:brief_small": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:budget": {
+   "n": 8,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:by_id": {
+   "n": 14,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:cancel": {
+   "n": 2,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:cheapest": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:clarify": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:color": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:compare": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:completed": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:confirmed": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:count": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:daily": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:dates": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:deposit": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:details": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:diesel": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:dtc": {
+   "n": 15,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:due": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:emergency": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:follow_up": {
+   "n": 8,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:fuel": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:gps": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:group": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:history": {
+   "n": 2,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:in_maintenance": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:listing": {
+   "n": 7,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:maint_cost": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:maint_cost_car": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:mileage": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_car": {
+   "n": 2,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_list": {
+   "n": 5,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_number": {
+   "n": 2,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_pickup": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_return": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_status": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:my_total": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:not_mine": {
+   "n": 2,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:off_topic": {
+   "n": 4,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:pay": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:pending": {
+   "n": 6,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:plate": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:price": {
+   "n": 32,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:priciest": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:quote": {
+   "n": 72,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:quote_forms": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:rented": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:requirements": {
+   "n": 3,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:revenue": {
+   "n": 5,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:seats": {
+   "n": 20,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:seats_yesno": {
+   "n": 6,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:security": {
+   "n": 18,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:smalltalk": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:status": {
+   "n": 24,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:stock_yes": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:symptom": {
+   "n": 10,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:transmission": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:unlisted": {
+   "n": 36,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:unrecorded": {
+   "n": 7,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:who": {
+   "n": 12,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "family:year": {
+   "n": 16,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "finding": {
+   "n": 80,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "policy": {
+   "n": 21,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "rental_pricing": {
+   "n": 120,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "security": {
+   "n": 18,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "style:english": {
+   "n": 501,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "style:taglish": {
+   "n": 155,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "troubleshooting": {
+   "n": 25,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  },
+  "vehicle_specs": {
+   "n": 125,
+   "accuracy_percent": 100.0,
+   "wrong": 0,
+   "unanswered": 0,
+   "crash": 0
+  }
+ }
+}
