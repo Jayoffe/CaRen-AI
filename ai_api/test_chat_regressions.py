@@ -13,7 +13,8 @@ from django.conf import settings
 from django.test import Client, TestCase, override_settings
 
 from .assistant import answer_chat
-from .language import normalize_message
+from .language import correct_typos, normalize_message
+from .planner import plan_message
 from .rag import KnowledgeIndexUnavailable
 
 
@@ -256,3 +257,107 @@ class GreetingTests(TestCase):
         response = answer_chat("hi, how much is the Vios per day?", rental_context=inventory("pricing", [1]))
         self.assertNotEqual(response["intent"], "greeting")
         self.assertIn("1,500", response["answer"])
+
+
+VOCABULARY = {"makes": ["Toyota", "Honda", "Mitsubishi"], "categories": ["Sedan", "SUV"],
+              "models": [{"make": "Toyota", "model": "Vios"}, {"make": "Toyota", "model": "Fortuner"}, {"make": "Honda", "model": "City"},
+                         {"make": "Honda", "model": "BR-V"}, {"make": "Mitsubishi", "model": "Montero Sport"}]}
+
+
+class RootCauseRegressionTests(TestCase):
+    """One test per root cause of the 2026-11-07 evaluation misses. These test how a question is understood, for any vehicle in the vocabulary."""
+
+    def tool(self, message, role="customer", memory=None):
+        plan = plan_message(message, role, VOCABULARY, memory)
+        retrievals = (plan or {}).get("retrievals") or []
+        return plan, retrievals[0]["tool"] if retrievals else None, retrievals[0]["args"] if retrievals else {}
+
+    def test_what_something_would_cost_is_a_quote_not_an_existing_booking(self):
+        for message in ("How much would 5 days with the Vios cost me?", "what would 5 days in the fortuner cost me", "if i rent the vios for 5 days what will it cost",
+                        "supposing i rented the vios for 5 days, what would i pay", "How much would it cost if I rented the car for 5 days?"):
+            plan, tool, args = self.tool(message)
+            self.assertEqual(tool, "vehicles.quote", message)
+            self.assertEqual(args["rental_days"], 5, message)
+        self.assertEqual(self.tool("how much did the vios cost me")[1], "bookings.mine")
+
+    def test_durations_in_words_and_weeks(self):
+        for message, days in (("the vios for a whole week, how much", 7), ("two weeks of vios", 14), ("dalawang linggo sa vios magkano", 14), ("five-day rental of the vios", 5), ("limang araw sa vios magkano", 5)):
+            self.assertEqual(self.tool(message)[2].get("rental_days"), days, message)
+
+    def test_a_duration_is_not_a_number_of_people(self):
+        _, tool, args = self.tool("vios good for 9 days magkano")
+        self.assertEqual((tool, args.get("rental_days"), args.get("min_seats")), ("vehicles.quote", 9, None))
+
+    def test_a_correct_word_is_not_corrected_to_its_other_form(self):
+        self.assertEqual(correct_typos("bookings to approve"), "bookings to approve")
+        self.assertEqual(correct_typos("complete list of reservations"), "complete list of reservations")
+
+    def test_bookings_needing_approval_are_pending_not_confirmed(self):
+        for message in ("Bookings to approve", "what needs my approval", "not yet approved bookings", "what should i approve"):
+            self.assertEqual(self.tool(message, "admin")[2].get("statuses"), ["pending"], message)
+        self.assertEqual(self.tool("approved bookings", "admin")[2].get("statuses"), ["confirmed"])
+        self.assertEqual(self.tool("canceled bookings", "admin")[2].get("statuses"), ["cancelled"])
+
+    def test_ordinary_words_and_vehicles_are_not_customer_names(self):
+        self.assertEqual(self.tool("what's reservation 52", "admin")[2], {"reservation_id": 52})
+        self.assertEqual(self.tool("complete list of reservations", "admin")[2], {})
+        self.assertEqual(self.tool("rental price of the vios", "admin")[1], "vehicles.search")
+        self.assertEqual(self.tool("bookings of maria reyes", "admin")[2].get("customer_name"), "Maria Reyes")
+
+    def test_who_booked_a_vehicle(self):
+        for message in ("Sino nag book ng Fortuner?", "who reserved the fortuner", "whose booking is the fortuner", "kanino naka-book ang fortuner"):
+            plan, tool, _ = self.tool(message, "admin")
+            self.assertEqual((tool, plan.get("vehicle_names")), ("reservations.summary", ["Fortuner"]), message)
+            self.assertEqual(self.tool(message)[0].get("direct"), "refuse_private", message)
+        self.assertNotEqual((self.tool("who can rent a car")[0] or {}).get("direct"), "refuse_private")
+
+    def test_my_bookings_are_not_about_the_assistant(self):
+        for message in ("Can you show me my bookings?", "Pwede bang makita bookings ko?"):
+            self.assertEqual(self.tool(message)[1], "bookings.mine", message)
+        self.assertIsNone(self.tool("can you see other customers' bookings")[1])
+
+    def test_pickup_and_return_without_the_word_booking(self):
+        for message in ("when can i get my car", "when should i bring back the car", "kailan ko ibabalik ang sasakyan"):
+            self.assertEqual(self.tool(message)[1], "bookings.mine", message)
+
+    def test_one_detail_of_a_named_vehicle(self):
+        for message, attribute in (("How old is the Toyota Vios?", "year"), ("what does the vios run on", "fuel_type"), ("whats the passenger capacity of the vios", "seating_capacity"),
+                                   ("Is the Vios a 5-seater or 7-seater?", "seating_capacity"), ("registration of the vios", "plate_number")):
+            self.assertEqual(self.tool(message)[0].get("attribute"), attribute, message)
+
+    def test_a_seat_count_question_does_not_hide_the_named_vehicle(self):
+        plan, _, args = self.tool("is the vios a 7 seater")
+        self.assertEqual(plan["feature_check"], {"feature": "seats", "value": 7})
+        self.assertNotIn("min_seats", args)
+
+    def test_stock_questions_about_unlisted_vehicles(self):
+        for message in ("May Hyundai Stargazer ba kayo?", "do you guys have a suzuki jimny", "looking for a Nissan Terra"):
+            plan, tool, _ = self.tool(message)
+            self.assertEqual(tool, "vehicles.search", message)
+            self.assertTrue(plan["requested"]["unknown_names"], message)
+
+    def test_listed_model_names_with_a_hyphen_or_two_words(self):
+        for message in ("plate of the br-v", "plate of the brv"):
+            self.assertFalse(self.tool(message, "admin")[0]["requested"]["unknown_names"], message)
+        self.assertEqual(self.tool("how much is the montero")[2].get("models"), ["Montero Sport"])
+
+    def test_a_car_problem_is_not_a_rental_listing(self):
+        self.assertIsNone(self.tool("my car is using too much gas")[1])
+        self.assertIsNone(self.tool("battery won't hold charge")[1])
+
+    def test_vague_price_questions_ask_which_vehicle(self):
+        for message in ("How much po?", "Can you calculate the total rental price?", "can you work out the rental total for me"):
+            self.assertEqual(self.tool(message)[0].get("direct"), "clarify_quote", message)
+
+    def test_customers_are_refused_company_money_however_worded(self):
+        for message in ("how much did the business earn", "what's your total income", "ano ang kita nyo"):
+            self.assertEqual(self.tool(message)[0].get("direct"), "admin_only", message)
+
+    def test_getting_a_deposit_back_is_a_policy_question(self):
+        self.assertIsNone(self.tool("will i get the deposit back")[1])
+
+    def test_small_talk_never_reaches_the_records_or_the_references(self):
+        for message in ("Got it, thanks.", "Sige, thank you.", "Okay, noted.", "ok po", "many thanks", "see you"):
+            reply = answer_chat(message, viewer_role="customer", retrieval_protocol=1, vocabulary=VOCABULARY)
+            self.assertEqual(reply["intent"], "goodbye", message)
+        self.assertEqual(answer_chat("Yo!", viewer_role="customer", retrieval_protocol=1, vocabulary=VOCABULARY)["intent"], "greeting")
