@@ -90,6 +90,9 @@ AUTOMOTIVE_KNOWLEDGE_PATH = Path(
         str(BASE_DIR / "data" / "automotive_knowledge.json")
     )
 )
+# Category-specific predictive models. Overridable so tests never touch the real ones.
+CATEGORY_MODEL_ROOT = Path(os.environ.get("CATEGORY_MODEL_ROOT", str(BASE_DIR / "trained_models" / "category_models")))
+
 KNOWLEDGE_INDEX_PATH = Path(
     os.environ.get(
         "KNOWLEDGE_INDEX_PATH",
