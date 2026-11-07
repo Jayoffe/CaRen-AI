@@ -11,7 +11,9 @@ import re
 
 _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replacement in (
     # Misspellings
-    (r"\b(?:res[ae]?rv|reserb|resrve|reseve)(?:e|ed|ing)?\b", "reserve"),
+    (r"\b(?:res[ae]?rv|reserb|resrve|reseve)(?:e)?\b", "reserve"),
+    (r"\b(?:res[ae]?rv|reserb|resrve|reseve)ed\b", "reserved"),
+    (r"\b(?:res[ae]?rv|reserb|resrve|reseve)ing\b", "reserving"),
     (r"\b(?:res[ae]?rv|resev|reserb)a(?:t|s|c|sh)i?on(s?)\b", r"reservation\1"),
     (r"\b(?:vehical|vehicel|vehicule|vechile|vehicl|vehilce|vihicle|veicle|vehcile)(s?)\b", r"vehicle\1"),
     (r"\b(?:bookng|boking|bokking|bookin)(s?)\b", r"booking\1"),
@@ -22,16 +24,50 @@ _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replace
     (r"\b(?:requirment|requirments|reqs|rekwayrments?)\b", "requirements"),
     (r"\b(?:cancle|cancell)\b", "cancel"),
     # Tagalog / Taglish
-    (r"\bilan\s+(?:ang\s+)?(?:mga\s+)?(?:sasakyan|kotse|cars?|vehicles?|units?)\b", "how many cars"),
+    (r"\bilang?\s+(?:lahat\s+(?:ng\s+)?)?(?:ang\s+)?(?:mga\s+)?(?:sasakyan|kotse|cars?|vehicles?|units?)\b", "how many cars"),
     (r"\bilan\b", "how many"),
     # Text-speak
     (r"\bur\b", "your"),
     (r"\bu\b(?!-)", "you"),
     (r"\br\b(?=\s+(?:available|there|you|the|they|these|those|any)\b)", "are"),
     (r"\btemp\b", "temperature"),
+    (r"\bpick-up\b", "pickup"),
+    (r"\bpick (?:my|the) (?:car|rental|vehicle|unit) up\b", "pick up my car"),
+    (r"\bkrudo\b", "fuel"),
+    (r"\bhanggang\s+kailan\b", "until when"),
     (r"\bkailan\b", "when"),
+    (r"\btotal seats\b", "number of seats"),
+    (r"\bwork out\b", "calculate"),
+    (r"\b(?:kumuha|makakuha)\b", "rent"),
+    (r"\bsmells? like burning(?: \w+)?\b", "has a burning smell"),
+    (r"\bhow (?:do|can) i (?:get|hire) (?:a|an) (?:car|vehicle|unit)\b", "how do i rent a car"),
+    (r"\b(?:aprubahan|i-?approve)\b", "to approve"),
+    (r"\banong\b", "what"),
+    (r"\b(?:nyo|ninyo|inyo)\b", "your"),
+    (r"\b(?:tumatanggap|tinatanggap)\b", "accept"),
+    (r"\bsino\b", "who"),
+    (r"\bkanino\b", "whose"),
+    (r"\b(?:nag|naka|nagpa)[- ]?book\b", "booked"),
+    (r"\b(?:nag|naka|nagpa)[- ]?(?:reserve|reserba)\b", "reserved"),
+    (r"\b(?:nag|naka|nagpa)[- ]?rent(?:a)?\b", "rented"),
+    (r"\b(?:yung|nung|ung)\b", "the"),
+    (r"\b(?:pasahero|sakay)\b", "passengers"),
+    (r"\bde[- ]kambyo\b", "manual"),
+    (r"\bklaseng\b", "kind of"),
+    (r"\bgasolina\b", "gasoline"),
+    (r"\blibre\b", "free"),
+    (r"\bnaghihintay\b", "waiting"),
+    (r"\btapos na\b", "completed"),
+    (r"\bi[- ]?(cancel|reset|extend)\b", r"\1"),
+    (r"\bback out of\b", "cancel"),
+    (r"\bpapers\b", "documents"),
+    (r"\b(?:one |a )?(?:whole|full|entire) week\b", "7 days"),
+    (r"\b(?:for |sa )?(?:a|one|1|isang) (?:month|buwan)\b(?! rate)", " for 30 days"),
+    (r"\b(?:runs?|running|run) (?:too |very |so )?hot\b", "overheating"),
+    (r"\bclick\w*\b(?=.*\b(?:turn the key|start|ignition)\b)", "won't start, just clicking,"),
+    (r"\b(?:won'?t|wont) move\b", "broke down"),
     (r"\b(?:kukunin|kunin|kukuha|makukuha)\b", "pick up"),
-    (r"\b(?:ibabalik|isasauli|isauli|ibalik)\b", "return"),
+    (r"\b(?:ibabalik|isasauli|isauli|ibalik|balik)\b", "return"),
     (r"\b(?:magkano|mgkano|magkanu|hm)\b", "how much"),
     (r"\b(?:presyo|halaga)\b", "price"),
     (r"\bdeposito\b", "deposit"),
@@ -42,10 +78,10 @@ _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replace
     (r"\baraw\b", "days"),
     (r"\b(?:isang\s+linggo|one\s+week|a\s+week|1\s+week)\b", "7 days"),
     (r"\b(?:magbayad|makabayad|pagbayad|bayaran|nagbayad|bayad)\b", "pay"),
-    (r"\b(?:pwede|puwede|pede)\s+(?:ba|po)?\s*", "can i "),
+    (r"\b(?:pwede|puwede|pede)(?:\s+(?:ba|po)|ng|\s+bang?)?\s*", "can i "),
     (r"\bpag\s+(?=\d)", "for "),
     (r"\b(?:paano|pano|papaano)\b", "how do i"),
-    (r"\b(?:makapag|mag|magpa)[- ]?(book|reserve|rent)\b", r"\1"),
+    (r"\b(?:makapag|mag|magpa|maka|pag)[- ]?(book|reserve|rent)\b", r"\1"),
     (r"\b(?:magbook|magpabook)\b", "book"),
     (r"\b(?:magrenta|umupa|arkila|arkilahin|renta|rentahan)\b", "rent"),
     (r"\b(?:makita|makikita|tingnan|titingnan|pakita|ipakita|patingin)\b", "see"),
@@ -105,11 +141,23 @@ magkano presyo sasakyan pickup return thanks salamat hello please goodbye rented
 magbayad bayad kotse nagastos gastos promo promos fleet odometer kilometers diesel petrol
 brother sister friend friends husband allowed approval approved papers signup register question magandang charge charges gearbox
 change changes changed changing chance charged charging charger lowest highest spend spent spending accept accepts accepted
+details detail newest oldest penalty returns overdue history linggo gulong manibela kamusta kumusta tanong approve reject confirm
+passenger stargazer xpander montero wigo navara everest reserved reserve pababa ibabalik isasauli kukunin should
 """.split())
 # Ordinary words that are one slip away from a domain word but mean something else.
 _NOT_TYPOS = {"break", "breaks", "broke", "dates", "carry", "where", "there", "these", "those", "other", "about",
               "house", "renter", "pricey", "lease", "leave", "later", "sellers", "covers", "brand", "ranter",
               "router", "statue", "colors", "colours", "models", "today", "renters", "member", "numbers"}
+
+
+# Everyday words one slip away from a domain word, unrelated to it.
+_COMMON_ENGLISH = {"complete", "approve", "reject", "confirm", "serve", "reverse", "sedate", "feature", "stars"}
+
+
+def _inflection(word, target):
+    """True for word forms of one word, such as approve/approved, seat/seats, charge/charges."""
+    short, long_ = sorted((word, target), key=len)
+    return long_ != short and long_.startswith(short) and long_[len(short):] in {"s", "d", "ed", "es"}
 
 
 def _one_slip(word, target):
@@ -134,7 +182,10 @@ def correct_typos(text):
         low = word.casefold()
         if len(low) < 4 or low in DOMAIN_WORDS or low in _NOT_TYPOS:
             return word
-        candidates = [target for target in DOMAIN_WORDS if abs(len(target) - len(low)) <= 1 and _one_slip(low, target)]
+        if low in _COMMON_ENGLISH:
+            return word
+        candidates = [target for target in DOMAIN_WORDS if abs(len(target) - len(low)) <= 1 and _one_slip(low, target)
+                      and not _inflection(low, target)]
         return candidates[0] if len(candidates) == 1 else word
     return re.sub(r"[A-Za-z]+", fix, text)
 
