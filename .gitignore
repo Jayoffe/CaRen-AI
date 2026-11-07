@@ -12,5 +12,8 @@ db.sqlite3
 data/raw/*
 !data/raw/README.md
 
+# Runs for this fleet stay on this machine until someone decides to publish one.
+trained_models/category_models/
+
 # Large intermediate experiment data
 trained_models/experiments/**/prepared_*.csv
