@@ -106,6 +106,7 @@ def compose(plan, results, role, vocabulary=None, guide=None, fleet_risk=None, s
     data["notes_shown"] = notes.added
     try:
         validate_amounts(answer, results)
+        validate_answers_question(plan, answer, by_tool)
     except UngroundedAnswer:
         answer = _fallback(by_tool)
         data["validation"] = "fallback_listing"
@@ -120,6 +121,18 @@ def validate_amounts(answer, results):
         value = round(float(match.group(1).replace(",", "")), 2)
         if value not in known:
             raise UngroundedAnswer(f"PHP {match.group(1)} is not in the retrieved records")
+
+
+def validate_answers_question(plan, answer, by_tool):
+    """The last check before replying: a vehicle question found in the records must name that vehicle in the answer."""
+    if plan.get("intent") != "vehicles" or plan.get("purpose") == "attribute":
+        return  # An attribute answer may rightly be "only administrators can see that".
+    item = by_tool.get("vehicles.quote") or by_tool.get("vehicles.search") or {}
+    found = [str(v.get("model") or "").casefold() for v in (item.get("data") or {}).get("vehicles") or []]
+    low = answer.casefold()
+    for model in (plan.get("requested") or {}).get("models") or []:
+        if str(model).casefold() in found and str(model).casefold() not in low:
+            raise UngroundedAnswer(f"the answer does not mention {model}")
 
 
 def _numbers(value, known):
@@ -177,6 +190,9 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
 
     if plan.get("follow_up") and vehicles:
         lines.append(f"(About the {_join(sorted({name(v) for v in vehicles}))} from earlier.)")
+    if plan.get("stock_check") and vehicles and (requested.get("models") or requested.get("makes")) and not requested.get("unknown_names"):
+        # "Do you have the Vios?" is answered yes first; its rate follows.
+        lines.append(f"Yes, we have the {_join(sorted({name(v) for v in vehicles}))}.")
     for unknown in requested.get("unknown_names") or []:
         lines.append(f"I couldn't find a {unknown} {scope}.")
 
@@ -206,7 +222,8 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
     elif purpose == "ranking" and plan.get("rank_by") == "seats":
         by_seats = sorted(vehicles, key=lambda v: v.get("seating_capacity") or 0, reverse=True)
         top = by_seats[0]
-        lines.append(f"The {label[id(top)]} seats the most people: {top.get('seating_capacity')} seats.")
+        tied = [label[id(v)] for v in by_seats if v.get("seating_capacity") == top.get("seating_capacity")]
+        lines.append(f"The {_join(tied)} {'seat' if len(tied) > 1 else 'seats'} the most people: {top.get('seating_capacity')} seats.")
         if len(by_seats) > 1:
             lines += [f"- {label[id(v)]} ({v.get('category') or 'vehicle'}): {v.get('seating_capacity')} seats, "
                       f"{money(v['daily_rental_price'])} per day" for v in by_seats]
@@ -257,6 +274,8 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
                 lines.append(f"{heading or _feature_words(args).capitalize() + ' vehicles'} {scope}:")
             lines += [f"- {label[id(v)]}: {_specs(v)}" for v in vehicles]
     else:
+        if plan.get("hourly"):
+            lines.append("Rentals are charged per day; the system has no hourly rates, so a few hours count as a full day.")
         if plan.get("rate_period"):
             lines.append("Only daily rates are recorded; the system has no weekly or monthly rates or discounts. "
                          "A longer rental is the daily rate times the number of days.")
@@ -378,6 +397,17 @@ def _has_equipment(v, terms):
 def _feature_lines(check, vehicles, label, listing=False):
     feature, value = check.get("feature"), check.get("value")
     lines = []
+    if feature == "seats":
+        # "Is the Vios a 7 seater?" / "Can 7 people fit in the Vios?"
+        for v in vehicles:
+            seats = v.get("seating_capacity")
+            if seats is None:
+                lines.append(f"The {label[id(v)]}'s seating capacity is not recorded.")
+            elif int(seats) >= int(value):
+                lines.append(f"Yes, the {label[id(v)]} has {seats} seats, so it fits {value}.")
+            else:
+                lines.append(f"No, the {label[id(v)]} has {seats} seats, so it does not fit {value}.")
+        return lines
     if feature == "equipment":
         terms = list(check.get("terms") or []) + [str(value)]
         # "a dash camera", but "Bluetooth" and "parking sensors" take no article.
@@ -605,7 +635,7 @@ def _own_bookings(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None
         if r is None:
             lines.append("You have no upcoming pickup.")
         elif r.get("is_active"):
-            lines.append(f"Your rental #{r['id']} ({name(r)}) is in progress; the return is due on {r['end_date']}.")
+            lines.append(f"Your rental #{r['id']} ({name(r)}) started on {r['start_date']} and is in progress; the return is due on {r['end_date']}.")
         else:
             lines.append(f"Your next pickup is on {r['start_date']} (in {r['days_until_pickup']} day(s)): reservation #{r['id']}, "
                          f"{name(r)}, return on {r['end_date']}, status {r['status']}.")
