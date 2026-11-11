@@ -561,9 +561,9 @@ def _finish(category_key, report, model, threshold, names, requested_by, reasons
             "trained_at": trained_at,
             "requested_by": requested_by,
             "algorithm": report.get("algorithm"),
-            "artifact_path": str(Path(category_key) / version / "pipeline.joblib") if artifact_sha else None,
+            "artifact_path": (Path(category_key) / version / "pipeline.joblib").as_posix() if artifact_sha else None,
             "artifact_sha256": artifact_sha,
-            "evaluation_report_path": str(Path(category_key) / version / "evaluation.json"),
+            "evaluation_report_path": (Path(category_key) / version / "evaluation.json").as_posix(),
             "evaluation_report_sha256": _sha_file(folder / "evaluation.json"),
             "evaluation": {"acceptance_criteria_passed": passed},
             "feature_schema_version": FEATURE_SCHEMA_VERSION,
@@ -603,8 +603,8 @@ def _integrity_problem(entry):
     """Why this entry's files cannot be trusted or used now, or None."""
     if not entry.get("artifact_path") or not entry.get("artifact_sha256"):
         return "It has no model artifact."
-    artifact = _model_root() / entry["artifact_path"]
-    report = _model_root() / entry["evaluation_report_path"]
+    artifact = _model_root() / entry["artifact_path"].replace("\\", "/")
+    report = _model_root() / entry["evaluation_report_path"].replace("\\", "/")
     if not artifact.is_file() or not report.is_file():
         return "Its files are missing."
     if _sha_file(artifact) != entry["artifact_sha256"] or _sha_file(report) != entry["evaluation_report_sha256"]:
@@ -683,7 +683,7 @@ _loaded = {}
 def _load_artifact(entry):
     key = entry["artifact_sha256"]
     if key not in _loaded:
-        _loaded[key] = joblib.load(_model_root() / entry["artifact_path"])
+        _loaded[key] = joblib.load(_model_root() / entry["artifact_path"].replace("\\", "/"))
     return _loaded[key]
 
 
