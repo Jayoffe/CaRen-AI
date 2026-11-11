@@ -1,0 +1,149 @@
+{
+  "category": "brakes",
+  "category_name": "Brakes",
+  "safety_critical": true,
+  "feature_schema_version": "1",
+  "catalog_version": "2026-11-07.1",
+  "policy_version": "1",
+  "horizon_days": 90,
+  "dataset": {
+    "rows": 214,
+    "vehicles": 20,
+    "faults": 43,
+    "healthy": 171,
+    "excluded_by_reason": {},
+    "sha256": "f4e7aba4215c926b29ab03a9506fda9f71b01f501a5af1069daa40a82741e2e5"
+  },
+  "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+  "periods": {
+    "training": [
+      "2025-08-05",
+      "2026-05-25"
+    ],
+    "test": [
+      "2026-06-20",
+      "2026-10-18"
+    ],
+    "training_rows": 142,
+    "test_rows": 66,
+    "rows_purged_to_prevent_leakage": 6,
+    "validation_start": "2026-03-18"
+  },
+  "algorithm": "logistic_regression",
+  "candidates": {
+    "logistic_regression": {
+      "validation_f2": 1.0,
+      "threshold": 0.130109
+    },
+    "random_forest": {
+      "validation_f2": 0.9804,
+      "threshold": 0.628166
+    }
+  },
+  "threshold": 0.130109,
+  "metrics": {
+    "records": 66,
+    "faults": 15,
+    "healthy": 51,
+    "precision": 0.7368,
+    "recall": 0.9333,
+    "f1": 0.8235,
+    "f2": 0.8861,
+    "accuracy": 0.9091,
+    "pr_auc": 0.9389,
+    "recall_lower_bound": 0.7018,
+    "false_negative_rate": 0.0667,
+    "confusion_matrix": {
+      "true_negative": 46,
+      "false_positive": 5,
+      "false_negative": 1,
+      "true_positive": 14
+    }
+  },
+  "baseline_flag_everything": {
+    "records": 66,
+    "faults": 15,
+    "healthy": 51,
+    "precision": 0.2273,
+    "recall": 1.0,
+    "f1": 0.3704,
+    "f2": 0.5952,
+    "accuracy": 0.2273,
+    "pr_auc": 0.2273,
+    "recall_lower_bound": 0.7961,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 51,
+      "false_negative": 0,
+      "true_positive": 15
+    }
+  },
+  "unseen_vehicle_metrics": null,
+  "false_negative_analysis": {
+    "count": 1,
+    "rate": 0.0667,
+    "missed_faults": [
+      {
+        "outcome_id": 209,
+        "vehicle_id": 25,
+        "assessed_on": "2026-08-14",
+        "outcome_date": "2026-09-04",
+        "rating": "excellent"
+      }
+    ],
+    "note": "Each of these is a verified fault this model would not have flagged."
+  },
+  "model_name": "category_brakes",
+  "model_version": "category_brakes_v1_f4e7aba4",
+  "trained_at": "2026-11-08T13:29:16.111725+00:00",
+  "acceptance_criteria": [
+    {
+      "name": "Faults in the test period",
+      "required": "at least 5",
+      "actual": 15,
+      "passed": true
+    },
+    {
+      "name": "Healthy outcomes in the test period",
+      "required": "at least 5",
+      "actual": 51,
+      "passed": true
+    },
+    {
+      "name": "Recall",
+      "required": "at least 0.85",
+      "actual": 0.9333,
+      "passed": true
+    },
+    {
+      "name": "Recall, 95% lower bound",
+      "required": "at least 0.6",
+      "actual": 0.7018,
+      "passed": true
+    },
+    {
+      "name": "Precision",
+      "required": "at least 0.5",
+      "actual": 0.7368,
+      "passed": true
+    },
+    {
+      "name": "F1-score",
+      "required": "at least 0.6",
+      "actual": 0.8235,
+      "passed": true
+    },
+    {
+      "name": "PR-AUC against the fault rate",
+      "required": "at least 0.2841",
+      "actual": 0.9389,
+      "passed": true
+    }
+  ],
+  "acceptance_criteria_passed": true,
+  "status": "evaluated_pending",
+  "decision_reasons": [
+    "Passed every criterion. An administrator must review it before it can serve predictions."
+  ]
+}
