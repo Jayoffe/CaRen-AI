@@ -47,10 +47,14 @@ QUERY_STOP_WORDS = {
 }
 
 
+# Ranking compares every question word with every passage and keyword word, so these pure helpers see
+# the same inputs millions of times per question; caching them keeps a chat answer fast.
+@lru_cache(maxsize=16384)
 def _normalize(text):
     return " ".join(re.findall(r"[a-z0-9]+", str(text).casefold()))
 
 
+@lru_cache(maxsize=65536)
 def _term_variants(term):
     variants = {term}
     if len(term) > 5 and term.endswith("ing"):
@@ -66,11 +70,12 @@ def _term_variants(term):
         variants.add(term[:-2])
     if len(term) > 3 and term.endswith("s"):
         variants.add(term[:-1])
-    return variants
+    return frozenset(variants)
 
 
+@lru_cache(maxsize=262144)
 def _terms_match(left, right):
-    return bool(_term_variants(left).intersection(_term_variants(right)))
+    return not _term_variants(left).isdisjoint(_term_variants(right))
 
 
 def _document_passages(document):
@@ -225,12 +230,15 @@ def rank_knowledge(query):
                 any(_terms_match(term, name) for name in names) for term in query_term_set) / len(query_term_set), 4)
         return coverage_cache[document_index]
 
-    for index, (document_index, passage) in enumerate(passages):
-        document = documents[document_index]
-        keywords = document.get("keywords", [])
+    phrase_cache = {}
+
+    def keyword_phrase(document_index):
+        """(score, length) of the document's best keyword phrase in the question; the same for all its passages."""
+        if document_index in phrase_cache:
+            return phrase_cache[document_index]
         phrase_score = 0.0
         phrase_length = 0
-        for keyword in keywords:
+        for keyword in documents[document_index].get("keywords", []):
             normalized_keyword = _normalize(keyword)
             if not normalized_keyword:
                 continue
@@ -251,6 +259,12 @@ def rank_knowledge(query):
                 phrase_score,
                 weight * min(1.0, keyword_length / max(1, len(query_terms)) + 0.35),
             )
+        phrase_cache[document_index] = (phrase_score, phrase_length)
+        return phrase_cache[document_index]
+
+    for index, (document_index, passage) in enumerate(passages):
+        document = documents[document_index]
+        phrase_score, phrase_length = keyword_phrase(document_index)
 
         keyword_terms = set(_normalize(passage["lexical_text"]).split())
         matched_terms = 0

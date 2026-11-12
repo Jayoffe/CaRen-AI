@@ -52,6 +52,13 @@ RENTAL_REQUEST = re.compile(
     r"|deposit|payment|pay|show me|list|cars\b|vehicles\b|for rent|rent a|rent an|seats?|seater)\b",
     re.IGNORECASE,
 )
+# "Does the Vios have automatic transmission?": a listed vehicle's equipment, so the planner looks first; it falls back to the
+# references when no vehicle of that name is listed. "Does my car have ...?" and "does the engine ...?" are about the customer's car.
+NAMED_VEHICLE_SPEC = re.compile(
+    r"^(?:does|do|is|has|have)\s+(?:the|a|an)\s+(?!car\b|vehicle\b|engine\b|battery\b|brakes?\b|tires?\b|transmission\b|it\b)"
+    r"[a-z0-9-]+(?:\s+[a-z0-9-]+)?\s+(?:have|has|come with|comes with|use|uses|run on|runs on)\b",
+    re.IGNORECASE,
+)
 # Follow-ups about the car problem being discussed ("what if the coolant is full?", "is it safe to drive?").
 TOPIC_FOLLOW_UP = re.compile(
     r"^(?:and|but|so|then|ok(?:ay)?|hmm+)?[\s,]*(?:what if|what about|how about|and if|if it|if the|if my|even if|is it|is that|is this|can i|could i|should i"
@@ -81,6 +88,8 @@ VAGUE_WORDS = {
     "issue", "issues", "trouble", "noise", "noises", "sound", "sounds", "smell", "smells", "smelling", "vibration", "vibrates", "vibrating", "shaking",
     "shakes", "light", "lights", "warning", "dashboard", "leak", "leaking", "leaks", "fluid", "under", "this", "that", "getting", "get", "got", "am",
     "ive", "i've", "think", "rental", "now", "today", "again", "lately", "recently", "when", "just",
+    # "My steering wheel is shaking" says where, not when: braking, high speed and idle have different causes.
+    "steering", "wheel",
 }
 VAGUE_SYMPTOMS = (
     (r"\b(?:noises?|sounds?)\b", "noise", "What kind of noise is it, and when does it happen? For example: squealing when braking, clicking when turning, "
@@ -222,6 +231,12 @@ VEHICLE_MANAGEMENT_ANSWER = (
     "see their details and daily rates, and reserve them from Vehicles (/users/vehicles)."
 )
 UNRECORDED_POLICY = "This policy is not recorded in the system. Please confirm it with the rental team."
+# Unrecorded topics that are vehicle facts rather than policies get their own second sentence.
+UNRECORDED_NOTES = {
+    "fuel-consumption figures for its vehicles": (
+        "The listings record each vehicle's fuel type but not its consumption. As a rough guide, smaller cars and diesel "
+        "engines usually use less fuel; ask the rental team for a specific vehicle."),
+}
 CREDENTIALS_ANSWER = ("I can't share passwords, keys or other account credentials, for any account. "
                       "If you can't sign in to your own account, contact the rental team.")
 BREAKDOWN_ANSWER = (
@@ -385,7 +400,7 @@ def _direct_response(kind, plan=None):
     if kind == "policy_unrecorded":
         topic = (plan or {}).get("topic", "that")
         return _with_evidence(core.build_response("policy_unrecorded", 1.0,
-            f"DriveRent has no information about {topic}. {UNRECORDED_POLICY}"), "none", [])
+            f"DriveRent has no information about {topic}. {UNRECORDED_NOTES.get(topic, UNRECORDED_POLICY)}"), "none", [])
     if kind == "refuse_sql":
         return _with_evidence(core.build_response("permission_denied", 1.0,
             "I can't run database queries. I can only look up your own reservations and the vehicles available for rent, "
@@ -827,7 +842,7 @@ def _is_car_problem(message, entities):
     "I smell gasoline near the car" names a fuel type and "hard to shift gears in my manual car" a
     transmission, but neither is an inventory search: a keyword phrase of a knowledge topic
     matched and no booking, price or inventory words are present."""
-    if entities["dtc_codes"] or RENTAL_REQUEST.search(message):
+    if entities["dtc_codes"] or RENTAL_REQUEST.search(message) or NAMED_VEHICLE_SPEC.search(message):
         return False
     knowledge = retrieve_knowledge(message)
     return knowledge is not None and knowledge.get("phrase_length", 0) > 0

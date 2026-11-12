@@ -1,15 +1,15 @@
 {
-  "built_at": "2026-11-12T01:30:27.147346+00:00",
-  "chunk_count": 9875,
+  "built_at": "2026-11-12T06:28:14.816746+00:00",
+  "chunk_count": 9885,
   "chunks_by_source": {
     "obdex": 9665,
-    "automotive_knowledge": 77,
+    "automotive_knowledge": 87,
     "automotive_fault_flowcharts": 99,
     "system_guide": 20,
     "vehicle_service_records": 14
   },
   "chunks_by_trust": {
-    "verified_reference": 9742,
+    "verified_reference": 9752,
     "unverified_reference": 99,
     "system_documentation": 20,
     "derived_from_records": 14
@@ -21,8 +21,8 @@
     "rows_rejected_invalid_part_number": 9,
     "source": "masterparts.xlsx"
   },
-  "chunks_sha256": "978faec11ce778c7c95cc9913fd2bc0ba527da560871e4f56e7f5a4aa8768044",
-  "index_sha256": "7f0e6f784fd39ba651f7c1ec5cabab84173a7e31a8f55fe94a165bb4684ddce9",
+  "chunks_sha256": "22db8e73bd21b0f1dd5d62a774d797fa5c13dd4dfa317a6d9e2883f6a96a0886",
+  "index_sha256": "5f15739900342ef130dac9d7d1739842df6c27b06e5ff9db2affc0fd6dddaed5",
   "not_indexed": {
     "cvffad": "generated records (source='generated'); Chinese commercial-fleet content",
     "vehicle_diagnostic_sample": "generated diagnostics with random measurements",

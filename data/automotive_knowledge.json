@@ -22,12 +22,7 @@
         "what does an ignition coil do",
         "ignition coil function",
         "fuel injector function",
-        "fuel pump function",
-        "vibrates at idle",
-        "shaking at idle",
-        "shakes at idle",
-        "car shakes when idling",
-        "vibrates when idling"
+        "fuel pump function"
       ],
       "overview": "A misfire or rough-running complaint means the engine is not producing smooth, consistent power. The symptom alone does not identify a failed part.",
       "component_functions": [
@@ -108,7 +103,15 @@
         "temperature gauge",
         "temperature gauge going up",
         "temperature gauge rising",
-        "temperature warning light"
+        "temperature warning light",
+        "temperature keeps going up",
+        "engine temperature going up",
+        "engine temperature keeps going up",
+        "engine temperature rising",
+        "temperature is going up",
+        "engine temperature keeps rising",
+        "temp is going up",
+        "temperature goes up"
       ],
       "overview": "An overheating indication means heat is not being removed or circulated as intended, or the temperature reading is not trustworthy. Treat a high-temperature warning as real until the vehicle-specific checks establish otherwise. The cooling system moves heat from the engine through coolant and heat exchangers; radiator airflow, coolant circulation, system sealing, and temperature control all matter.",
       "component_functions": [
@@ -441,7 +444,15 @@
         "brake pedal",
         "what do brake pads do",
         "brake rotor function",
-        "brake caliper function"
+        "brake caliper function",
+        "how often should i change brake pads",
+        "how often change brake pads",
+        "when to replace brake pads",
+        "when should i replace brake pads",
+        "brake pad replacement",
+        "how long do brake pads last",
+        "replace brake pads",
+        "change brake pads"
       ],
       "overview": "Brake pads and friction surfaces wear with use. Noise or vibration can have several causes and requires inspection; it is not a measurement of remaining pad life.",
       "component_functions": [
@@ -578,7 +589,12 @@
         "abs code",
         "abs module",
         "abs sensor",
-        "abs fault"
+        "abs fault",
+        "what does abs do",
+        "what is abs",
+        "abs function",
+        "anti-lock brakes",
+        "anti-lock braking system"
       ],
       "overview": "Brake and ABS warnings can indicate different systems. The exact symbol and the owner's-manual instructions matter; an ABS warning does not prove that the ordinary braking system is fully functional.",
       "possible_causes": [
@@ -619,7 +635,10 @@
       ],
       "stop": "If the red brake warning is on, the pedal feels soft or the car stops poorly, pull over safely and don't drive further; arrange a tow.",
       "professional": "ABS and hydraulic repairs need a qualified technician.",
-      "drive_safety": "With only the ABS light on and a normal pedal, you can usually drive carefully to a workshop, leaving extra stopping distance. With the red brake warning, a soft pedal or poor braking, don't drive; arrange a tow."
+      "drive_safety": "With only the ABS light on and a normal pedal, you can usually drive carefully to a workshop, leaving extra stopping distance. With the red brake warning, a soft pedal or poor braking, don't drive; arrange a tow.",
+      "component_functions": [
+        "ABS (the anti-lock braking system) stops the wheels from locking under hard braking, so you can still steer while braking hard. It works automatically; you may feel the brake pedal pulse when it does."
+      ]
     },
     {
       "id": "transmission_slip",
@@ -776,7 +795,15 @@
         "low tire",
         "what does tire tread do",
         "tire tread function",
-        "wheel alignment function"
+        "wheel alignment function",
+        "how much air in my tires",
+        "how much air",
+        "air in my tires",
+        "air in the tires",
+        "how much air should i put",
+        "correct air pressure",
+        "how much psi",
+        "air pressure for my tires"
       ],
       "overview": "Tires affect grip, handling, and stopping. Use the vehicle placard and owner's manual for recommended cold pressure and rotation guidance; the maximum pressure on a tire sidewall is not the vehicle's target pressure.",
       "possible_causes": [
@@ -907,7 +934,12 @@
         "battery keeps dying",
         "battery dies overnight",
         "battery drains overnight",
-        "battery dead in the morning"
+        "battery dead in the morning",
+        "battery won't hold charge",
+        "battery won't hold a charge",
+        "battery not holding charge",
+        "battery does not hold charge",
+        "battery keeps going flat"
       ],
       "overview": "Starting and charging symptoms can involve the battery, starter, alternator, wiring, connections, or another electrical load. A symptom alone cannot identify which part has failed.",
       "component_functions": [
@@ -984,7 +1016,10 @@
         "engine warning light",
         "engine light is on",
         "engine light came on",
-        "check engine light is on"
+        "check engine light is on",
+        "check engine warning",
+        "check engine warning light",
+        "engine check light"
       ],
       "overview": "An OBD diagnostic trouble code identifies a detected condition or circuit that needs diagnosis; it does not automatically identify a failed part. A code reader's description is not a complete diagnosis.",
       "possible_causes": [
@@ -1536,15 +1571,7 @@
         "air con not cold",
         "hindi malamig ang aircon",
         "walang lamig ang aircon",
-        "aircon not working",
-        "ac smells bad",
-        "aircon smells bad",
-        "bad smell from the aircon",
-        "musty smell from vents",
-        "ac smell",
-        "aircon smell",
-        "smelly aircon",
-        "mabaho ang aircon"
+        "aircon not working"
       ],
       "overview": "Cabin heating and air-conditioning depend on airflow, heat exchangers, doors and controls, and—in vehicles with conventional A/C—a sealed refrigerant circuit. A warm vent or weak airflow does not by itself identify a failed compressor or refrigerant leak.",
       "component_functions": [
@@ -2057,7 +2084,12 @@
         "grey smoke from exhaust",
         "burning oil smoke",
         "smoke when accelerating",
-        "blue smoke on startup"
+        "blue smoke on startup",
+        "bluish smoke",
+        "blueish smoke",
+        "bluish exhaust smoke",
+        "blue-grey smoke",
+        "bluish smoke from the tailpipe"
       ],
       "overview": "Blue or blue-grey exhaust smoke usually means engine oil is getting into the combustion chambers and being burned. The engine then uses oil between changes, which can lead to low oil level and can damage the catalytic converter over time.",
       "possible_causes": [
@@ -2172,7 +2204,10 @@
         "steering wheel vibrates at speed",
         "shaking at high speed",
         "wobble at high speed",
-        "vibrates above 80 kph"
+        "vibrates above 80 kph",
+        "vibrates on the highway",
+        "shakes on the highway",
+        "vibrates at high speed"
       ],
       "overview": "Shaking that comes through the steering wheel at higher speeds, and is not tied to braking, most often comes from the wheels and tires: a wheel out of balance (for example a lost balance weight), a bent rim, or a damaged or unevenly worn tire. Worn steering or suspension parts and loose wheel nuts can also cause it.",
       "possible_causes": [
@@ -2293,12 +2328,16 @@
         "charging light",
         "charging light is on",
         "charge warning light",
-        "dim headlights",
-        "headlights are dim",
-        "headlights dimming",
         "car died while driving",
         "car died",
-        "lights dimming while driving"
+        "lights dimming while driving",
+        "dim and the car died",
+        "dim and car died",
+        "dimmed and the car died",
+        "dim then the car died",
+        "dim and the engine died",
+        "lights dim and the car stalled",
+        "dim and the car stalled"
       ],
       "overview": "A battery-shaped warning light while the engine is running usually means the charging system is not charging, most often a failing alternator, a broken or slipping drive belt, or a loose or corroded connection, rather than a bad battery. The car is then running on battery power alone and may stall when the battery runs down.",
       "possible_causes": [
@@ -3224,7 +3263,11 @@
         "engine pinging",
         "engine noise",
         "noise from engine",
-        "loud engine"
+        "loud engine",
+        "noise the engine",
+        "engine is noisy",
+        "noisy engine",
+        "maingay ang makina"
       ],
       "overview": "Engine noises point to different problems depending on the sound: knocking or pinging when accelerating, ticking from the top of the engine, rattling at start-up, or squealing from a belt.",
       "possible_causes": [
@@ -3798,7 +3841,11 @@
         "what coolant",
         "top up coolant",
         "coolant level",
-        "add coolant"
+        "add coolant",
+        "what is coolant",
+        "what does coolant do",
+        "coolant function",
+        "what is antifreeze"
       ],
       "overview": "Coolant protects the engine from overheating, freezing and corrosion. Check the level in the reservoir with the engine cold, and replace it at the interval in the owner's manual using the specified coolant type.",
       "possible_causes": [
@@ -4035,7 +4082,17 @@
         "bad smell from air conditioning",
         "ac smells like mold",
         "smell from the vents",
-        "aircon smell"
+        "aircon smell",
+        "ac smells bad",
+        "bad smell from the aircon",
+        "musty smell from vents",
+        "ac smell",
+        "smelly aircon",
+        "mabaho ang aircon",
+        "ac smells",
+        "air conditioner smells",
+        "aircon smells",
+        "mabaho ang ac"
       ],
       "answer": "A musty or mouldy smell from the vents usually comes from moisture and mould on the A/C evaporator, or a dirty cabin air filter.",
       "key_causes": [
@@ -4491,6 +4548,540 @@
           "reference": "Intervals, capacities, fluid types and procedures are vehicle-specific; this entry gives general guidance only."
         }
       ]
+    },
+    {
+      "id": "jump_start",
+      "title": "Jump-starting a car with a flat battery",
+      "category": "electrical",
+      "system": "battery and charging",
+      "component": "battery",
+      "keywords": [
+        "jump start",
+        "jump-start",
+        "jumpstart",
+        "how to jump start a car",
+        "how do i jump start",
+        "jumper cables",
+        "booster cables",
+        "jump a car",
+        "jump the battery",
+        "jump pack",
+        "mag jump start"
+      ],
+      "overview": "To jump-start a car you need jumper cables and a working car or a jump pack. With both cars off, connect red to the flat battery's positive (+) terminal, then red to the good battery's positive, then black to the good battery's negative (-), and finally black to bare, unpainted metal on the dead car's engine, away from the battery.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "Start the working car, let it run for a few minutes, then start the dead car. Remove the cables in reverse order.",
+        "Drive for at least 20 to 30 minutes so the battery recharges; if it goes flat again, have the battery and charging system tested."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": true,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "To jump-start a car you need jumper cables and a working car or a jump pack. With both cars off, connect red to the flat battery's positive (+) terminal, then red to the good battery's positive, then black to the good battery's negative (-), and finally black to bare, unpainted metal on the dead car's engine, away from the battery.",
+      "key_causes": [],
+      "actions": [
+        "Start the working car, let it run for a few minutes, then start the dead car. Remove the cables in reverse order.",
+        "Drive for at least 20 to 30 minutes so the battery recharges; if it goes flat again, have the battery and charging system tested."
+      ],
+      "stop": "Don't jump-start a battery that is cracked, leaking or swollen, and keep sparks and flames away from it. Hybrids and electric cars have their own jump points, so follow the owner's manual.",
+      "professional": null
+    },
+    {
+      "id": "transmission_types",
+      "title": "Manual, automatic and CVT transmissions",
+      "category": "transmission",
+      "system": "transmission",
+      "component": "transmission",
+      "keywords": [
+        "difference between cvt and automatic",
+        "cvt vs automatic",
+        "cvt or automatic",
+        "automatic vs cvt",
+        "what is a cvt",
+        "what is cvt",
+        "what does cvt mean",
+        "continuously variable transmission",
+        "difference between automatic and manual",
+        "automatic vs manual",
+        "manual vs automatic",
+        "manual or automatic which is better",
+        "types of transmission",
+        "kinds of transmission"
+      ],
+      "overview": "A manual transmission has a clutch pedal and a gear lever, so you change gears yourself. A conventional automatic changes between a fixed set of gears for you. A CVT (continuously variable transmission) is also automatic, but it has no fixed gears: a belt or chain between two variable pulleys changes the ratio smoothly, so you feel no gear shifts.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "You drive a CVT the same way as any automatic: select D and use the accelerator and brake; there's no clutch.",
+        "A CVT needs the specific CVT fluid named in the owner's manual; ordinary automatic transmission fluid can damage it."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "A manual transmission has a clutch pedal and a gear lever, so you change gears yourself. A conventional automatic changes between a fixed set of gears for you. A CVT (continuously variable transmission) is also automatic, but it has no fixed gears: a belt or chain between two variable pulleys changes the ratio smoothly, so you feel no gear shifts.",
+      "key_causes": [],
+      "actions": [
+        "You drive a CVT the same way as any automatic: select D and use the accelerator and brake; there's no clutch.",
+        "A CVT needs the specific CVT fluid named in the owner's manual; ordinary automatic transmission fluid can damage it."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "engine_braking",
+      "title": "Engine braking and driving downhill",
+      "category": "brakes",
+      "system": "brakes",
+      "component": "driveline",
+      "keywords": [
+        "engine braking",
+        "what is engine braking",
+        "engine brake",
+        "use a lower gear downhill",
+        "lower gear when going downhill",
+        "driving downhill",
+        "going down a steep hill",
+        "steep descent",
+        "brakes overheating downhill"
+      ],
+      "overview": "Engine braking means slowing the car by lifting off the accelerator or selecting a lower gear, so the engine's resistance slows the wheels instead of the brakes alone. It's normal and safe, and on long downhill roads it keeps the brakes from overheating.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "On a long or steep descent, select a lower gear (L, 2, B or manual mode, as the owner's manual describes) and brake in firm, short applications instead of holding the pedal down.",
+        "Don't shift so low that the engine speed reaches the red zone of the rev counter."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Engine braking means slowing the car by lifting off the accelerator or selecting a lower gear, so the engine's resistance slows the wheels instead of the brakes alone. It's normal and safe, and on long downhill roads it keeps the brakes from overheating.",
+      "key_causes": [],
+      "actions": [
+        "On a long or steep descent, select a lower gear (L, 2, B or manual mode, as the owner's manual describes) and brake in firm, short applications instead of holding the pedal down.",
+        "Don't shift so low that the engine speed reaches the red zone of the rev counter."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "changing_a_tire",
+      "title": "Changing a flat tire",
+      "category": "tires",
+      "system": "tires and wheels",
+      "component": "tires",
+      "keywords": [
+        "change a tire",
+        "change a flat tire",
+        "change a tyre",
+        "change a flat tyre",
+        "how to change a tire",
+        "how to change a flat tire",
+        "changing a tire",
+        "changing a flat tire",
+        "put on the spare",
+        "put on the spare tire",
+        "fit the spare tire",
+        "install the spare tire",
+        "how to use the jack",
+        "magpalit ng gulong",
+        "palit gulong"
+      ],
+      "overview": "Stop on firm, level ground away from traffic, turn on the hazard lights and apply the parking brake. Loosen the wheel nuts slightly while the wheel is on the ground, jack the car up at the point shown in the owner's manual, remove the nuts and wheel, and fit the spare. Lower the car, then tighten the nuts fully in a criss-cross pattern.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "Never put any part of your body under a car held up only by the jack.",
+        "A temporary spare has a speed and distance limit; have the flat repaired or replaced soon, and recheck the wheel nuts after a short drive."
+      ],
+      "urgency": "Change the tire only where it is safe; otherwise call roadside assistance.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": true,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Stop on firm, level ground away from traffic, turn on the hazard lights and apply the parking brake. Loosen the wheel nuts slightly while the wheel is on the ground, jack the car up at the point shown in the owner's manual, remove the nuts and wheel, and fit the spare. Lower the car, then tighten the nuts fully in a criss-cross pattern.",
+      "key_causes": [],
+      "actions": [
+        "Never put any part of your body under a car held up only by the jack.",
+        "A temporary spare has a speed and distance limit; have the flat repaired or replaced soon, and recheck the wheel nuts after a short drive."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "idle_vibration",
+      "title": "Car vibrates or shakes at idle",
+      "category": "engine",
+      "system": "engine",
+      "component": "engine and mounts",
+      "keywords": [
+        "vibrates at idle",
+        "vibrates when idle",
+        "vibrates when idling",
+        "shaking at idle",
+        "shakes at idle",
+        "shakes when idle",
+        "car shakes when idling",
+        "vibration at idle",
+        "vibrates when stopped",
+        "shakes at a stoplight",
+        "vibrates at a red light",
+        "nanginginig pag idle"
+      ],
+      "overview": "Shaking at idle usually means the engine is running unevenly, often from a misfire, or that worn engine mounts are letting normal engine vibration through to the cabin.",
+      "possible_causes": [
+        "worn spark plugs or a failing ignition coil",
+        "an air (vacuum) leak",
+        "a dirty throttle body or an idle-control fault",
+        "worn or broken engine mounts",
+        "a clogged fuel injector"
+      ],
+      "symptoms": [
+        "Vibration felt through the seat, steering wheel or floor while stopped with the engine running."
+      ],
+      "checks": [
+        "Notice whether it gets worse with the A/C on, or in Drive compared with Park; that points towards the engine mounts or idle control.",
+        "If the check-engine light is on, have the codes read before replacing parts."
+      ],
+      "urgency": "Have it checked soon; stop driving if the check-engine light flashes.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Shaking at idle usually means the engine is running unevenly, often from a misfire, or that worn engine mounts are letting normal engine vibration through to the cabin.",
+      "key_causes": [
+        "worn spark plugs or a failing ignition coil",
+        "an air (vacuum) leak",
+        "a dirty throttle body or an idle-control fault",
+        "worn or broken engine mounts",
+        "a clogged fuel injector"
+      ],
+      "actions": [
+        "Notice whether it gets worse with the A/C on, or in Drive compared with Park; that points towards the engine mounts or idle control.",
+        "If the check-engine light is on, have the codes read before replacing parts."
+      ],
+      "stop": "If the check-engine light is flashing or the engine shakes hard, stop driving and have it checked; a severe misfire can damage the catalytic converter.",
+      "professional": null
+    },
+    {
+      "id": "diesel_vs_gasoline",
+      "title": "Diesel and gasoline engines",
+      "category": "engine",
+      "system": "engine",
+      "component": "fuel system",
+      "keywords": [
+        "difference between diesel and gasoline",
+        "difference between diesel and petrol",
+        "diesel vs gasoline",
+        "gasoline vs diesel",
+        "diesel vs petrol",
+        "petrol vs diesel",
+        "diesel or gasoline",
+        "diesel or petrol which is better",
+        "is diesel better than gasoline"
+      ],
+      "overview": "A gasoline (petrol) engine ignites its fuel with a spark plug; a diesel engine has no spark plugs and ignites the fuel by compressing air until it is hot enough. Diesels usually use less fuel and pull harder at low engine speed, which suits heavy loads and long drives; gasoline engines are usually quieter, smoother and rev more freely.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "Always use the fuel named on the fuel-filler flap or in the owner's manual; the wrong fuel can seriously damage the engine."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "A gasoline (petrol) engine ignites its fuel with a spark plug; a diesel engine has no spark plugs and ignites the fuel by compressing air until it is hot enough. Diesels usually use less fuel and pull harder at low engine speed, which suits heavy loads and long drives; gasoline engines are usually quieter, smoother and rev more freely.",
+      "key_causes": [],
+      "actions": [
+        "Always use the fuel named on the fuel-filler flap or in the owner's manual; the wrong fuel can seriously damage the engine."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "fuel_grade",
+      "title": "Regular or premium gasoline",
+      "category": "engine",
+      "system": "engine",
+      "component": "fuel system",
+      "keywords": [
+        "regular instead of premium",
+        "regular gas instead of premium",
+        "premium gas",
+        "premium gasoline",
+        "premium or regular",
+        "regular or premium",
+        "octane rating",
+        "what octane",
+        "ron 91",
+        "ron 95",
+        "ron 97",
+        "unleaded or premium",
+        "which gasoline should i use",
+        "which fuel should i use"
+      ],
+      "overview": "Use the fuel grade (octane or RON number) given in the owner's manual or on the fuel-filler flap. If premium is only recommended, regular is usually fine with slightly less power; if premium is required, using regular can cause knocking and engine damage over time. A higher grade than the manual asks for brings no benefit.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "If you've filled up with the wrong type of fuel (diesel instead of gasoline, or the reverse), don't start the engine."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Use the fuel grade (octane or RON number) given in the owner's manual or on the fuel-filler flap. If premium is only recommended, regular is usually fine with slightly less power; if premium is required, using regular can cause knocking and engine damage over time. A higher grade than the manual asks for brings no benefit.",
+      "key_causes": [],
+      "actions": [
+        "If you've filled up with the wrong type of fuel (diesel instead of gasoline, or the reverse), don't start the engine."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "hazard_lights",
+      "title": "Using the hazard lights",
+      "category": "electrical",
+      "system": "lighting",
+      "component": "hazard lights",
+      "keywords": [
+        "hazard lights",
+        "hazard light",
+        "turn on the hazard lights",
+        "hazards",
+        "emergency lights",
+        "flashers",
+        "where is the hazard button",
+        "hazard button",
+        "when to use hazard lights",
+        "pang emergency na ilaw"
+      ],
+      "overview": "The hazard lights are switched on and off with the button marked with a red triangle, usually in the middle of the dashboard. They flash all the turn signals at once to warn other drivers.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "Use them when you've stopped where you're a hazard, such as a breakdown, an accident or changing a tire at the roadside.",
+        "Don't use them while driving in rain or traffic, except briefly to warn of a sudden hazard ahead."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "The hazard lights are switched on and off with the button marked with a red triangle, usually in the middle of the dashboard. They flash all the turn signals at once to warn other drivers.",
+      "key_causes": [],
+      "actions": [
+        "Use them when you've stopped where you're a hazard, such as a breakdown, an accident or changing a tire at the roadside.",
+        "Don't use them while driving in rain or traffic, except briefly to warn of a sudden hazard ahead."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "dim_headlights",
+      "title": "Dim headlights",
+      "category": "electrical",
+      "system": "lighting",
+      "component": "headlights",
+      "keywords": [
+        "headlights are dim",
+        "dim headlights",
+        "headlights dim",
+        "headlights not bright",
+        "weak headlights",
+        "headlights dimming",
+        "lights dim at idle",
+        "yellow headlights",
+        "cloudy headlights",
+        "foggy headlights",
+        "malabo ang ilaw"
+      ],
+      "overview": "Dim headlights usually come from cloudy or yellowed lenses or ageing bulbs. If the lights also dim when the engine idles or other electrics act up, the battery or charging system may be weak.",
+      "possible_causes": [
+        "cloudy or yellowed headlight lenses",
+        "ageing bulbs",
+        "a poor earth (ground) connection",
+        "a weak battery or a failing alternator"
+      ],
+      "symptoms": [
+        "Lights that look weak or yellow, or that dim when the engine idles."
+      ],
+      "checks": [
+        "Clean the lenses and check both headlights; if only one is dim, its bulb or connection is the likely cause.",
+        "If the dimming changes with engine speed or the battery light comes on, have the battery and alternator tested."
+      ],
+      "urgency": "Have it checked soon; weak lights reduce how far you can see at night.",
+      "needed_information": [
+        "The make, model and year, and what you want to do."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Dim headlights usually come from cloudy or yellowed lenses or ageing bulbs. If the lights also dim when the engine idles or other electrics act up, the battery or charging system may be weak.",
+      "key_causes": [
+        "cloudy or yellowed headlight lenses",
+        "ageing bulbs",
+        "a poor earth (ground) connection",
+        "a weak battery or a failing alternator"
+      ],
+      "actions": [
+        "Clean the lenses and check both headlights; if only one is dim, its bulb or connection is the likely cause.",
+        "If the dimming changes with engine speed or the battery light comes on, have the battery and alternator tested."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "high_fuel_consumption",
+      "title": "Car uses more fuel than usual",
+      "category": "engine",
+      "system": "engine",
+      "component": "fuel and engine management",
+      "keywords": [
+        "using so much fuel",
+        "uses too much fuel",
+        "using too much fuel",
+        "using a lot of fuel",
+        "bad fuel economy",
+        "poor fuel economy",
+        "high fuel consumption",
+        "fuel consumption increased",
+        "gas mileage dropped",
+        "uses a lot of gas",
+        "using too much gas",
+        "burning too much fuel",
+        "malakas sa gas",
+        "malakas kumain ng gas",
+        "lakas sa gasolina"
+      ],
+      "overview": "A car that suddenly uses more fuel usually has a simple cause you can check first, such as low tire pressure, before an engine fault is likely.",
+      "possible_causes": [
+        "under-inflated tires",
+        "a dirty air filter",
+        "a dragging brake",
+        "a misfire or a failing oxygen sensor",
+        "heavy traffic, short trips, extra load or constant A/C use"
+      ],
+      "symptoms": [
+        "Filling up more often than usual for the same driving."
+      ],
+      "checks": [
+        "Check the tire pressures first, then whether the check-engine light is on.",
+        "If one wheel is much hotter than the others after a drive, a brake may be dragging; have it checked."
+      ],
+      "urgency": "Have it checked at the next convenient service, sooner if a warning light is on.",
+      "needed_information": [
+        "How much more fuel it uses, since when, and whether any warning light is on."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "A car that suddenly uses more fuel usually has a simple cause you can check first, such as low tire pressure, before an engine fault is likely.",
+      "key_causes": [
+        "under-inflated tires",
+        "a dirty air filter",
+        "a dragging brake",
+        "a misfire or a failing oxygen sensor",
+        "heavy traffic, short trips, extra load or constant A/C use"
+      ],
+      "actions": [
+        "Check the tire pressures first, then whether the check-engine light is on.",
+        "If one wheel is much hotter than the others after a drive, a brake may be dragging; have it checked."
+      ],
+      "stop": null,
+      "professional": null
     }
   ]
 }
