@@ -233,14 +233,14 @@ class GuideAndSymptomTests(TestCase):
 
     def test_white_smoke_answer_covers_condensation_coolant_and_head_gasket(self):
         answer = answer_chat("white smoke from exhaust", viewer_role="customer")["answer"]
-        self.assertTrue(answer.startswith("Direct answer: Thin white vapour"))
+        self.assertTrue(answer.startswith("Thin white vapour"))
         for text in ("condensation", "coolant", "head gasket", "overheat"):
             self.assertIn(text, answer)
         self.assertIn("one possible cause", answer)
 
     def test_squeaking_brakes_answer_leads_with_noise_causes(self):
         answer = answer_chat("my brakes are squeaking when I stop", viewer_role="customer")["answer"]
-        self.assertTrue(answer.startswith("Direct answer: A squeak or squeal when braking"))
+        self.assertTrue(answer.startswith("A squeak or squeal when braking"))
         for text in ("wear indicator", "moisture", "Grinding"):
             self.assertIn(text, answer)
 
@@ -361,3 +361,102 @@ class RootCauseRegressionTests(TestCase):
             reply = answer_chat(message, viewer_role="customer", retrieval_protocol=1, vocabulary=VOCABULARY)
             self.assertEqual(reply["intent"], "goodbye", message)
         self.assertEqual(answer_chat("Yo!", viewer_role="customer", retrieval_protocol=1, vocabulary=VOCABULARY)["intent"], "greeting")
+
+
+@skipUnless(INDEX_BUILT, "knowledge index not built")
+class AnswerQualityTests(TestCase):
+    """Answer-quality regressions found on 2026-11-12 (scripts/evaluate_answer_quality.py has the full set)."""
+
+    LEAKS = ("From the automotive", "reference notes", "Direct answer:", "Source limitation", "Possible causes and mechanisms",
+             "Safe preliminary checks", "not a confirmed diagnosis", ".json", "OBDex", "SAE J2012")
+
+    def ask(self, message, conversation_id=None):
+        return answer_chat(message, viewer_role="customer", conversation_id=conversation_id,
+                           conversation_scope="customer:quality-test" if conversation_id else None, retrieval_protocol=1)
+
+    def test_answers_are_short_and_carry_no_source_labels(self):
+        for message in ("What should I do if my tire is flat?", "Why is my car overheating?", "My steering is heavy", "What is P0420?",
+                        "Transmission slipping", "What does the ABS light mean?"):
+            answer = self.ask(message)["answer"]
+            self.assertLessEqual(len(answer.split()), 130, message)
+            for leak in self.LEAKS:
+                self.assertNotIn(leak, answer, message)
+
+    def test_flat_tire_answer_stays_on_tires(self):
+        answer = self.ask("What should I do if my tire is flat?")["answer"]
+        self.assertTrue(answer.startswith("If your tire is flat, slow down gradually and pull over"))
+        for unrelated in ("steering", "transmission", "engine"):
+            self.assertNotIn(unrelated, answer.casefold())
+
+    def test_follow_up_narrows_causes_without_repeating(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000001"
+        first = self.ask("Why is my car overheating?", conversation)["answer"]
+        follow_up = self.ask("What if the coolant is full?", conversation)
+        self.assertEqual(follow_up["data"]["knowledge_id"], "engine_overheating")
+        self.assertIn("radiator fan", follow_up["answer"])
+        self.assertNotIn("low coolant", follow_up["answer"])
+        self.assertLess(len(follow_up["answer"]), len(first) / 1.5)
+
+    def test_safety_follow_up_gets_a_direct_answer(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000002"
+        self.ask("My steering is heavy", conversation)
+        answer = self.ask("Is it safe to drive?", conversation)["answer"]
+        self.assertTrue(answer.startswith("Not until it's checked"))
+
+    def test_ruling_out_a_part_uses_what_that_tells_a_technician(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000003"
+        self.ask("my car won't start", conversation)
+        answer = self.ask("the lights work fine though", conversation)["answer"]
+        self.assertIn("starter", answer)
+        self.assertNotIn("pre-rental", answer.casefold())
+
+    def test_topic_change_starts_a_new_answer(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000004"
+        self.ask("Why is my car overheating?", conversation)
+        response = self.ask("What about a flat tire?", conversation)
+        self.assertEqual(response["data"]["knowledge_id"], "tire_puncture")
+
+    def test_vague_symptoms_get_a_clarifying_question(self):
+        for message in ("My car makes a noise", "Something is wrong with my car", "A light came on on my dashboard"):
+            response = self.ask(message)
+            self.assertEqual(response["intent"], "clarification_needed", message)
+            self.assertTrue(response["answer"].endswith("?") or "?" in response["answer"], message)
+
+    def test_unrelated_questions_are_declined_not_matched_on_stray_words(self):
+        for message in ("Who won the NBA finals?", "What is the capital of France", "Recommend a good movie to watch"):
+            response = self.ask(message)
+            self.assertTrue(response["data"].get("abstained") or response["intent"] == "unknown", message)
+
+    def test_car_problems_that_name_a_fuel_or_gearbox_are_not_inventory_searches(self):
+        for message, topic in (("I smell gasoline near the car", "fuel_leak_smell"), ("It's hard to shift gears in my manual car", "gear_shifting_difficulty"),
+                               ("I put diesel in my petrol car", "wrong_fuel")):
+            response = self.ask(message)
+            self.assertNotEqual(response.get("status"), "needs_data", message)
+            self.assertEqual(response["data"]["knowledge_id"], topic, message)
+        self.assertEqual(self.ask("Do you have manual cars available?")["status"], "needs_data")
+
+    def test_safety_critical_situations_lead_with_what_to_do(self):
+        expected = {"my car caught fire": "vehicle_fire", "My brakes are not working while driving": "brake_failure",
+                    "My brakes feel spongy": "brake_pedal_soft", "I smell burning plastic from the dashboard": "electrical_burning_smell",
+                    "my car battery is swollen": "battery_hazard", "My tire blew out on the highway": "tire_blowout"}
+        for message, topic in expected.items():
+            response = self.ask(message)
+            self.assertEqual(response["data"]["knowledge_id"], topic, message)
+            self.assertRegex(response["answer"].casefold(), r"stop|pull over|don't|get everyone out|hold the steering", message)
+
+    def test_dtc_answer_is_short_and_follow_ups_are_focused(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000005"
+        first = self.ask("What is P0420?", conversation)["answer"]
+        self.assertNotIn("GM uses", first)
+        self.assertLessEqual(len(first.split()), 110)
+        serious = self.ask("is it serious?", conversation)
+        self.assertEqual(serious["data"]["focus"], "safety")
+        self.assertIn("flashing", serious["answer"])
+        detailed = self.ask("Explain P0420 in detail")["answer"]
+        self.assertIn("GM", detailed)
+
+    def test_stated_figures_are_not_invented(self):
+        for message in ("What tire pressure should my Toyota Vios have?", "How many liters of oil does my engine take?",
+                        "What is the torque for the wheel nuts on my car?"):
+            answer = self.ask(message).get("answer") or ""
+            self.assertNotRegex(answer, r"\b\d+(?:\.\d+)?\s*(?:psi|bar|kpa|nm|liters?|litres?|quarts?)\b", message)

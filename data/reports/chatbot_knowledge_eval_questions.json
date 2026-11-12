@@ -4,7 +4,7 @@
   "cases": [
     {"id":"misfire-01","question":"Why is my engine misfiring?","expected_knowledge_id":"engine_misfire"},
     {"id":"misfire-02","question":"The car shakes and idles rough; could an ignition coil cause it?","expected_knowledge_id":"engine_misfire","expected_knowledge_ids":["engine_misfire","fuel_ignition_air"]},
-    {"id":"misfire-03","question":"What should I do when the check-engine light flashes and the engine runs rough?","expected_knowledge_id":"engine_misfire","safety_terms":["stop safely"]},
+    {"id":"misfire-03","question":"What should I do when the check-engine light flashes and the engine runs rough?","expected_knowledge_id":"engine_misfire","safety_terms":["stop safely"],"expected_knowledge_ids":["engine_misfire","check_engine_flashing"]},
     {"id":"misfire-04","question":"My van stalls after starting and has lost power. What information helps diagnose it?","expected_knowledge_id":"engine_misfire"},
 
     {"id":"cooling-01","question":"What could cause an engine to overheat?","expected_knowledge_id":"engine_overheating","safety_terms":["never remove","do not continue driving"]},
@@ -22,8 +22,8 @@
     {"id":"oil-service-03","question":"Is an oil-life reminder the same as a red oil pressure warning?","expected_knowledge_id":"oil_change_schedule","expected_knowledge_ids":["oil_change_schedule","oil_pressure_leak"]},
     {"id":"oil-service-04","question":"What does engine oil do, and why is the filter changed?","expected_knowledge_id":"oil_change_schedule"},
 
-    {"id":"fuel-01","question":"I smell gasoline near the car. What should I do first?","expected_knowledge_id":"fuel_ignition_air","safety_terms":["fire risk","ignition sources"]},
-    {"id":"fuel-02","question":"The engine cranks but will not start. Could it be fuel, air, or ignition?","expected_knowledge_id":"fuel_ignition_air"},
+    {"id":"fuel-01","question":"I smell gasoline near the car. What should I do first?","expected_knowledge_id":"fuel_ignition_air","safety_terms":["fire risk","ignition sources"],"expected_knowledge_ids":["fuel_ignition_air","fuel_leak_smell"]},
+    {"id":"fuel-02","question":"The engine cranks but will not start. Could it be fuel, air, or ignition?","expected_knowledge_id":"fuel_ignition_air","expected_knowledge_ids":["fuel_ignition_air","engine_cranks_no_start"]},
     {"id":"fuel-03","question":"Can a vacuum leak cause rough running and hesitation?","expected_knowledge_id":"fuel_ignition_air"},
     {"id":"fuel-04","question":"How do a fuel pump and injectors affect engine operation?","expected_knowledge_id":"fuel_ignition_air"},
 
@@ -33,9 +33,9 @@
     {"id":"timing-04","question":"Can worn timing components cause an engine to run abnormally?","expected_knowledge_id":"timing_engine_wear"},
 
     {"id":"brakes-01","question":"What happens if I keep driving with worn brake pads?","expected_knowledge_id":"brake_wear","safety_terms":["stop safely"]},
-    {"id":"brakes-02","question":"My brakes grind when I slow down. What could be wrong?","expected_knowledge_id":"brake_wear"},
-    {"id":"brakes-03","question":"The brake pedal feels soft and stopping takes longer. Can I keep driving?","expected_knowledge_id":"brake_wear","safety_terms":["stop safely"]},
-    {"id":"brakes-04","question":"Does squealing tell me exactly how much brake pad remains?","expected_knowledge_id":"brake_wear"},
+    {"id":"brakes-02","question":"My brakes grind when I slow down. What could be wrong?","expected_knowledge_id":"brake_wear","expected_knowledge_ids":["brake_wear","brake_grinding"]},
+    {"id":"brakes-03","question":"The brake pedal feels soft and stopping takes longer. Can I keep driving?","expected_knowledge_id":"brake_wear","safety_terms":["stop safely"],"expected_knowledge_ids":["brake_wear","brake_pedal_soft"]},
+    {"id":"brakes-04","question":"Does squealing tell me exactly how much brake pad remains?","expected_knowledge_id":"brake_wear","expected_knowledge_ids":["brake_wear","brake_noise"]},
 
     {"id":"brake-warning-01","question":"The ABS warning light is on but the brake pedal feels normal. What does that mean?","expected_knowledge_id":"brake_warning_abs"},
     {"id":"brake-warning-02","question":"A red brake warning and fluid leak appeared. Should I drive?","expected_knowledge_id":"brake_warning_abs","safety_terms":["stop safely"]},
@@ -50,21 +50,21 @@
     {"id":"drivetrain-01","question":"Why does my car shake when I accelerate?","expected_knowledge_id":"clutch_drivetrain_vibration","expected_knowledge_ids":["clutch_drivetrain_vibration","engine_misfire"]},
     {"id":"drivetrain-02","question":"My motorcycle clutch slips under acceleration. What might be involved?","expected_knowledge_id":"clutch_drivetrain_vibration"},
     {"id":"drivetrain-03","question":"What can cause a clunk from a driveshaft or differential?","expected_knowledge_id":"clutch_drivetrain_vibration"},
-    {"id":"drivetrain-04","question":"A vibration starts only when I accelerate at highway speed. What details matter?","expected_knowledge_id":"clutch_drivetrain_vibration"},
+    {"id":"drivetrain-04","question":"A vibration starts only when I accelerate at highway speed. What details matter?","expected_knowledge_id":"clutch_drivetrain_vibration","expected_knowledge_ids":["clutch_drivetrain_vibration","high_speed_vibration"]},
 
     {"id":"tires-01","question":"What tire pressure should I use on my car?","expected_knowledge_id":"tire_pressure_tread"},
-    {"id":"tires-02","question":"There is a bulge on the tire sidewall. Can I drive to work?","expected_knowledge_id":"tire_pressure_tread","safety_terms":["stop safely"]},
-    {"id":"tires-03","question":"Why are the front tires wearing unevenly?","expected_knowledge_id":"tire_pressure_tread"},
+    {"id":"tires-02","question":"There is a bulge on the tire sidewall. Can I drive to work?","expected_knowledge_id":"tire_pressure_tread","safety_terms":["stop safely"],"expected_knowledge_ids":["tire_pressure_tread","sidewall_damage"]},
+    {"id":"tires-03","question":"Why are the front tires wearing unevenly?","expected_knowledge_id":"tire_pressure_tread","expected_knowledge_ids":["tire_pressure_tread","uneven_tire_wear"]},
     {"id":"tires-04","question":"Is the maximum pressure printed on a tire the recommended pressure?","expected_knowledge_id":"tire_pressure_tread"},
 
     {"id":"steering-01","question":"My steering feels loose and the van wanders. Is this urgent?","expected_knowledge_id":"steering_suspension","safety_terms":["stop safely"]},
     {"id":"steering-02","question":"What can cause a clunk over bumps in the suspension?","expected_knowledge_id":"steering_suspension"},
-    {"id":"steering-03","question":"Why does my vehicle pull to one side after I hit a pothole?","expected_knowledge_id":"steering_suspension"},
+    {"id":"steering-03","question":"Why does my vehicle pull to one side after I hit a pothole?","expected_knowledge_id":"steering_suspension","expected_knowledge_ids":["steering_suspension","vehicle_pulling"]},
     {"id":"steering-04","question":"Can a wheel bearing make a humming noise that changes with speed?","expected_knowledge_id":"steering_suspension"},
 
     {"id":"electrical-01","question":"How can I tell whether a weak battery, starter, or alternator is involved?","expected_knowledge_id":"battery_charging_starting"},
     {"id":"electrical-02","question":"My car clicks once and will not crank. What should be checked?","expected_knowledge_id":"battery_charging_starting"},
-    {"id":"electrical-03","question":"The battery warning light came on while driving. What does it indicate?","expected_knowledge_id":"battery_charging_starting"},
+    {"id":"electrical-03","question":"The battery warning light came on while driving. What does it indicate?","expected_knowledge_id":"battery_charging_starting","expected_knowledge_ids":["battery_charging_starting","battery_charging_light"]},
     {"id":"electrical-04","question":"Can a loose ground cause intermittent electrical problems?","expected_knowledge_id":"battery_charging_starting"},
 
     {"id":"obd-01","question":"What does OBD-II do on a modern car?","expected_knowledge_id":"dashboard_warning_obd"},
@@ -72,7 +72,7 @@
     {"id":"obd-03","question":"Should I clear a check-engine code before recording freeze-frame data?","expected_knowledge_id":"dashboard_warning_obd"},
     {"id":"obd-04","question":"What is the difference between a pending and stored diagnostic trouble code?","expected_knowledge_id":"dashboard_warning_obd"},
 
-    {"id":"fluids-01","question":"There is a puddle under the car. Can fluid color identify it for certain?","expected_knowledge_id":"coolant_leaks_fluids"},
+    {"id":"fluids-01","question":"There is a puddle under the car. Can fluid color identify it for certain?","expected_knowledge_id":"coolant_leaks_fluids","expected_knowledge_ids":["coolant_leaks_fluids","fluid_leak_colors"]},
     {"id":"fluids-02","question":"I see coolant on the driveway and the temperature is rising. What should I do?","expected_knowledge_id":"coolant_leaks_fluids","expected_knowledge_ids":["coolant_leaks_fluids","engine_overheating"],"safety_terms":["do not continue driving"]},
     {"id":"fluids-03","question":"Can I mix different coolant types if the colors look alike?","expected_knowledge_id":"coolant_leaks_fluids"},
     {"id":"fluids-04","question":"What could cause a transmission fluid leak?","expected_knowledge_id":"coolant_leaks_fluids"},

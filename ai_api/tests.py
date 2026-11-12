@@ -589,7 +589,9 @@ class AutomotiveKnowledgeTests(TestCase):
         self.assertIn("not a probability", result["data"]["retrieval_score_interpretation"])
         self.assertEqual(result["data"]["source_count"], 0)
         self.assertEqual(result["data"]["source_references_fetched"], 0)
-        self.assertIn("Source limitation:", result["answer"])
+        # The limitation is kept for review in data; the chat text carries no source labels.
+        self.assertNotIn("Source limitation", result["answer"])
+        self.assertTrue(result["data"]["source_limitations"])
 
     def test_high_voltage_questions_only_give_safe_general_limits(self):
         result = retrieve_knowledge("Can I open the high-voltage battery pack?")
@@ -622,7 +624,7 @@ class AutomotiveKnowledgeTests(TestCase):
             ("What information do you need to assess my vehicle?", "vehicle_health_data_limits"),
             ("Can you explain the difference between a symptom and a confirmed mechanical fault?", "symptom_vs_fault"),
             ("What maintenance should be completed before a rental vehicle is released?", "pre_rental_inspection"),
-            ("I smell gasoline near the car", "fuel_ignition_air"),
+            ("I smell gasoline near the car", "fuel_leak_smell"),
             ("The red oil pressure light came on", "oil_pressure_leak"),
             ("The ABS warning light is on", "brake_warning_abs"),
         ]
@@ -829,7 +831,7 @@ class AutomotiveKnowledgeTests(TestCase):
             "I smell gasoline near the car",
             rental_context={"vehicles": []},
         )
-        self.assertEqual(result["data"]["knowledge_id"], "fuel_ignition_air")
+        self.assertEqual(result["data"]["knowledge_id"], "fuel_leak_smell")
         self.assertIn("fire risk", result["answer"])
         self.assertNotIn("vehicle listing", result["answer"])
 

@@ -214,7 +214,7 @@ class SymptomAnswerTests(TestCase):
                     "grinding noise when I brake": "A grinding or metal-on-metal", "Car shakes when braking.": "Shaking or a pulsing pedal",
                     "Car pulls to the left.": "A car that pulls or drifts", "check engine light is flashing": "A flashing (blinking)"}
         for message, start in expected.items():
-            self.assertTrue(answer_chat(message, viewer_role="customer")["answer"].startswith("Direct answer: " + start), message)
+            self.assertTrue(answer_chat(message, viewer_role="customer")["answer"].startswith(start), message)
 
     def test_flashing_check_engine_light_says_to_stop(self):
         answer = answer_chat("my check engine light is blinking", viewer_role="customer")["answer"]

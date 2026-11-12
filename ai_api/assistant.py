@@ -26,6 +26,9 @@ from django.db import DatabaseError
 from . import chatbot_service as core
 from . import grounded_answers as grounded
 from . import planner
+from .automotive_knowledge import (
+    compose_chat_answer, compose_follow_up, has_chat_fields, knowledge_document, mentions, retrieve_knowledge,
+)
 from .fleet_service import analyze_fleet
 from .language import correct_typos, normalize_message
 from .prediction_service import MaintenancePredictionsUnavailableError
@@ -37,14 +40,68 @@ ADMIN_CONTEXT_KINDS = {"admin_fleet", "admin_maintenance", "admin_fleet_risk"}
 SYSTEM_GUIDE_INTENTS = core.RENTAL_INTENTS - core.LIVE_RENTAL_INTENTS | {"capabilities"}
 FOLLOW_UP = re.compile(
     r"^(?:and|what about|how about|also|then)\b|\b(?:it|that|this|those|these)\b.*\b(?:code|fault|mean|cause|causes|symptom|symptoms|fix|repair|cost|serious|safe)\b"
-    r"|^(?:causes?|symptoms?|fix(?:es)?|how (?:do i|to) fix|is it (?:serious|safe))\??$",
+    r"|^(?:causes?|symptoms?|fix(?:es)?|how (?:do i|to) fix|is it (?:serious|safe))\??$"
+    r"|^(?:what|why|how)\b[\w\s']{0,30}\b(?:it|that|this)\s*\??$",
     re.IGNORECASE,
+)
+RENTAL_OPERATION_TOPICS = {"pre_rental_inspection", "rental_damage_reporting", "rental_fault_reporting"}
+RENTAL_CAR = re.compile(r"\b(?:rental|rented|hired)\b", re.IGNORECASE)
+# Booking, price and inventory words: these questions belong to the database planner even when they name a car part.
+RENTAL_REQUEST = re.compile(
+    r"\b(?:price|prices|rate|rates|per day|daily|cheap|cheapest|available|availability|book|booking|bookings|reserve|reservation|reservations"
+    r"|deposit|payment|pay|show me|list|cars\b|vehicles\b|for rent|rent a|rent an|seats?|seater)\b",
+    re.IGNORECASE,
+)
+# Follow-ups about the car problem being discussed ("what if the coolant is full?", "is it safe to drive?").
+TOPIC_FOLLOW_UP = re.compile(
+    r"^(?:and|but|so|then|ok(?:ay)?|hmm+)?[\s,]*(?:what if|what about|how about|and if|if it|if the|if my|even if|is it|is that|is this|can i|could i|should i"
+    r"|could it|could that|would it|what else|anything else|tell me more|more details?|more info|explain more|why|what causes|what caused|what could cause"
+    r"|how (?:do|can|should) i|how much|i (?:already|just|have) |it'?s not|it is not|not the |what (?:should|do|can) i do|what now|now what"
+    r"|the [a-z ]{2,30} (?:is|are|was|were|works?|seems?|looks?) )",
+    re.IGNORECASE,
+)
+CONDITION = re.compile(
+    r"(?:what if|and if|but if|even if|if|suppose|assuming)?\s*(?:the |my |its )?(?P<subject>[a-z][a-z -]{1,40}?)\s+(?P<verb>is|are|was|were|looks?|seems?|works?|working)\s+"
+    r"(?P<state>full|fine|ok|okay|good|normal|new|topped up|not low|correct|working|alright|all right|clean|fixed|replaced|charged|tight)\b",
+    re.IGNORECASE,
+)
+CHECKED = re.compile(r"\bi (?:already |just |have )?(?P<verb>checked|replaced|changed|topped up|filled|cleaned|charged|tightened)\s+(?:the |my )?"
+                     r"(?P<subject>[a-z][a-z -]{1,40}?)(?:\s+(?:and|but|already|too|yesterday)\b.*)?[.?!]*$", re.IGNORECASE)
+NOT_THE = re.compile(r"\b(?:it'?s|it is|that'?s|that is)?\s*not (?:the |my )(?P<subject>[a-z][a-z -]{1,40}?)[.?!]*$", re.IGNORECASE)
+ASKS_SAFE = re.compile(r"\b(?:safe|ok(?:ay)? to drive|still drive|keep driving|drive it|drive with it|drive like this|dangerous|serious|urgent|emergency)\b", re.IGNORECASE)
+ASKS_COST = re.compile(r"\b(?:how much|cost|costs|price|expensive|cheap)\b", re.IGNORECASE)
+ASKS_FIX = re.compile(r"\b(?:fix|repair|what (?:should|do|can) i do|what now|how (?:do|can|should) i)\b", re.IGNORECASE)
+ASKS_WHY = re.compile(r"\b(?:why|cause|causes|caused|reason)\b", re.IGNORECASE)
+TOPIC_SWITCH = re.compile(r"^(?:what|how) about (?:the |my )?(?P<subject>[a-z][a-z -]{1,40}?)[.?!]*$", re.IGNORECASE)
+# A message made only of these words names a kind of symptom but nothing specific about it.
+VAGUE_WORDS = {
+    "my", "car", "the", "a", "an", "is", "it", "its", "it's", "makes", "making", "made", "has", "have", "having", "had", "there", "weird", "strange",
+    "funny", "odd", "some", "something", "kind", "of", "sort", "bit", "little", "new", "started", "starting", "keeps", "from", "coming", "came", "come",
+    "with", "vehicle", "i", "hear", "heard", "hearing", "on", "what", "do", "should", "help", "me", "please", "can", "you", "wrong", "problem", "problems",
+    "issue", "issues", "trouble", "noise", "noises", "sound", "sounds", "smell", "smells", "smelling", "vibration", "vibrates", "vibrating", "shaking",
+    "shakes", "light", "lights", "warning", "dashboard", "leak", "leaking", "leaks", "fluid", "under", "this", "that", "getting", "get", "got", "am",
+    "ive", "i've", "think", "rental", "now", "today", "again", "lately", "recently", "when", "just",
+}
+VAGUE_SYMPTOMS = (
+    (r"\b(?:noises?|sounds?)\b", "noise", "What kind of noise is it, and when does it happen? For example: squealing when braking, clicking when turning, "
+     "knocking from the engine, or a hum that gets louder with speed."),
+    (r"\bsmell", "smell", "What does it smell like, and where is it coming from? For example: burning plastic, fuel, a sweet coolant smell or burnt oil. "
+     "If it's a burning or fuel smell, stop somewhere safe first."),
+    (r"\b(?:vibrat|shak)", "vibration", "When do you feel the shaking? For example: only when braking, at high speed, when accelerating, or at idle. "
+     "If it's sudden and severe, slow down and stop somewhere safe first."),
+    (r"\bleak|\bfluid\b", "leak", "What colour is the fluid, and where under the car is it dripping? For example: green or pink near the front, "
+     "brown or black under the engine, or red near the middle."),
+    (r"\blights?\b", "warning_light", "Which warning light is it, and what colour? For example: the check-engine light (steady or flashing), "
+     "the battery light, the oil-pressure light, or the brake or ABS light."),
+    (r"\b(?:wrong|problems?|issues?|trouble)\b", "problem", "What's happening with the car? Tell me the symptom, for example a noise, a warning light, "
+     "a smell, a leak, or trouble starting, steering or braking."),
 )
 # Free-text retrieval never answers from DTC definitions: fuzzy matches between a
 # symptom description and code titles are unreliable. DTCs are looked up only
 # when the code itself appears in the question.
 FREE_TEXT_SOURCES = {"system_documentation", "pid_reference", "curated_reference", "diagnostic_flowchart", "service_statistics"}
 SPECIFIC_SOURCE_MIN_SUPPORT = 0.60
+DETAIL_REQUEST = re.compile(r"\b(?:in detail|detailed|details|in depth|technical|how (?:is|does) (?:it|the code|that) (?:get )?(?:detected|set|work))\b", re.IGNORECASE)
 ASKS_FOR_CODE = re.compile(r"\b(?:this|that|the|my)\s+(?:dtc|code|fault code|error code|trouble code)\b", re.IGNORECASE)
 GREETING = re.compile(
     r"^(?:hi+|hiya|hello+|hey+|heya|good\s+(?:morning|afternoon|evening|day|noon|am|pm)|greetings|kumusta|kamusta|musta|yo+|sup|wassup|what'?s\s+up"
@@ -185,10 +242,8 @@ ACCIDENT_ANSWER = (
 )
 GUIDE_NOT_FOUND = UNRECORDED_POLICY
 OUT_OF_SCOPE_ANSWER = (
-    "I can only answer from this system's data and its automotive references, and I found nothing "
-    "relevant enough to answer that reliably. I can help with vehicle availability, prices and bookings, "
-    "your own booking records, how to use the system, diagnostic trouble codes, maintenance and symptoms, and "
-    "(for administrators) fleet maintenance records and model-based service-need predictions."
+    "I can only answer from this system's data and its automotive references, and I don't have anything reliable on that. "
+    "I can help with car problems, warning lights, trouble codes and maintenance, and with vehicles, prices and your bookings."
 )
 
 
@@ -228,12 +283,16 @@ def answer_chat(message, vehicle=None, vehicles=None, rental_context=None, diagn
     grounded_vehicles = None
 
     memory_updates = {}
-    database_mode = retrieval_protocol == 1 and rental_context is None and not diagnostic_context and not vehicle and not vehicles
-    if database_mode and isinstance(retrieval, dict):
+    no_context = rental_context is None and not diagnostic_context and not vehicle and not vehicles
+    database_mode = retrieval_protocol == 1 and no_context
+    follow_up = _topic_follow_up(message, entities, memory) if no_context and not isinstance(retrieval, dict) else None
+    if follow_up is not None:
+        response, memory_updates = follow_up
+    elif database_mode and isinstance(retrieval, dict):
         response, grounded_vehicles, memory_updates = _grounded_response(message, role, retrieval, vocabulary, memory, entities)
     else:
         direct = None
-        if database_mode:
+        if database_mode and not _is_car_problem(message, entities):
             plan = planner.plan_message(message, role, vocabulary, memory)
             if plan and plan.get("retrievals"):
                 return {"status": "needs_data", "plan": plan}
@@ -244,7 +303,12 @@ def answer_chat(message, vehicle=None, vehicles=None, rental_context=None, diagn
             elif plan and plan.get("direct"):
                 direct = _direct_response(plan["direct"], plan)
         # Typos and Tagalog terms are mapped before matching; entities come from the message as typed.
-        response = direct or _route(normalize_message(resolved_message), entities, role, vehicle, vehicles, rental_context, diagnostic_context)
+        # "Is it serious?" / "What causes it?" about a code from earlier in the conversation answers just that.
+        dtc_focus = None
+        if used_memory and used_memory.get("dtc_codes"):
+            dtc_focus = "safety" if ASKS_SAFE.search(message) else "causes" if ASKS_WHY.search(message) else None
+        response = direct or _route(normalize_message(resolved_message), entities, role, vehicle, vehicles, rental_context, diagnostic_context,
+                                    dtc_focus=dtc_focus)
     response.setdefault("data", None)
     if response["data"] is None:
         response["data"] = {}
@@ -253,7 +317,14 @@ def answer_chat(message, vehicle=None, vehicles=None, rental_context=None, diagn
     response["data"]["viewer_role"] = role
     if used_memory:
         response["data"]["resolved_from_conversation"] = used_memory
+    topic_id = response["data"].get("knowledge_id")
+    if topic_id and topic_id not in RENTAL_OPERATION_TOPICS and RENTAL_CAR.search(message) and "rental team" not in response["answer"]:
+        response["answer"] += "\n\nAs it's a rental car, tell the rental team before arranging any repairs."
     response["data"]["latency_ms"] = round((time.perf_counter() - started) * 1000, 1)
+    if "last_topic" not in memory_updates:
+        # The car problem being discussed, so a follow-up can build on it; anything else ends that topic.
+        topic_id = response["data"].get("knowledge_id")
+        memory_updates["last_topic"] = {"id": topic_id, "shown": response["data"].get("shown_parts", [])} if topic_id else None
     _save_memory(conversation_id, conversation_scope, memory, entities, response.get("intent"), grounded_vehicles, memory_updates)
     logger.info("chat intent=%s evidence=%s role=%s latency_ms=%s", response.get("intent"),
                 response["data"]["evidence"].get("evidence_type"), role, response["data"]["latency_ms"])
@@ -342,7 +413,7 @@ def _direct_response(kind, plan=None):
     return _with_evidence(core.build_response("permission_denied", 1.0, ADMIN_ONLY_ANSWER), "none", [])
 
 
-def _route(message, entities, role, vehicle, vehicles, rental_context, diagnostic_context):
+def _route(message, entities, role, vehicle, vehicles, rental_context, diagnostic_context, dtc_focus=None):
     database_context = rental_context.get("database_context") if isinstance(rental_context, dict) else None
     if isinstance(database_context, dict) and database_context.get("kind") in ADMIN_CONTEXT_KINDS and role != "admin":
         return _with_evidence(core.build_response("permission_denied", 1.0, (
@@ -366,6 +437,11 @@ def _route(message, entities, role, vehicle, vehicles, rental_context, diagnosti
                          "how to book or cancel, or a car problem.")
         return _with_evidence(core.build_response("clarification_needed", 1.0, question), "none", [], clarification="help_topic")
 
+    vague = _vague_symptom(message) if not isinstance(database_context, dict) and not diagnostic_context else None
+    if vague:
+        # "My car makes a noise": asking beats guessing which system it is.
+        return _with_evidence(core.build_response("clarification_needed", 1.0, vague[1]), "none", [], clarification=f"symptom_{vague[0]}")
+
     parts = lookup_parts(entities["part_numbers"])
     if parts:
         lines = [f"{number}: {item['description']} (supply group {item['supply_group']})" for number, item in parts.items()]
@@ -378,7 +454,7 @@ def _route(message, entities, role, vehicle, vehicles, rental_context, diagnosti
         return _fleet_risk_response(database_context)
 
     if entities["dtc_codes"] and not isinstance(database_context, dict):
-        return _dtc_response(entities["dtc_codes"], role)
+        return _dtc_response(entities["dtc_codes"], role, detailed=bool(DETAIL_REQUEST.search(message)), focus=dtc_focus)
     if ASKS_FOR_CODE.search(message) and not entities["dtc_codes"] and not isinstance(database_context, dict):
         return _with_evidence(core.build_response("clarification_needed", 1.0,
             "Which diagnostic trouble code do you mean? Please type it exactly as the scanner shows it, for example P0420."),
@@ -460,11 +536,61 @@ def _citation(passage):
     return citation
 
 
-def _dtc_response(codes, role):
+def _short_dtc(text):
+    """The code's name, its three most likely causes and typical signs; the detection details stay out of a chat answer."""
+    head = re.match(r"^[A-Z]\d{4}: [^.]+\.", text)
+    if not head:
+        return text
+    parts = [head.group(0)]
+    causes = re.search(r"Common causes: (.*?)(?= Symptoms:| Repair difficulty:|$)", text)
+    if causes:
+        items = [re.sub(r"\s*\((?:high|medium|low) likelihood\)", "", item).strip(" .") for item in causes.group(1).split(";")]
+        items = [item if item[:2].isupper() else item[0].lower() + item[1:] for item in items if item]
+        parts.append("Common causes: " + "; ".join(items[:3]) + ".")
+    symptoms = re.search(r"Symptoms: (.*?)(?= Repair difficulty:|$)", text)
+    if symptoms:
+        items = [item.strip(" .") for item in symptoms.group(1).split(";") if item.strip(" .")]
+        if items:
+            parts.append("Typical signs: " + "; ".join(item[0].lower() + item[1:] for item in items[:2]) + ".")
+    return " ".join(parts)
+
+
+def _dtc_causes(text):
+    causes = re.search(r"Common causes: (.*?)(?= Symptoms:| Repair difficulty:|$)", text)
+    if not causes:
+        return []
+    items = [re.sub(r"\s*\((?:high|medium|low) likelihood\)", "", item).strip(" .") for item in causes.group(1).split(";")]
+    return [item if item[:2].isupper() else item[0].lower() + item[1:] for item in items if item]
+
+
+def _dtc_focused(codes, passages, focus):
+    """A short answer to "is it serious?" or "what causes it?" about codes already defined."""
+    found = [code for code in codes if code in passages]
+    if focus == "causes":
+        lines = [f"The usual causes of {code} are: " + "; ".join(_dtc_causes(passages[code]["text"])) + "."
+                 for code in found if _dtc_causes(passages[code]["text"])]
+        return "\n\n".join(lines) + "\n\nConfirm the cause with an inspection or tests before replacing parts." if lines else None
+    notes = []
+    for code in found:
+        metadata = passages[code]["metadata"]
+        note = f"{code} normally turns on the check-engine light" if metadata.get("mil") else f"{code} is a stored fault code"
+        if metadata.get("limp_mode_possible"):
+            note += ", and the car may go into reduced-power (limp) mode"
+        notes.append(note + ".")
+    return " ".join(notes) + (
+        " A steady check-engine light usually means have it checked soon rather than stop straight away. If the light starts "
+        "flashing, or the car overheats, loses power or drives abnormally, stop when it's safe and arrange an inspection.") if notes else None
+
+
+def _dtc_response(codes, role, detailed=False, focus=None):
     try:
         passages = {p["metadata"].get("dtc_code"): p for code in codes for p in retrieve(code, role, top_k=1, source_types={"dtc_reference"})}
     except KnowledgeIndexUnavailable as error:
         return _with_evidence(core.build_response("dtc_lookup", 0.0, f"The diagnostic code reference is unavailable: {error}"), "none", [])
+    focused = _dtc_focused(codes, passages, focus) if focus else None
+    if focused:
+        return _with_evidence(core.build_response("dtc_lookup", 1.0, focused, {"dtc_codes": codes, "dtc_not_found": [], "focus": focus}),
+                              "reference", [_citation(passages[code]) for code in codes if code in passages], support=1.0)
     lines, citations, missing = [], [], []
     for code in codes:
         passage = passages.get(code)
@@ -472,7 +598,7 @@ def _dtc_response(codes, role):
             missing.append(code)
             continue
         metadata = passage["metadata"]
-        line = passage["text"]
+        line = passage["text"] if detailed else _short_dtc(passage["text"])
         if metadata.get("mil"):
             line += " This code normally turns on the check-engine (MIL) light."
         if metadata.get("limp_mode_possible"):
@@ -482,13 +608,12 @@ def _dtc_response(codes, role):
     answer = "\n\n".join(lines)
     if missing:
         answer += ("\n\n" if answer else "") + (
-            f"{', '.join(missing)} {'is' if len(missing) == 1 else 'are'} not in the generic SAE J2012 code reference I use. "
+            f"{', '.join(missing)} {'is' if len(missing) == 1 else 'are'} not in the generic OBD-II code list. "
             "Codes like P1xxx, B1xxx or U1xxx are usually manufacturer-specific: tell me the make, model and year, "
             "or check the manufacturer's service information or a scan tool that supports that brand."
         )
     if lines:
-        answer += ("\n\nThese are generic code definitions, not a diagnosis of your vehicle. A code shows which circuit or "
-                   "test failed; confirm the cause with an inspection before replacing parts.")
+        answer += "\n\nA code shows which circuit or test failed, so confirm the cause with an inspection before replacing parts."
     return _with_evidence(core.build_response("dtc_lookup", 1.0, answer.strip(), {"dtc_codes": codes, "dtc_not_found": missing}),
                           "reference" if lines else "none", citations, support=1.0 if lines else 0.0)
 
@@ -513,6 +638,8 @@ def _specific_reference(message, role):
     if not passages or passages[0]["support"] < SPECIFIC_SOURCE_MIN_SUPPORT:
         return None
     top = passages[0]["source_type"]
+    if top == "system_documentation" and _rental_operation_topic(message):
+        return None  # Inspecting the car or reporting damage: the vehicle guidance answers, not the booking guide.
     if top == "system_documentation" or (top == "pid_reference" and re.search(r"\bpids?\b", message, re.IGNORECASE)):
         return _grounded_answer(message, role, {"intent": None, "confidence": 0.0}, passages=passages)
     return None
@@ -543,6 +670,9 @@ def _is_guide_question(message):
         return True
     if MECHANICAL.search(message) or extract_entities(message)["dtc_codes"]:
         return False
+    if _rental_operation_topic(message):
+        # Inspecting the car, or reporting damage or a fault, is vehicle guidance rather than booking policy.
+        return False
     return bool(RENTAL_POLICY.search(message) or SYSTEM_PROCEDURE.search(message))
 
 
@@ -553,25 +683,32 @@ def _grounded_answer(message, role, core_response, passages=None, source_types=F
     except KnowledgeIndexUnavailable as error:
         logger.warning("knowledge index unavailable: %s", error)
         return None
+    if passages and passages[0]["source_type"] == "curated_reference":
+        # The knowledge retrieval has stricter topic checks; a curated entry it rejects for this message
+        # ("my car caught fire" vs. brake grinding) is not used from this index either.
+        agreed = retrieve_knowledge(message)
+        agreed_id = f"kb:{agreed['document']['id']}" if agreed is not None else None
+        passages = [p for p in passages if p["source_type"] != "curated_reference" or p["id"] == agreed_id]
     if not passages or passages[0]["support"] < settings.CHATBOT_MIN_RETRIEVAL_SUPPORT:
         return None
     best = passages[0]
     used = [best] + [p for p in passages[1:] if p["support"] >= settings.CHATBOT_STRONG_RETRIEVAL_SUPPORT
                      and p["source_type"] == best["source_type"]][:1]
-    label = {
-        "system_documentation": "From the DriveRent system guide",
-        "dtc_reference": "From the generic OBD-II code reference",
-        "pid_reference": "From the OBD-II PID reference",
-        "curated_reference": "From the automotive reference notes",
-        "diagnostic_flowchart": "From a diagnostic flowchart (source not independently verified)",
-        "service_statistics": "From recorded workshop service data",
-    }.get(best["source_type"], "From the reference material")
-    answer = f"{label}: " + " ".join(f"{p['title']}. {p['text']}" if p is not best else p["text"] for p in used)
+    # Which source answered stays in data.evidence; the text itself carries no source labels.
+    curated = knowledge_document(best["id"][3:]) if best["source_type"] == "curated_reference" and best["id"].startswith("kb:") else None
+    shown_parts = []
+    if curated is not None and has_chat_fields(curated):
+        used = [best]
+        answer, shown_parts = compose_chat_answer(curated, message)
+    else:
+        answer = " ".join(f"{p['title']}. {p['text']}" if p is not best else p["text"] for p in used)
     if best["support"] < settings.CHATBOT_STRONG_RETRIEVAL_SUPPORT:
-        answer += " (This is the closest match I found; if it doesn't answer your question, please add more detail.)"
+        answer += " If that isn't what you meant, tell me a bit more about the problem."
     intent = core_response.get("intent") if core_response.get("intent") not in {"unknown", None} else best["metadata"].get("category", "reference")
-    response = core.build_response(intent, core_response.get("confidence", 0.0), answer,
-                                   {"retrieved_ids": [p["id"] for p in passages], "retrieval_scores": [p["score"] for p in passages]})
+    data = {"retrieved_ids": [p["id"] for p in passages], "retrieval_scores": [p["score"] for p in passages]}
+    if curated is not None:
+        data.update(knowledge_id=curated["id"], knowledge_ids=[curated["id"]], shown_parts=shown_parts)
+    response = core.build_response(intent, core_response.get("confidence", 0.0), answer, data)
     return _with_evidence(response, "reference", [_citation(p) for p in used], support=best["support"])
 
 
@@ -622,6 +759,97 @@ def _resolve_follow_up(message, entities, memory):
     return message, None
 
 
+def _topic_follow_up(message, entities, memory):
+    """(response, memory updates) when the message follows up on the car problem just discussed, else None.
+
+    Only short follow-ups are handled here; a message that clearly names another topic, a
+    trouble code, or anything not covered below goes through normal routing."""
+    topic = memory.get("last_topic") if isinstance(memory, dict) else None
+    if not isinstance(topic, dict) or not topic.get("id") or entities["dtc_codes"]:
+        return None
+    text = message.strip()
+    if len(re.findall(r"[a-z0-9']+", text.casefold())) > 16 or not TOPIC_FOLLOW_UP.search(text):
+        return None
+    document = knowledge_document(topic["id"])
+    if document is None or not has_chat_fields(document):
+        return None
+    document_text = " ".join([document["answer"], document["title"], " ".join(document.get("key_causes") or []),
+                              " ".join(document.get("actions") or []), " ".join(document.get("keywords") or []),
+                              " ".join(document.get("condition_hints") or {})])
+    ruled_out = CONDITION.search(text) or CHECKED.search(text) or NOT_THE.search(text)
+    about_this_topic = ruled_out is not None and mentions(document_text, [
+        term for term in re.findall(r"[a-z]+", ruled_out.group("subject").casefold()) if term not in {"the", "my", "a", "an", "it", "that", "this"}])
+    other = retrieve_knowledge(text)
+    if not about_this_topic and other is not None and other["document"]["id"] != document["id"] and other.get("phrase_length", 0) > 0:
+        return None  # "what about a flat tire?" after overheating: a new topic. "I replaced the spark plugs" after a misfire is not.
+    switch = TOPIC_SWITCH.match(text)
+    if switch:
+        subject_terms = [term for term in re.findall(r"[a-z]+", switch.group("subject").casefold()) if term not in {"the", "my", "a", "an", "if", "it"}]
+        if not subject_terms or not mentions(document_text, subject_terms):
+            return None
+
+    kind, subject, lead = None, None, None
+    condition, checked, not_the = CONDITION.search(text), CHECKED.search(text), NOT_THE.search(text)
+    if ASKS_SAFE.search(text) and not condition:
+        kind = "safety"
+    elif ASKS_COST.search(text):
+        kind = "cost"
+    elif condition and condition.group("subject").casefold() not in {"it", "that", "this"}:
+        kind, subject = "condition", condition.group("subject")
+        lead = f"If the {subject} {condition.group('verb')} {condition.group('state')}"
+    elif checked:
+        kind, subject = "condition", checked.group("subject")
+        lead = f"With the {subject} already {checked.group('verb')}"
+    elif not_the:
+        kind, subject = "condition", not_the.group("subject")
+        lead = f"If it isn't the {subject}"
+    elif ASKS_WHY.search(text):
+        kind = "causes"
+    elif ASKS_FIX.search(text):
+        kind = "fix"
+    elif re.search(r"\b(?:what else|anything else|tell me more|more details?|more info|explain more)\b", text, re.IGNORECASE):
+        kind = "more"
+    if kind is None:
+        return None
+
+    answer, shown = compose_follow_up(document, kind, topic.get("shown"), subject=subject, lead=lead)
+    response = core.build_response(document["category"], 1.0, answer,
+                                   {"knowledge_id": document["id"], "knowledge_ids": [document["id"]], "follow_up": kind})
+    response = _with_evidence(response, "reference", [{"name": "Curated automotive knowledge base", "ids": [document["id"]]}])
+    response["data"]["resolved_from_conversation"] = {"topic": document["id"]}
+    updates = {"last_topic": {"id": document["id"], "shown": sorted(set(topic.get("shown") or []) | set(shown))}}
+    return response, updates
+
+
+def _is_car_problem(message, entities):
+    """True for a question about a car problem or maintenance topic, which needs no rental records.
+
+    "I smell gasoline near the car" names a fuel type and "hard to shift gears in my manual car" a
+    transmission, but neither is an inventory search: a keyword phrase of a knowledge topic
+    matched and no booking, price or inventory words are present."""
+    if entities["dtc_codes"] or RENTAL_REQUEST.search(message):
+        return False
+    knowledge = retrieve_knowledge(message)
+    return knowledge is not None and knowledge.get("phrase_length", 0) > 0
+
+
+def _rental_operation_topic(message):
+    """True when a keyword phrase of a rental-operations topic (inspection, damage or fault reporting) matches."""
+    knowledge = retrieve_knowledge(message)
+    return knowledge is not None and knowledge.get("phrase_length", 0) > 0 and knowledge["document"]["id"] in RENTAL_OPERATION_TOPICS
+
+
+def _vague_symptom(message):
+    """(kind, clarifying question) when the message names a kind of symptom and nothing specific, else None."""
+    words = re.findall(r"[a-z']+", message.casefold())
+    if not words or len(words) > 14 or any(word not in VAGUE_WORDS for word in words):
+        return None
+    for pattern, kind, question in VAGUE_SYMPTOMS:
+        if re.search(pattern, message, re.IGNORECASE):
+            return kind, question
+    return None
+
+
 def _load_memory(conversation_id, scope):
     if not conversation_id or not scope:
         return {}
@@ -666,7 +894,8 @@ def _save_memory(conversation_id, scope, memory, entities, intent, vehicles=None
               "last_vehicles": vehicles or memory.get("last_vehicles", []),
               # Explanations already shown in this conversation, and the last date range asked about.
               "notes_shown": (updates or {}).get("notes_shown", memory.get("notes_shown", [])),
-              "last_period": (updates or {}).get("last_period", memory.get("last_period"))}
+              "last_period": (updates or {}).get("last_period", memory.get("last_period")),
+              "last_topic": (updates or {})["last_topic"] if "last_topic" in (updates or {}) else memory.get("last_topic")}
     try:
         conversation = Conversation.objects.filter(id=conversation_id).first()
         if conversation is not None and conversation.memory.get("scope") not in {None, scope}:

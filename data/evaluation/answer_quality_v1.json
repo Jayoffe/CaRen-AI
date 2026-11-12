@@ -1,0 +1,2281 @@
+{
+  "version": 1,
+  "description": "Chat answer-quality cases. Each case is a conversation (one or more turns). Per turn: expect (answer | clarify | abstain | dtc), topics (accepted knowledge ids), include (each item is a list of alternatives; at least one must appear), exclude (must not appear), safety (the answer must contain an immediate safety instruction), max_words, no_numbers (the answer must not state figures it cannot know). Paraphrase groups must all resolve to the same topic.",
+  "leakage_terms": [
+    "From the automotive",
+    "From the DriveRent",
+    "From the generic",
+    "From the OBD",
+    "From the reference",
+    "From a diagnostic",
+    "From recorded",
+    "reference notes",
+    "knowledge base",
+    "Direct answer:",
+    "Source limitation",
+    "Possible causes and mechanisms",
+    "Safe preliminary checks",
+    ".json",
+    "OBDex",
+    "SAE J2012",
+    "dataset",
+    "not a confirmed diagnosis",
+    "retrieval",
+    "curated"
+  ],
+  "safety_phrases": [
+    "stop",
+    "pull over",
+    "don't drive",
+    "do not drive",
+    "tow",
+    "emergency",
+    "get everyone out",
+    "move away",
+    "don't continue",
+    "switch off the engine",
+    "hold the steering wheel",
+    "hold the wheel"
+  ],
+  "cases": [
+    {
+      "id": "tire_flat",
+      "category": "tires",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "What should I do if my tire is flat?",
+          "expect": "answer",
+          "topics": [
+            "tire_puncture"
+          ],
+          "include": [
+            [
+              "pull over",
+              "safe"
+            ],
+            [
+              "hazard"
+            ],
+            [
+              "spare",
+              "repair kit"
+            ]
+          ],
+          "exclude": [
+            "transmission",
+            "steering",
+            "engine"
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "tire_pressure",
+      "category": "tires",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "How often should I check my tire pressure?",
+          "expect": "answer",
+          "topics": [
+            "tire_pressure_tread"
+          ],
+          "include": [
+            [
+              "month"
+            ],
+            [
+              "cold"
+            ]
+          ],
+          "exclude": [
+            "brake fluid"
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "tire_pressure_number",
+      "category": "tires",
+      "type": "insufficient_information",
+      "turns": [
+        {
+          "message": "What tire pressure should my Toyota Vios have?",
+          "expect": "answer",
+          "topics": [
+            "tire_pressure_tread"
+          ],
+          "include": [
+            [
+              "door",
+              "placard",
+              "owner's manual"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "tire_blowout",
+      "category": "tires",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "My tire blew out on the highway",
+          "expect": "answer",
+          "topics": [
+            "tire_blowout"
+          ],
+          "include": [
+            [
+              "steering wheel firmly",
+              "hold the steering"
+            ],
+            [
+              "don't brake hard",
+              "not brake hard"
+            ]
+          ],
+          "safety": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "tire_sidewall",
+      "category": "tires",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "There's a bulge on the sidewall of my tire",
+          "expect": "answer",
+          "topics": [
+            "sidewall_damage"
+          ],
+          "include": [
+            [
+              "burst"
+            ],
+            [
+              "spare",
+              "replace"
+            ]
+          ],
+          "safety": true,
+          "max_words": 100
+        }
+      ]
+    },
+    {
+      "id": "tire_uneven",
+      "category": "tires",
+      "type": "technical",
+      "turns": [
+        {
+          "message": "Why are my tires wearing on the inside edge?",
+          "expect": "answer",
+          "topics": [
+            "uneven_tire_wear"
+          ],
+          "include": [
+            [
+              "alignment"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "tire_rotation",
+      "category": "tires",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What is tire rotation?",
+          "expect": "answer",
+          "topics": [
+            "tire_rotation"
+          ],
+          "include": [
+            [
+              "evenly"
+            ]
+          ],
+          "max_words": 70
+        }
+      ]
+    },
+    {
+      "id": "wheel_balancing",
+      "category": "tires",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What is wheel balancing?",
+          "expect": "answer",
+          "topics": [
+            "wheel_balancing"
+          ],
+          "include": [
+            [
+              "vibration"
+            ]
+          ],
+          "max_words": 70
+        }
+      ]
+    },
+    {
+      "id": "overheat_follow_up",
+      "category": "engine",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "Why is my car overheating?",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "include": [
+            [
+              "coolant"
+            ],
+            [
+              "thermostat"
+            ],
+            [
+              "fan"
+            ]
+          ],
+          "safety": true,
+          "max_words": 130
+        },
+        {
+          "message": "What if the coolant is full?",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "include": [
+            [
+              "fan"
+            ],
+            [
+              "thermostat",
+              "water pump"
+            ]
+          ],
+          "exclude": [
+            "low coolant"
+          ],
+          "max_words": 70,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "overheat_safe",
+      "category": "engine",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "My temperature gauge is going up",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "Is it safe to keep driving?",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "safety": true,
+          "max_words": 60,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "misfire",
+      "category": "engine",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My engine is misfiring",
+          "expect": "answer",
+          "topics": [
+            "engine_misfire"
+          ],
+          "include": [
+            [
+              "spark plug"
+            ],
+            [
+              "ignition coil",
+              "coil"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "check_engine_flashing",
+      "category": "engine",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "My check engine light is flashing",
+          "expect": "answer",
+          "topics": [
+            "check_engine_flashing"
+          ],
+          "include": [
+            [
+              "misfire"
+            ]
+          ],
+          "safety": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "oil_light",
+      "category": "engine",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "The red oil pressure light came on while driving",
+          "expect": "answer",
+          "topics": [
+            "oil_pressure_leak"
+          ],
+          "include": [
+            [
+              "oil level"
+            ]
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "oil_check",
+      "category": "engine",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "How do I check my engine oil?",
+          "expect": "answer",
+          "topics": [
+            "engine_oil_level"
+          ],
+          "include": [
+            [
+              "dipstick"
+            ],
+            [
+              "level"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "oil_change",
+      "category": "maintenance",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "How often should I change engine oil?",
+          "expect": "answer",
+          "topics": [
+            "oil_change_schedule"
+          ],
+          "include": [
+            [
+              "owner's manual",
+              "oil-life"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 100
+        }
+      ]
+    },
+    {
+      "id": "engine_knock",
+      "category": "engine",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My engine is making a knocking noise",
+          "expect": "answer",
+          "topics": [
+            "engine_noises"
+          ],
+          "include": [
+            [
+              "oil"
+            ]
+          ],
+          "max_words": 140
+        }
+      ]
+    },
+    {
+      "id": "cranks_no_start",
+      "category": "engine",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "The engine cranks but won't start",
+          "expect": "answer",
+          "topics": [
+            "engine_cranks_no_start"
+          ],
+          "include": [
+            [
+              "fuel"
+            ],
+            [
+              "immobiliser",
+              "key"
+            ]
+          ],
+          "exclude": [
+            "alternator"
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "blue_smoke",
+      "category": "engine",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "Blue smoke from my exhaust",
+          "expect": "answer",
+          "topics": [
+            "exhaust_blue_smoke"
+          ],
+          "include": [
+            [
+              "oil"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "white_smoke",
+      "category": "engine",
+      "type": "technical",
+      "turns": [
+        {
+          "message": "white smoke from exhaust",
+          "expect": "answer",
+          "topics": [
+            "exhaust_smoke_color"
+          ],
+          "include": [
+            [
+              "condensation"
+            ],
+            [
+              "coolant"
+            ],
+            [
+              "head gasket"
+            ]
+          ],
+          "max_words": 140
+        }
+      ]
+    },
+    {
+      "id": "timing_belt",
+      "category": "engine",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What does a timing belt do?",
+          "expect": "answer",
+          "topics": [
+            "timing_engine_wear"
+          ],
+          "include": [
+            [
+              "valves",
+              "pistons"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "battery_click",
+      "category": "electrical",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "Car won't start, just clicking",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting"
+          ],
+          "include": [
+            [
+              "battery"
+            ],
+            [
+              "starter"
+            ]
+          ],
+          "exclude": [
+            "transmission"
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "alternator_role",
+      "category": "electrical",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What does an alternator do?",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting",
+            "battery_charging_light"
+          ],
+          "include": [
+            [
+              "electrical power",
+              "charges",
+              "charging"
+            ]
+          ],
+          "max_words": 80
+        }
+      ]
+    },
+    {
+      "id": "battery_light",
+      "category": "electrical",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "The battery light came on while driving",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_light"
+          ],
+          "include": [
+            [
+              "alternator"
+            ]
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "battery_dies_overnight",
+      "category": "electrical",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My battery dies overnight",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting"
+          ],
+          "include": [
+            [
+              "drain",
+              "draining"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "blown_fuse",
+      "category": "electrical",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My radio stopped working, could it be a blown fuse?",
+          "expect": "answer",
+          "topics": [
+            "blown_fuse"
+          ],
+          "include": [
+            [
+              "fuse"
+            ],
+            [
+              "same rating"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "burning_plastic",
+      "category": "electrical",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "I smell burning plastic from the dashboard",
+          "expect": "answer",
+          "topics": [
+            "electrical_burning_smell"
+          ],
+          "include": [
+            [
+              "fire"
+            ],
+            [
+              "wiring",
+              "short circuit"
+            ]
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "battery_care",
+      "category": "maintenance",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "How do I take care of my car battery?",
+          "expect": "answer",
+          "topics": [
+            "battery_maintenance"
+          ],
+          "include": [
+            [
+              "terminals"
+            ]
+          ],
+          "max_words": 100
+        }
+      ]
+    },
+    {
+      "id": "spongy_brakes",
+      "category": "brakes",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "My brakes feel spongy",
+          "expect": "answer",
+          "topics": [
+            "brake_pedal_soft"
+          ],
+          "include": [
+            [
+              "air"
+            ],
+            [
+              "brake fluid",
+              "brake-fluid"
+            ]
+          ],
+          "exclude": [
+            "squeal",
+            "wear indicator"
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "brake_failure",
+      "category": "brakes",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "My brakes are not working while driving",
+          "expect": "answer",
+          "topics": [
+            "brake_failure"
+          ],
+          "include": [
+            [
+              "lower gear"
+            ],
+            [
+              "parking brake"
+            ]
+          ],
+          "safety": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "brake_squeal",
+      "category": "brakes",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "my brakes are squeaking when I stop",
+          "expect": "answer",
+          "topics": [
+            "brake_noise"
+          ],
+          "include": [
+            [
+              "wear indicator"
+            ],
+            [
+              "moisture"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "brake_grinding",
+      "category": "brakes",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "grinding noise when I brake",
+          "expect": "answer",
+          "topics": [
+            "brake_grinding"
+          ],
+          "include": [
+            [
+              "pads"
+            ]
+          ],
+          "safety": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "abs_light",
+      "category": "brakes",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What does the ABS light mean?",
+          "expect": "answer",
+          "topics": [
+            "brake_warning_abs"
+          ],
+          "include": [
+            [
+              "anti-lock"
+            ]
+          ],
+          "max_words": 100
+        }
+      ]
+    },
+    {
+      "id": "brake_fluid",
+      "category": "brakes",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "When should brake fluid be changed?",
+          "expect": "answer",
+          "topics": [
+            "brake_fluid_maintenance"
+          ],
+          "include": [
+            [
+              "owner's manual"
+            ],
+            [
+              "moisture"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "brake_vibration",
+      "category": "brakes",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "Car shakes when braking.",
+          "expect": "answer",
+          "topics": [
+            "brake_vibration"
+          ],
+          "include": [
+            [
+              "rotor"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "brake_pads_role",
+      "category": "brakes",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What do brake pads do?",
+          "expect": "answer",
+          "topics": [
+            "brake_wear"
+          ],
+          "max_words": 90
+        }
+      ]
+    },
+    {
+      "id": "trans_slip",
+      "category": "transmission",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "Transmission slipping",
+          "expect": "answer",
+          "topics": [
+            "transmission_slip"
+          ],
+          "include": [
+            [
+              "fluid"
+            ]
+          ],
+          "exclude": [
+            "tire",
+            "brake pad"
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "trans_fluid",
+      "category": "transmission",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "How do I check transmission fluid?",
+          "expect": "answer",
+          "topics": [
+            "transmission_fluid"
+          ],
+          "include": [
+            [
+              "owner's manual"
+            ],
+            [
+              "dipstick"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "trans_fluid_capacity",
+      "category": "transmission",
+      "type": "insufficient_information",
+      "turns": [
+        {
+          "message": "How many liters of transmission fluid does my car need?",
+          "expect": "answer",
+          "topics": [
+            "transmission_fluid",
+            "transmission_slip"
+          ],
+          "no_numbers": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "grinding_gears",
+      "category": "transmission",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "It's hard to shift gears in my manual car",
+          "expect": "answer",
+          "topics": [
+            "gear_shifting_difficulty"
+          ],
+          "include": [
+            [
+              "clutch"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "trans_noise",
+      "category": "transmission",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My transmission is whining",
+          "expect": "answer",
+          "topics": [
+            "transmission_noise"
+          ],
+          "include": [
+            [
+              "fluid"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "heavy_steering",
+      "category": "steering",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My steering is heavy",
+          "expect": "answer",
+          "topics": [
+            "steering_heavy"
+          ],
+          "include": [
+            [
+              "power-steering",
+              "power steering"
+            ],
+            [
+              "tire"
+            ]
+          ],
+          "exclude": [
+            "transmission"
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "steering_failure",
+      "category": "steering",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "I lost steering while driving",
+          "expect": "answer",
+          "topics": [
+            "steering_failure"
+          ],
+          "include": [
+            [
+              "hazard"
+            ],
+            [
+              "brake gently"
+            ]
+          ],
+          "safety": true,
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "steering_lock",
+      "category": "steering",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My steering wheel is locked and the key won't turn",
+          "expect": "answer",
+          "topics": [
+            "steering_failure"
+          ],
+          "include": [
+            [
+              "steering lock"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "worn_shocks",
+      "category": "suspension",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My car keeps bouncing after bumps",
+          "expect": "answer",
+          "topics": [
+            "shock_absorbers"
+          ],
+          "include": [
+            [
+              "shock"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "alignment",
+      "category": "suspension",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "My steering wheel is not straight when driving straight",
+          "expect": "answer",
+          "topics": [
+            "wheel_alignment"
+          ],
+          "include": [
+            [
+              "alignment"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "pulling",
+      "category": "suspension",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "Car pulls to the left.",
+          "expect": "answer",
+          "topics": [
+            "vehicle_pulling"
+          ],
+          "include": [
+            [
+              "tire pressure"
+            ],
+            [
+              "alignment"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "high_speed_shake",
+      "category": "suspension",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My steering wheel shakes at high speed",
+          "expect": "answer",
+          "topics": [
+            "high_speed_vibration"
+          ],
+          "include": [
+            [
+              "balanc"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "cv_click",
+      "category": "suspension",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "Clicking noise when turning",
+          "expect": "answer",
+          "topics": [
+            "cv_joint_clicking"
+          ],
+          "include": [
+            [
+              "CV joint"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "severe_shake",
+      "category": "suspension",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "My car suddenly started shaking violently",
+          "expect": "answer",
+          "topics": [
+            "severe_vibration"
+          ],
+          "include": [
+            [
+              "tire"
+            ]
+          ],
+          "safety": true,
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "power_steering_whine",
+      "category": "steering",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "Whining noise when turning the steering wheel",
+          "expect": "answer",
+          "topics": [
+            "power_steering_noise"
+          ],
+          "include": [
+            [
+              "fluid"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "fuel_smell",
+      "category": "safety",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "I smell gasoline near the car",
+          "expect": "answer",
+          "topics": [
+            "fuel_leak_smell"
+          ],
+          "include": [
+            [
+              "fire"
+            ]
+          ],
+          "safety": true,
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "engine_smoke",
+      "category": "safety",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "There is smoke coming from under the hood",
+          "expect": "answer",
+          "topics": [
+            "engine_bay_smoke"
+          ],
+          "include": [
+            [
+              "bonnet",
+              "hood"
+            ]
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "ev_battery",
+      "category": "safety",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "Can I open the high-voltage battery pack?",
+          "expect": "answer",
+          "topics": [
+            "hybrid_ev_high_voltage_safety"
+          ],
+          "include": [
+            [
+              "shock"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "coolant_change",
+      "category": "maintenance",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What coolant should I use?",
+          "expect": "answer",
+          "topics": [
+            "coolant_maintenance"
+          ],
+          "include": [
+            [
+              "owner's manual"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "service_schedule",
+      "category": "maintenance",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "When should I service my car?",
+          "expect": "answer",
+          "topics": [
+            "maintenance_schedule_overdue",
+            "filters_routine_service",
+            "oil_change_schedule"
+          ],
+          "include": [
+            [
+              "owner's manual",
+              "schedule"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "air_filter",
+      "category": "maintenance",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "When do I replace the air filter?",
+          "expect": "answer",
+          "topics": [
+            "filters_routine_service"
+          ],
+          "include": [
+            [
+              "dusty",
+              "schedule"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "ac_warm",
+      "category": "maintenance",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "My aircon is blowing warm air",
+          "expect": "answer",
+          "topics": [
+            "hvac_air_conditioning"
+          ],
+          "include": [
+            [
+              "refrigerant"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "dtc_p0420",
+      "category": "dtc",
+      "type": "technical",
+      "turns": [
+        {
+          "message": "What is P0420?",
+          "expect": "dtc",
+          "include": [
+            [
+              "Catalyst"
+            ]
+          ],
+          "exclude": [
+            "GM uses",
+            "Ford"
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "dtc_p0300",
+      "category": "dtc",
+      "type": "technical",
+      "turns": [
+        {
+          "message": "What does code P0300 mean?",
+          "expect": "dtc",
+          "include": [
+            [
+              "Misfire"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "dtc_p0171",
+      "category": "dtc",
+      "type": "technical",
+      "turns": [
+        {
+          "message": "P0171",
+          "expect": "dtc",
+          "include": [
+            [
+              "Lean"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "dtc_follow_up",
+      "category": "dtc",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "What is P0300?",
+          "expect": "dtc",
+          "max_words": 110
+        },
+        {
+          "message": "What causes it?",
+          "expect": "dtc",
+          "include": [
+            [
+              "P0300"
+            ]
+          ],
+          "max_words": 400
+        }
+      ]
+    },
+    {
+      "id": "dtc_manufacturer",
+      "category": "dtc",
+      "type": "insufficient_information",
+      "turns": [
+        {
+          "message": "What is P1456?",
+          "expect": "dtc",
+          "include": [
+            [
+              "manufacturer"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "dtc_types",
+      "category": "dtc",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What is the difference between P0 and P1 codes?",
+          "expect": "answer",
+          "topics": [
+            "dtc_code_types"
+          ],
+          "include": [
+            [
+              "generic"
+            ],
+            [
+              "manufacturer"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "warning_light_general",
+      "category": "dtc",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What does the check engine light mean?",
+          "expect": "answer",
+          "topics": [
+            "dashboard_warning_obd"
+          ],
+          "include": [
+            [
+              "code",
+              "codes"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "rental_inspection",
+      "category": "rental",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "What should I check before renting a car?",
+          "expect": "answer",
+          "topics": [
+            "pre_rental_inspection"
+          ],
+          "include": [
+            [
+              "photo"
+            ],
+            [
+              "tire",
+              "tires"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "rental_damage",
+      "category": "rental",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "I scratched the rental car, what should I do?",
+          "expect": "answer",
+          "topics": [
+            "rental_damage_reporting"
+          ],
+          "include": [
+            [
+              "photo"
+            ],
+            [
+              "rental team"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "rental_fault",
+      "category": "rental",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "There's a warning light on my rental car",
+          "expect": "answer",
+          "topics": [
+            "rental_fault_reporting"
+          ],
+          "include": [
+            [
+              "rental team"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "vague_noise",
+      "category": "ambiguous",
+      "type": "ambiguous",
+      "turns": [
+        {
+          "message": "My car makes a noise",
+          "expect": "clarify"
+        }
+      ]
+    },
+    {
+      "id": "vague_problem",
+      "category": "ambiguous",
+      "type": "ambiguous",
+      "turns": [
+        {
+          "message": "Something is wrong with my car",
+          "expect": "clarify"
+        }
+      ]
+    },
+    {
+      "id": "vague_smell",
+      "category": "ambiguous",
+      "type": "ambiguous",
+      "turns": [
+        {
+          "message": "My car smells weird",
+          "expect": "clarify",
+          "include": [
+            [
+              "burning",
+              "fuel"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vague_light",
+      "category": "ambiguous",
+      "type": "ambiguous",
+      "turns": [
+        {
+          "message": "A light came on on my dashboard",
+          "expect": "clarify"
+        }
+      ]
+    },
+    {
+      "id": "vague_then_specific",
+      "category": "ambiguous",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "My car makes a strange noise",
+          "expect": "clarify"
+        },
+        {
+          "message": "It squeals when I brake",
+          "expect": "answer",
+          "topics": [
+            "brake_noise",
+            "brake_wear"
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "topic_change",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "Why is my car overheating?",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "What about a flat tire?",
+          "expect": "answer",
+          "topics": [
+            "tire_puncture"
+          ],
+          "exclude": [
+            "coolant"
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "follow_up_fix",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "My steering is heavy",
+          "expect": "answer",
+          "topics": [
+            "steering_heavy"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "Is it safe to drive?",
+          "expect": "answer",
+          "topics": [
+            "steering_heavy"
+          ],
+          "safety": true,
+          "max_words": 60,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "follow_up_cost",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "Transmission slipping",
+          "expect": "answer",
+          "topics": [
+            "transmission_slip"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "How much will it cost to fix?",
+          "expect": "answer",
+          "topics": [
+            "transmission_slip"
+          ],
+          "include": [
+            [
+              "quote",
+              "don't have repair prices"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 60
+        }
+      ]
+    },
+    {
+      "id": "follow_up_checked",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "Car won't start, just clicking",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "The battery is new",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting"
+          ],
+          "include": [
+            [
+              "starter",
+              "terminals",
+              "connection"
+            ]
+          ],
+          "exclude": [
+            "worn-out battery"
+          ],
+          "max_words": 80,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "follow_up_more",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "My engine is misfiring",
+          "expect": "answer",
+          "topics": [
+            "engine_misfire"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "What else could it be?",
+          "expect": "answer",
+          "topics": [
+            "engine_misfire"
+          ],
+          "max_words": 90,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "unrelated_sports",
+      "category": "unrelated",
+      "type": "unrelated",
+      "turns": [
+        {
+          "message": "Who won the NBA finals?",
+          "expect": "abstain"
+        }
+      ]
+    },
+    {
+      "id": "unrelated_recipe",
+      "category": "unrelated",
+      "type": "unrelated",
+      "turns": [
+        {
+          "message": "How do I bake a chocolate cake?",
+          "expect": "abstain"
+        }
+      ]
+    },
+    {
+      "id": "unrelated_weather",
+      "category": "unrelated",
+      "type": "unrelated",
+      "turns": [
+        {
+          "message": "What's the weather tomorrow in Manila?",
+          "expect": "abstain"
+        }
+      ]
+    },
+    {
+      "id": "unrelated_code",
+      "category": "unrelated",
+      "type": "unrelated",
+      "turns": [
+        {
+          "message": "Write me a python script",
+          "expect": "abstain"
+        }
+      ]
+    },
+    {
+      "id": "torque_value",
+      "category": "hallucination",
+      "type": "insufficient_information",
+      "turns": [
+        {
+          "message": "What is the torque for the wheel nuts on my car?",
+          "expect": "any",
+          "no_numbers": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "oil_capacity",
+      "category": "hallucination",
+      "type": "insufficient_information",
+      "turns": [
+        {
+          "message": "How many liters of oil does my engine take?",
+          "expect": "any",
+          "no_numbers": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "floaty_ride",
+      "category": "suspension",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "the car feels like it's floating over bumps",
+          "expect": "answer",
+          "topics": [
+            "shock_absorbers"
+          ],
+          "include": [
+            [
+              "shock"
+            ]
+          ],
+          "max_words": 120
+        }
+      ]
+    },
+    {
+      "id": "orange_engine_symbol",
+      "category": "dtc",
+      "type": "ambiguous",
+      "turns": [
+        {
+          "message": "what's that orange engine symbol on my dash",
+          "expect": "answer",
+          "topics": [
+            "dashboard_warning_obd"
+          ],
+          "include": [
+            [
+              "code"
+            ]
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "dim_lights_died",
+      "category": "electrical",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "my headlights are dim and the car died",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_light",
+            "battery_charging_starting"
+          ],
+          "include": [
+            [
+              "alternator"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "idle_vibration",
+      "category": "engine",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "car vibrates when I idle at a red light",
+          "expect": "answer",
+          "topics": [
+            "engine_misfire"
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "ac_musty",
+      "category": "maintenance",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "the AC smells musty",
+          "expect": "answer",
+          "topics": [
+            "ac_musty_smell"
+          ],
+          "include": [
+            [
+              "cabin"
+            ],
+            [
+              "evaporator"
+            ]
+          ],
+          "exclude": [
+            "refrigerant"
+          ],
+          "max_words": 110
+        }
+      ]
+    },
+    {
+      "id": "water_coolant",
+      "category": "maintenance",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "can I use water instead of coolant",
+          "expect": "answer",
+          "topics": [
+            "coolant_water"
+          ],
+          "include": [
+            [
+              "emergency"
+            ],
+            [
+              "corrosion"
+            ]
+          ],
+          "max_words": 100
+        }
+      ]
+    },
+    {
+      "id": "jerky_shift",
+      "category": "transmission",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "my car jerks when shifting from 2nd to 3rd",
+          "expect": "answer",
+          "topics": [
+            "transmission_slip"
+          ],
+          "include": [
+            [
+              "fluid"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "hum_with_speed",
+      "category": "suspension",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "I hear a humming noise that gets louder with speed",
+          "expect": "answer",
+          "topics": [
+            "steering_suspension"
+          ],
+          "include": [
+            [
+              "wheel bearing"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "ran_over_nail",
+      "category": "tires",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "i ran over a nail",
+          "expect": "answer",
+          "topics": [
+            "tire_puncture"
+          ],
+          "include": [
+            [
+              "spare",
+              "repair kit"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "catalytic_role",
+      "category": "parts",
+      "type": "simple",
+      "turns": [
+        {
+          "message": "what does a catalytic converter do",
+          "expect": "answer",
+          "topics": [
+            "exhaust_emissions_dpf"
+          ],
+          "include": [
+            [
+              "exhaust gases"
+            ]
+          ],
+          "max_words": 70
+        }
+      ]
+    },
+    {
+      "id": "hard_brake_pedal",
+      "category": "brakes",
+      "type": "safety",
+      "turns": [
+        {
+          "message": "my brake pedal is hard to press",
+          "expect": "answer",
+          "topics": [
+            "brake_pedal_hard"
+          ],
+          "include": [
+            [
+              "booster"
+            ]
+          ],
+          "exclude": [
+            "wear indicator"
+          ],
+          "safety": true,
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "temp_light_follow_ups",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "engine temperature warning light",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "safety": true,
+          "max_words": 130
+        },
+        {
+          "message": "what should i do now?",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "include": [
+            [
+              "fan",
+              "coolant"
+            ]
+          ],
+          "max_words": 90,
+          "not_repeating_previous": true
+        },
+        {
+          "message": "how much will that cost",
+          "expect": "answer",
+          "topics": [
+            "engine_overheating"
+          ],
+          "include": [
+            [
+              "quote"
+            ]
+          ],
+          "no_numbers": true,
+          "max_words": 50
+        }
+      ]
+    },
+    {
+      "id": "replaced_plugs",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "My engine is misfiring",
+          "expect": "answer",
+          "topics": [
+            "engine_misfire"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "I already replaced the spark plugs",
+          "expect": "answer",
+          "topics": [
+            "engine_misfire"
+          ],
+          "include": [
+            [
+              "coil"
+            ]
+          ],
+          "max_words": 80,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "lights_work_fine",
+      "category": "context",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "my car won't start",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting"
+          ],
+          "max_words": 130
+        },
+        {
+          "message": "the lights work fine though",
+          "expect": "answer",
+          "topics": [
+            "battery_charging_starting"
+          ],
+          "include": [
+            [
+              "starter"
+            ]
+          ],
+          "max_words": 80,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "dtc_serious",
+      "category": "dtc",
+      "type": "follow_up",
+      "turns": [
+        {
+          "message": "P0128",
+          "expect": "dtc",
+          "include": [
+            [
+              "Thermostat"
+            ]
+          ],
+          "max_words": 110
+        },
+        {
+          "message": "is it serious?",
+          "expect": "dtc",
+          "include": [
+            [
+              "check-engine light"
+            ],
+            [
+              "flashing"
+            ]
+          ],
+          "max_words": 70,
+          "not_repeating_previous": true
+        }
+      ]
+    },
+    {
+      "id": "rental_check_engine",
+      "category": "rental",
+      "type": "troubleshooting",
+      "turns": [
+        {
+          "message": "my rental car has a check engine light, what do I do",
+          "expect": "answer",
+          "topics": [
+            "dashboard_warning_obd"
+          ],
+          "include": [
+            [
+              "rental team"
+            ]
+          ],
+          "max_words": 130
+        }
+      ]
+    },
+    {
+      "id": "unrelated_geography",
+      "category": "unrelated",
+      "type": "unrelated",
+      "turns": [
+        {
+          "message": "what is the capital of France",
+          "expect": "abstain"
+        }
+      ]
+    }
+  ],
+  "paraphrase_groups": [
+    {
+      "topic": "tire_puncture",
+      "messages": [
+        "I have a flat tire",
+        "my tyre is flat",
+        "I got a puncture",
+        "nail in tire"
+      ]
+    },
+    {
+      "topic": "engine_overheating",
+      "messages": [
+        "engine overheating",
+        "my car is overheating",
+        "temperature gauge in the red",
+        "why does my engine overheat"
+      ]
+    },
+    {
+      "topic": "brake_pedal_soft",
+      "messages": [
+        "spongy brakes",
+        "soft brake pedal",
+        "brake pedal goes to the floor",
+        "my brake pedal sinks"
+      ]
+    },
+    {
+      "topic": "battery_charging_starting",
+      "messages": [
+        "car won't start",
+        "my car won't start",
+        "clicking when starting",
+        "slow cranking"
+      ]
+    },
+    {
+      "topic": "fuel_leak_smell",
+      "messages": [
+        "I smell gasoline",
+        "fuel smell in the car",
+        "there is a fuel leak",
+        "smell of petrol"
+      ]
+    },
+    {
+      "topic": "steering_heavy",
+      "messages": [
+        "my steering is heavy",
+        "steering is hard to turn",
+        "steering became heavy"
+      ]
+    },
+    {
+      "topic": "transmission_slip",
+      "messages": [
+        "transmission slipping",
+        "my gears are slipping",
+        "transmission slips"
+      ]
+    }
+  ]
+}
