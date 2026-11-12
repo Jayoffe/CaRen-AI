@@ -334,6 +334,30 @@ class RegistryAndPredictionTests(IsolatedRegistry):
         low = analyze_assessment(self.payload(rating="excellent"))
         self.assertEqual(next(item for item in low["components"] if item["component_key"] == "brakes")["prediction"]["risk_level"], "not_elevated")
 
+    def test_models_trained_on_sample_vehicles_are_labelled_demonstrations(self):
+        # Rows with SYNTH- plates stand for real vehicles: no notice.
+        self.accepted()
+        real = analyze_assessment(self.payload(rating="critical"))
+        brakes = next(item for item in real["components"] if item["component_key"] == "brakes")
+        self.assertFalse(brakes["prediction"]["demonstration"])
+        self.assertIsNone(brakes["prediction"]["notice"])
+        self.assertEqual(brakes["prediction"]["training_data"]["source"], "real")
+        # The same data on SAMPLE- vehicles: every prediction says it is a demonstration.
+        rows = [dict(row, plate_number=f"SAMPLE-{row['vehicle_id']}") for row in synthetic_rows(seed=11)]
+        entry = train_category("brakes", rows)
+        self.assertEqual(entry["training_data"], {"source": "simulated", "rows": entry["report"]["dataset"]["rows"],
+                                                  "simulated_rows": entry["report"]["dataset"]["rows"]})
+        promote_model("brakes", entry["model_version"], 1)
+        demo = analyze_assessment(self.payload(rating="critical"))
+        brakes = next(item for item in demo["components"] if item["component_key"] == "brakes")
+        self.assertTrue(brakes["prediction"]["demonstration"])
+        self.assertIn("simulated SAMPLE- vehicles", brakes["prediction"]["notice"])
+        self.assertTrue(brakes["prediction"]["explanation"].startswith("Demonstration only"))
+        self.assertTrue(brakes["ai_model"]["demonstration"])
+        self.assertEqual(demo["predictive_capability"]["demonstration_categories"], ["brakes"])
+        self.assertIn("demonstration models", demo["predictive_capability"]["reason"])
+        self.assertTrue(category_availability()["brakes"]["demonstration"])
+
     def test_categories_unlock_independently(self):
         self.accepted("brakes")
         train_category("engine", synthetic_rows("engine", signal=False))
@@ -376,6 +400,64 @@ class RegistryAndPredictionTests(IsolatedRegistry):
         state = category_availability()["brakes"]
         self.assertFalse(state["available"])
         self.assertIn("changed", state["reason"])
+        self.assertEqual(state["status"], "artifact_changed")
+
+    def test_accepted_model_reports_ready(self):
+        entry = self.accepted()
+        state = category_availability()["brakes"]
+        self.assertEqual((state["available"], state["status"], state["active_version"]), (True, "ready", entry["model_version"]))
+
+    def rewrite_active_entry(self, **fields):
+        path = Path(self.folder.name, "registry.json")
+        registry = json.loads(path.read_text(encoding="utf-8"))
+        section = registry["category_models"]["brakes"]
+        entry = next(item for item in section["versions"] if item["model_version"] == section["active_version"])
+        entry.update(fields)
+        path.write_text(json.dumps(registry), encoding="utf-8")
+        return entry
+
+    def test_windows_separators_in_registry_still_resolve(self):
+        entry = self.accepted()
+        self.rewrite_active_entry(artifact_path=entry["artifact_path"].replace("/", "\\"), evaluation_report_path=entry["evaluation_report_path"].replace("/", "\\"))
+        self.assertTrue(category_availability()["brakes"]["available"])
+        self.assertTrue(predictions_for_assessment(self.payload(rating="good"))["brakes"]["available"])
+
+    def test_new_registry_paths_use_forward_slashes(self):
+        entry = self.accepted()
+        self.assertNotIn("\\", entry["artifact_path"] + entry["evaluation_report_path"])
+
+    def test_each_missing_file_is_reported_separately(self):
+        entry = self.accepted()
+        Path(self.folder.name, "models", entry["evaluation_report_path"]).unlink()
+        self.assertEqual(category_availability()["brakes"]["status"], "report_missing")
+        Path(self.folder.name, "models", entry["artifact_path"]).unlink()
+        self.assertEqual(category_availability()["brakes"]["status"], "artifact_missing")
+
+    def test_unloadable_artifact_is_refused(self):
+        self.accepted()
+        with patch("ai_api.category_models._load_artifact", side_effect=ValueError("broken pickle")):
+            state = category_availability()["brakes"]
+        self.assertEqual((state["available"], state["status"]), (False, "load_failed"))
+        self.assertNotIn("broken pickle", state["reason"])
+
+    def test_artifact_with_other_features_is_refused(self):
+        self.accepted()
+        with patch("ai_api.category_models.feature_names", return_value=["something_else"]):
+            state = category_availability()["brakes"]
+        self.assertEqual((state["available"], state["status"]), (False, "incompatible_features"))
+
+    def test_active_version_missing_from_registry_is_reported(self):
+        self.accepted()
+        path = Path(self.folder.name, "registry.json")
+        registry = json.loads(path.read_text(encoding="utf-8"))
+        registry["category_models"]["brakes"]["active_version"] = "does_not_exist"
+        path.write_text(json.dumps(registry), encoding="utf-8")
+        self.assertEqual(category_availability()["brakes"]["status"], "invalid_registry_entry")
+
+    def test_rejected_only_category_reports_rejected(self):
+        train_category("brakes", synthetic_rows(signal=False))
+        state = category_availability()["brakes"]
+        self.assertEqual((state["available"], state["status"]), (False, "rejected"))
 
     def test_incompatible_versions_are_refused(self):
         self.accepted()
@@ -447,6 +529,15 @@ class RealStateTests(SimpleTestCase):
         for category, section in (registry.get("category_models") or {}).items():
             for entry in section["versions"]:
                 self.assertFalse(entry["model_version"].startswith("synthetic"), category)
+
+    def test_every_active_real_model_is_ready(self):
+        registry = json.loads(REAL_REGISTRY.read_text(encoding="utf-8"))
+        root = Path(__file__).resolve().parents[1] / "trained_models" / "category_models"
+        with override_settings(AI_MAINTENANCE_MODEL_REGISTRY_PATH=REAL_REGISTRY, CATEGORY_MODEL_ROOT=root):
+            availability = category_availability()
+        for category, section in (registry.get("category_models") or {}).items():
+            if section.get("active_version"):
+                self.assertEqual(availability[category]["status"], "ready", (category, availability[category]["reason"]))
 
     def test_screening_function_is_still_exported(self):
         self.assertEqual(screen_component("engine", {"rating": "fair"})[1], "monitor")

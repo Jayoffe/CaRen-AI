@@ -16,11 +16,20 @@ DATA_ERROR = ("I couldn't read {what} from the database just now, so I can't giv
 AMOUNT = re.compile(r"PHP\s?([\d,]+(?:\.\d{1,2})?)")
 # Reservation statuses as the system guide defines them.
 STATUS_MEANINGS = {
-    "pending": "it is waiting for an administrator to confirm or reject it",
-    "confirmed": "an administrator approved it and the vehicle is reserved for your dates",
+    "pending": "it is awaiting payment, and it is confirmed automatically once the payment is verified",
+    "confirmed": "the vehicle is reserved for your dates",
     "cancelled": "it was cancelled and no longer holds the vehicle",
-    "rejected": "an administrator did not approve it, so it does not hold the vehicle",
+    "rejected": "it was not accepted, so it does not hold the vehicle",
     "completed": "the rental has finished and the vehicle was returned",
+}
+# Payment states as My Reservations shows them (ReservationModel::attach_payment_summary).
+PAYMENT_MEANINGS = {
+    "paid": "the payment is verified and the reservation is confirmed.",
+    "pending": "a payment was started but hasn't been verified yet. If you've finished paying, it usually updates shortly; "
+               "otherwise continue the payment.",
+    "failed": "the last payment attempt didn't go through or expired, so it isn't paid yet. You can retry the payment.",
+    "unpaid": "it hasn't been paid yet, so it stays pending until you pay.",
+    "not_required": "no payment is due for it.",
 }
 STATUS_LABELS = {"overdue": "Overdue", "approaching": "Due within 30 days", "not_due": "Not due",
                  "insufficient_history": "Not enough service history"}
@@ -98,6 +107,7 @@ def compose(plan, results, role, vocabulary=None, guide=None, fleet_risk=None, s
         "maintenance_recurring": _maintenance_recurring, "maintenance_inspections": _maintenance_inspections,
         "maintenance_prediction": _maintenance_prediction, "maintenance_costs": _maintenance_costs,
         "vehicle_status": _vehicle_status, "revenue": _revenue, "utilization": _utilization,
+        "reassessment_due": _reassessment_due,
     }.get(intent)
     if handler is None:
         return "I couldn't work out which records answer that. Could you rephrase it?", data
@@ -190,7 +200,8 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
 
     if plan.get("follow_up") and vehicles:
         lines.append(f"(About the {_join(sorted({name(v) for v in vehicles}))} from earlier.)")
-    if plan.get("stock_check") and vehicles and (requested.get("models") or requested.get("makes")) and not requested.get("unknown_names"):
+    if plan.get("stock_check") and vehicles and (requested.get("models") or requested.get("makes") or requested.get("categories")) \
+            and not requested.get("unknown_names"):
         # "Do you have the Vios?" is answered yes first; its rate follows.
         lines.append(f"Yes, we have the {_join(sorted({name(v) for v in vehicles}))}.")
     for unknown in requested.get("unknown_names") or []:
@@ -222,6 +233,8 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
     elif purpose == "ranking" and plan.get("rank_by") == "seats":
         by_seats = sorted(vehicles, key=lambda v: v.get("seating_capacity") or 0, reverse=True)
         top = by_seats[0]
+        if plan.get("long_trip"):
+            lines.append("No comfort rating is recorded, but roomier vehicles are usually easier on a long drive, so here they are by size.")
         tied = [label[id(v)] for v in by_seats if v.get("seating_capacity") == top.get("seating_capacity")]
         lines.append(f"The {_join(tied)} {'seat' if len(tied) > 1 else 'seats'} the most people: {top.get('seating_capacity')} seats.")
         if len(by_seats) > 1:
@@ -248,7 +261,13 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
             free = [label[id(v)] for v in vehicles if v.get("available_for_period")]
             taken = [label[id(v)] for v in vehicles if v.get("available_for_period") is False]
             dates = f"{period['start_date']} to {period['end_date']}"
-            if free:
+            too_short = [v for v in vehicles if v.get("available_for_period") and not (v.get("quote") or {}).get("meets_minimum", True)]
+            if free and len(too_short) == len(free):
+                # "Is the Staria available on Saturday?": free that day, but one day is shorter than any rental allowed.
+                minimum = max(v["quote"]["minimum_days"] for v in too_short)
+                lines.append(f"{_join(free)} {'is' if len(free) == 1 else 'are'} free from {dates}, but rentals are at least "
+                             f"{minimum} days. Tell me your return date and I'll check the whole period.")
+            elif free:
                 lines.append(f"Yes: {_join(free)} {'is' if len(free) == 1 else 'are'} free from {dates}.")
             if taken:
                 lines.append(f"{_join(taken)} {'is' if len(taken) == 1 else 'are'} already booked for {dates}.")
@@ -263,7 +282,11 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
         notes.add(lines, "quote_rule")
     elif purpose == "availability" or purpose == "status":
         lines += _availability_lines(vehicles, data, role, purpose, label)
-        if role != "admin" and not data.get("period"):
+        if plan.get("pending_pickup") and not data.get("period"):
+            # "Is the Staria available on 2026-12-05?": the pickup is known; the period needs a return date.
+            lines.append(f"To check {plan['pending_pickup']} against existing bookings I need the return date too: rentals are 3 to 7 days "
+                         "(up to 21 as a special-duration request). When will you return it?")
+        elif role != "admin" and not data.get("period"):
             notes.add(lines, "dates_hint")
     elif purpose == "details":
         if len(vehicles) == 1:
@@ -478,6 +501,11 @@ def _quote_lines(vehicles, data, label):
         text = ""
         if not quote.get("meets_minimum"):
             text += f"; it has a {quote['minimum_days']}-day minimum, so {days} day{plural} can't be booked"
+        elif quote.get("exceeds_maximum"):
+            text += f"; rentals can't be longer than {quote.get('maximum_days', 21)} days, so {days} days can't be booked"
+        elif quote.get("special_request_required"):
+            text += (f"; rentals over {quote.get('standard_maximum_days', 7)} days must be sent as a special-duration request "
+                     "on the reservation form")
         if v.get("available_for_period") is False:
             text += "; it is already booked for those dates"
         elif v.get("available_for_period") is True:
@@ -573,6 +601,18 @@ def _own_bookings(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None
                      f"Your account has {data['all_records_count']} past or closed reservation(s); ask to see all your reservations to list them.")
     elif not rows:
         lines.append("You don't have any reservations on this account. You can book from Vehicles (/users/vehicles).")
+    elif purpose == "payment":
+        # "Did my payment go through?": the open reservations first, else the latest one.
+        focus = [r for r in rows if r.get("status") in ("pending", "confirmed") and not r.get("returned")] or rows[:1]
+        if args.get("reservation_id"):
+            focus = rows[:1]
+        for r in focus[:3]:
+            lines.append(f"Reservation #{r['id']} for the {name(r)} ({r['start_date']} to {r['end_date']}): "
+                         + PAYMENT_MEANINGS.get(r.get("payment_status"), f"its status is {r.get('status')}, but I don't have its payment "
+                                                "details here; My Reservations shows them."))
+        if any(r.get("payment_status") in ("unpaid", "failed", "pending") for r in focus[:3]):
+            lines.append("Pay from My Reservations (/users/reservations). A screenshot or receipt doesn't confirm a booking; "
+                         "only the payment provider's verification does.")
     elif purpose in ("status", "details"):
         asked = plan.get("asked_statuses") or []
         matching = [r for r in rows if r.get("status") in asked]
@@ -701,6 +741,27 @@ def _reservation_summary(plan, by_tool, role, vocabulary, guide, fleet_risk, not
         return "\n".join(lines)
     counts = data.get("counts_by_status") or {}
     args = (plan.get("retrievals") or [{}])[0].get("args") or {}
+    if plan.get("rank_customers"):
+        # "Who has the most bookings?": customers ranked by how many reservations they made (cancelled ones included).
+        tally = {}
+        for r in rows:
+            customer = r.get("customer_name") or "Unnamed customer"
+            entry = tally.setdefault(customer, {"count": 0, "value": 0.0})
+            entry["count"] += 1
+            if r.get("status") in ("pending", "confirmed", "completed") and r.get("total_amount") is not None:
+                entry["value"] += float(r["total_amount"])
+        if not tally:
+            return "There are no reservations to rank."
+        ranked = sorted(tally.items(), key=lambda item: (-item[1]["count"], -item[1]["value"], item[0]))
+        top_count = ranked[0][1]["count"]
+        leaders = [customer for customer, entry in ranked if entry["count"] == top_count]
+        window = f" from {args['from']} to {args.get('to') or args['from']}" if args.get("from") else ""
+        lines = [f"{_join(leaders)} {'has' if len(leaders) == 1 else 'have'} the most reservations{window}: {top_count}."]
+        # Counts only: summed peso amounts would not appear in the records, and the answer check refuses unrecorded amounts.
+        lines += [f"- {customer}: {entry['count']} reservation(s)" for customer, entry in ranked[:10]]
+        if data.get("all_records_count", 0) > len(rows) and not args:
+            lines.append(f"Counted from the latest {len(rows)} of {data['all_records_count']} reservations.")
+        return "\n".join(lines)
     if args.get("reservation_id"):
         if not rows:
             return f"No reservation #{args['reservation_id']} was found."
@@ -731,6 +792,37 @@ def _reservation_summary(plan, by_tool, role, vocabulary, guide, fleet_risk, not
               f"{r['status']}, " + (money(r['total_amount']) if r.get("total_amount") is not None else "no total") for r in rows[:10]]
     if len(rows) > 10:
         lines.append(f"Showing 10 of {len(rows)}; see Reservations in the admin pages for the rest.")
+    return "\n".join(lines)
+
+
+def _reassessment_due(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None):
+    """Monthly vehicle reassessments (administrators): overdue first, then due within 7 days, then never assessed."""
+    data = by_tool["assessments.due"].get("data") or {}
+    vehicles = data.get("vehicles") or []
+    if not vehicles:
+        return "No vehicles matched, so there are no reassessments to report."
+
+    def label(v):
+        return name(v) + (f" ({v['plate_number']})" if v.get("plate_number") else "")
+
+    groups = (
+        ("overdue", "Overdue", lambda v: f"due {v['due_on']}, {abs(v['days_until_due'] or 0)} day(s) late"),
+        ("due_soon", "Due within 7 days", lambda v: f"due {v['due_on']}"),
+        ("never_assessed", "Never assessed", lambda v: "no assessment recorded"),
+    )
+    lines = []
+    for status, heading, detail in groups:
+        rows = sorted((v for v in vehicles if v.get("status") == status), key=lambda v: (v.get("days_until_due") or 0, label(v)))
+        if rows:
+            lines.append(f"{heading}: {len(rows)}")
+            lines += [f"- {label(v)}: {detail(v)}" for v in rows[:10]]
+    current = sum(1 for v in vehicles if v.get("status") == "current")
+    if not lines:
+        return (f"All {current} vehicle(s) are up to date with the monthly reassessment."
+                if current else "No reassessment status is recorded for these vehicles.")
+    if current:
+        lines.append(f"Up to date: {current} vehicle(s).")
+    lines.append("Assess them from Predictive Maintenance (/admin/maintenance/predictions).")
     return "\n".join(lines)
 
 

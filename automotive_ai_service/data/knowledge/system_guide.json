@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "scope": "How the DriveRent car-rental and fleet application works, written from its source code. Each entry names the code it was verified against. Update this file when the application changes.",
-  "verified_on": "2026-11-07",
+  "verified_on": "2026-11-12",
   "documents": [
     {
       "id": "sys_overview_features",
@@ -16,7 +16,7 @@
         "help",
         "how does this app work"
       ],
-      "text": "Customers can browse vehicles, view vehicle details and daily rates, create reservation requests, view active rentals and reservation history, cancel their own pending or confirmed reservations, and maintain their profile including driver's licence details and a verification photo. Administrators can additionally manage the vehicle inventory and images, approve, reject, cancel or complete reservations, record maintenance and mileage, complete vehicle condition assessments and review their results and 3D inspection, and view model-based service-need predictions when an accepted model is registered (none is accepted as of 2026-10-31). Online payment is not implemented.",
+      "text": "Customers can browse vehicles, view vehicle details and daily rates, create reservations, pay for them online, view active rentals, reservation and payment history, cancel their own unpaid pending or confirmed reservations, and maintain their profile including driver's licence details and a verification photo. Administrators can additionally manage the vehicle inventory and images, cancel reservations, record vehicle handover and return, view payment history, record maintenance and mileage, complete vehicle condition assessments and review their results and 3D inspection, and view model-based service-need predictions when an accepted model is registered (none is accepted as of 2026-10-31).",
       "code_references": [
         "Front-End/src/App.jsx",
         "Back-End/app/config/routes.php"
@@ -33,11 +33,40 @@
         "reserve a car",
         "booking steps",
         "create reservation",
-        "rent a car"
+        "rent a car",
+        "is booking online",
+        "can i book online",
+        "book online",
+        "online booking",
+        "book through the website",
+        "book on the app",
+        "rental agreement",
+        "contract",
+        "special duration request",
+        "longest rental",
+        "maximum rental",
+        "minimum rental",
+        "shortest rental",
+        "sign a contract",
+        "do i need to sign a contract",
+        "rental contract",
+        "need to sign",
+        "agreement to sign",
+        "terms and conditions",
+        "how far in advance",
+        "book in advance",
+        "advance booking",
+        "same day booking",
+        "book for today",
+        "can i book today",
+        "how early should i book",
+        "last minute booking"
       ],
-      "text": "Open Vehicles (/users/vehicles), choose a vehicle, and select Reserve to open the reservation form (/users/reservations/create). Pick a pickup date and a return date. The system checks that the vehicle's status is available, that the period meets the vehicle's minimum rental duration, and that no pending or confirmed reservation overlaps the dates. A new reservation starts as pending and waits for an administrator to confirm or reject it. The total shown is the stored daily rate multiplied by the number of rental days.",
+      "text": "Open Vehicles (/users/vehicles), choose a vehicle, and select Reserve to open the reservation form (/users/reservations/create). Pick a pickup date (today or any later date; there is no advance-booking limit) and a return date, and a colour if the vehicle offers several. Rentals must be at least 3 days (or the vehicle's own minimum, if longer) and at most 7 days; 8 to 21 days must be sent as a special-duration request, and longer rentals are not accepted. You must accept the rental agreement before submitting. The system checks that the vehicle is available and that no pending or confirmed reservation overlaps the dates. The new reservation is pending until you pay the rental total online from My Reservations (/users/reservations); it is confirmed automatically once the payment provider verifies the payment. The total is the stored daily rate multiplied by the number of rental days.",
       "code_references": [
-        "Back-End/app/models/ReservationModel.php::create",
+        "Back-End/app/controllers/ReservationController.php::createReservation",
+        "Back-End/app/models/ReservationModel.php::create_reservation",
+        "Back-End/app/libraries/ReservationPolicy.php",
         "Front-End/src/Pages/Users/Pages/CreateReservation.jsx"
       ]
     },
@@ -54,11 +83,20 @@
         "completed",
         "cancelled",
         "what does pending mean",
-        "booking status"
+        "booking status",
+        "how long does approval take",
+        "approval time",
+        "when will my booking be approved",
+        "how long until my booking is confirmed",
+        "why is my booking pending",
+        "pending payment",
+        "how do i get my booking confirmed",
+        "who approves reservations"
       ],
-      "text": "Reservation statuses are pending, confirmed, cancelled, rejected and completed. An administrator may change pending to confirmed, rejected or cancelled, and confirmed to cancelled or completed. A customer may only cancel their own reservation while it is pending or confirmed. Pending and confirmed reservations block the vehicle for their dates; cancelled, rejected and completed ones do not. Confirming also requires the vehicle to still be available.",
+      "text": "Reservation statuses are pending (awaiting payment), confirmed, cancelled, rejected and completed. A pending reservation is confirmed automatically when the payment provider verifies full payment; administrators do not approve reservations by hand. An administrator can cancel an unpaid pending or confirmed reservation, records the vehicle handover during the rental period (only once it is paid), and records the return, which marks the reservation completed. A customer can cancel their own pending or confirmed reservation unless it has been paid or the vehicle has been handed over. Pending and confirmed reservations block the vehicle for their dates; cancelled, rejected and completed ones do not.",
       "code_references": [
-        "Back-End/app/models/ReservationModel.php::STATUSES, ADMIN_TRANSITIONS, update_status"
+        "Back-End/app/models/ReservationModel.php::STATUSES, ADMIN_TRANSITIONS, update_status, update_vehicle_use",
+        "Back-End/app/models/PaymentModel.php::mark_paid"
       ]
     },
     {
@@ -80,10 +118,10 @@
         "fee for cancelling",
         "cancellation penalty"
       ],
-      "text": "Open My Reservations (/users/reservations) and cancel a reservation that is still pending or confirmed. Completed, rejected or already-cancelled reservations cannot be cancelled. There is no reschedule action: to change dates, cancel and create a new reservation, which is checked again for availability. The system stores no cancellation-fee rule, so ask the rental team about any fees.",
+      "text": "Open My Reservations (/users/reservations) and cancel a reservation that is still pending or confirmed. A reservation that has already been paid cannot be cancelled in the system: contact an administrator to arrange a refund. Completed, rejected, already-cancelled and handed-over reservations cannot be cancelled. There is no reschedule action: to change dates, cancel and create a new reservation, which is checked again for availability. The system stores no cancellation-fee rule, so ask the rental team about any fees.",
       "code_references": [
-        "Back-End/app/controllers/ReservationController.php::updateReservation",
-        "Back-End/app/models/ReservationModel.php::update_status"
+        "Back-End/app/models/ReservationModel.php::update_status",
+        "Back-End/app/controllers/ReservationController.php::ERRORS"
       ]
     },
     {
@@ -99,11 +137,21 @@
         "longer rental",
         "change my dates",
         "change reservation dates",
-        "keep the car longer"
+        "keep the car longer",
+        "how do i extend my booking",
+        "extend my booking",
+        "extend booking",
+        "extend my reservation",
+        "how do i extend",
+        "extend the rental",
+        "add days to my booking",
+        "pa-extend",
+        "i-extend ang booking"
       ],
-      "text": "A reservation's dates cannot be changed or extended in the system: there is no extend or edit-dates action, and administrators can only change a reservation's status. To rent for longer or on other dates, create a new reservation for the period you need (it is checked for availability and the vehicle's minimum duration) and, if needed, cancel the old one while it is still pending or confirmed from My Reservations (/users/reservations). Ask the rental team about an extension during an active rental.",
+      "text": "A reservation's dates cannot be changed or extended in the system: there is no reschedule, extend or edit-dates action. The rental agreement says any extension needs administrator approval and an updated agreement, so ask the rental team. To rent on other dates, create a new reservation (3 to 7 days, or up to 21 days as a special-duration request) and, if needed, cancel the old one from My Reservations (/users/reservations) while it is unpaid.",
       "code_references": [
-        "Back-End/app/models/ReservationModel.php::update_status",
+        "Back-End/app/libraries/RentalAgreement.php",
+        "Back-End/app/libraries/ReservationPolicy.php",
         "Back-End/app/config/routes.php"
       ]
     },
@@ -155,12 +203,26 @@
         "payment methods",
         "payment options",
         "pay cash",
-        "accept gcash"
+        "accept gcash",
+        "xendit",
+        "payment link expired",
+        "how to pay for my reservation",
+        "is the deposit included in the payment",
+        "payment not confirmed",
+        "i already paid",
+        "is online payment available",
+        "online payment available",
+        "can i pay online",
+        "do you accept online payment",
+        "pay by card",
+        "e-wallet"
       ],
-      "text": "Online payment is not implemented: there is no payment gateway, transaction endpoint or payment table, so the Payment and Payment History pages show that payments are unavailable and no card details are collected. Each vehicle stores a security-deposit amount that is shown with its details; how the deposit is collected and refunded is handled by the rental team outside the system.",
+      "text": "Pay online from My Reservations (/users/reservations): choose Pay now on a pending reservation to open a Xendit checkout page, which offers the payment methods enabled there. The amount is the rental total; the security deposit is not part of the online payment. A payment link lasts 24 hours; if it expires, the reservation stays pending and you can start a new payment, as long as the pickup date has not passed. The reservation is confirmed only when Xendit verifies the payment: a screenshot or receipt does not confirm it. Past payments are under Payments (/users/payments). Refunds are arranged by an administrator; how the security deposit is collected and returned is handled by the rental team outside the system.",
       "code_references": [
-        "Front-End/src/Pages/Users/Pages/PaymentPage.jsx",
-        "Front-End/src/Pages/Admin/Pages/PaymentManagement.jsx"
+        "Back-End/app/controllers/PaymentController.php",
+        "Back-End/app/libraries/XenditClient.php",
+        "Back-End/app/libraries/RentalAgreement.php",
+        "Front-End/src/Pages/Users/Pages/MyReservations.jsx"
       ]
     },
     {
@@ -227,11 +289,25 @@
         "minimum age",
         "age requirement",
         "how old do I need to be",
-        "valid id"
+        "valid id",
+        "what do you require",
+        "require from renters",
+        "requirements for renters",
+        "who can rent",
+        "what are your requirements",
+        "ano ang requirements",
+        "anong kailangan para mag rent",
+        "what's needed to rent",
+        "what is needed to rent",
+        "needed to rent a car",
+        "what do i need to rent a car",
+        "what is required to rent",
+        "what are the requirements to rent a car"
       ],
-      "text": "To reserve a vehicle you need a signed-in, active customer account; administrator accounts cannot create reservations. The reservation form asks only for the vehicle, a pickup date and a return date: the pickup date cannot be in the past, the return date must be after the pickup date, and the period must meet the vehicle's minimum rental duration. Your profile (/users/profile) stores your driver's licence number, a licence expiry date that has not passed, and a photo of you holding your licence with your consent; the profile cannot be saved without them. The reservation form does not itself check the profile, and the system stores no age rule or other document requirement, so ask the rental team what they check at pickup. In particular, the system does not block a booking when no licence is saved, and it stores no minimum-age rule, so whether a licence or a minimum age is required at pickup cannot be confirmed here.",
+      "text": "To reserve a vehicle you need a signed-in, active customer account; administrator accounts cannot create reservations. The reservation form asks for the vehicle, a pickup date and a return date, and you must accept the rental agreement: the pickup date cannot be in the past, and the rental must be 3 to 7 days (up to 21 days as a special-duration request) and meet the vehicle's own minimum. The rental agreement says you must present a valid driver's licence and follow DriveRent's rental rules before pickup. Your profile (/users/profile) stores your driver's licence number and expiry date and a photo of you holding your licence, but the reservation form does not check the profile, so the system does not block a booking when no licence is saved, and the system stores no minimum-age rule or other document requirement, so ask the rental team what else they check at pickup.",
       "code_references": [
         "Back-End/app/controllers/ReservationController.php::createReservation",
+        "Back-End/app/libraries/RentalAgreement.php",
         "Back-End/app/controllers/ProfileController.php"
       ]
     },
@@ -262,12 +338,21 @@
         "promos",
         "any promo",
         "promotions",
-        "may promo"
+        "may promo",
+        "rent by the hour",
+        "hourly rate",
+        "hourly rental",
+        "rent for a few hours",
+        "few hours",
+        "half day",
+        "per hour",
+        "for 12 hours",
+        "oras lang"
       ],
-      "text": "A reservation's total is the vehicle's daily rate multiplied by the number of rental days, counted from the pickup date up to but not including the return date. The system stores no discounts, promotions, free days, taxes or extra fees, and the listed security deposit is shown separately and is not added to the total. Ask the rental team about any charges they handle outside the system. No late-return fee or penalty is stored either.",
+      "text": "A reservation's total is the vehicle's daily rate multiplied by the number of rental days, counted from the pickup date up to but not including the return date. Rentals are charged by the full day, with no hourly rate, and run 3 to 7 days, or up to 21 days as a special-duration request. The system stores no discounts, promotions, free days, taxes or extra fees, and the listed security deposit is shown separately and is not added to the total or to the online payment. Ask the rental team about any charges they handle outside the system. No late-return fee or penalty is stored either.",
       "code_references": [
         "Back-End/app/models/ReservationModel.php::create_reservation",
-        "Back-End/app/controllers/ReservationController.php::createReservation"
+        "Back-End/app/libraries/ReservationPolicy.php"
       ]
     },
     {
@@ -411,16 +496,27 @@
       "audience": "admin",
       "category": "booking_reservation",
       "keywords": [
-        "approve a reservation",
-        "confirm a booking",
-        "reject a reservation",
         "manage reservations",
         "complete a reservation",
-        "pending reservations"
+        "pending reservations",
+        "record handover",
+        "vehicle checkout",
+        "record the return",
+        "mark returned",
+        "approve a reservation",
+        "how do i approve a reservation",
+        "confirm a booking",
+        "reject a reservation",
+        "mark a reservation as completed",
+        "how do i mark a reservation as completed",
+        "mark as completed",
+        "mark it completed",
+        "complete a rental",
+        "how do i complete a reservation"
       ],
-      "text": "Administrators review reservations at Reservations (/admin/reservations), with past ones under Reservation History (/admin/reservations/history). A pending reservation can be confirmed, rejected or cancelled; a confirmed one can be cancelled or marked completed. Dates and prices cannot be edited.",
+      "text": "Administrators see reservations at Reservations (/admin/reservations), with past ones under Reservation History (/admin/reservations/history) and payments under Payment History (/admin/payments). Reservations are confirmed automatically by a verified payment, not by hand. An administrator can cancel an unpaid pending or confirmed reservation (a paid one cannot be cancelled in the system; its refund is arranged outside it), record the vehicle handover during the rental period once it is paid, and record the return, which marks the reservation completed. Dates and prices cannot be edited.",
       "code_references": [
-        "Back-End/app/models/ReservationModel.php::ADMIN_TRANSITIONS",
+        "Back-End/app/models/ReservationModel.php::ADMIN_TRANSITIONS, update_vehicle_use",
         "Front-End/src/App.jsx"
       ]
     },
@@ -464,12 +560,24 @@
         "fuel policy",
         "fuel level",
         "gas level",
-        "return the car with fuel"
+        "return the car with fuel",
+        "is fuel included",
+        "does the price include fuel",
+        "who pays for fuel",
+        "fuel included",
+        "gas included",
+        "pick up at the airport",
+        "airport pickup",
+        "pickup location",
+        "where is the pickup",
+        "return location",
+        "return it somewhere else",
+        "drop off location"
       ],
-      "text": "Each reservation records a pickup date and a return date; the return date is not counted as a rental day. The system stores no pickup or return times, no pickup location, and no fuel, cleaning or handover rules, so confirm those with the rental team. After the return, an administrator marks the confirmed reservation completed.",
+      "text": "Each reservation records a pickup date and a return date; the return date is not counted as a rental day, and the rental agreement requires the vehicle back on the stated return date. An administrator records the handover during the rental period, and only after the reservation is paid; when the vehicle comes back, the administrator records the return and the reservation is marked completed. The system stores no pickup or return times, no pickup location, and no fuel, cleaning or handover rules, so confirm those with the rental team.",
       "code_references": [
-        "Back-End/database/schema.sql (reservations)",
-        "Back-End/app/models/ReservationModel.php::ADMIN_TRANSITIONS"
+        "Back-End/app/models/ReservationModel.php::update_vehicle_use",
+        "Back-End/app/libraries/RentalAgreement.php"
       ]
     }
   ]

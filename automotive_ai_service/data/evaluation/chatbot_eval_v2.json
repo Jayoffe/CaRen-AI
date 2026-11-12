@@ -426,12 +426,13 @@
           "reference"
         ],
         "must_contain": [
-          "not implemented"
+          "Xendit"
         ],
         "sources": [
           "sys:sys_payments"
         ]
-      }
+      },
+      "note": "Updated 2026-11-12: online payment (Xendit) and the 3-day minimum since Back-End commit 22b829f."
     },
     {
       "id": "sys-005",
@@ -500,9 +501,11 @@
           "cancel and create"
         ],
         "sources": [
-          "sys:sys_cancellation"
+          "sys:sys_cancellation",
+          "sys:sys_rental_extension"
         ]
-      }
+      },
+      "note": "Updated 2026-11-12: the extension entry also answers date changes (no reschedule; cancel and create a new reservation)."
     },
     {
       "id": "sys-009",
@@ -2380,9 +2383,10 @@
           "database_record"
         ],
         "must_contain": [
-          "2-day minimum"
+          "3-day minimum"
         ]
-      }
+      },
+      "note": "Updated 2026-11-12: online payment (Xendit) and the 3-day minimum since Back-End commit 22b829f."
     },
     {
       "id": "db-v-018",
@@ -3317,10 +3321,11 @@
           "reference"
         ],
         "must_contain": [
-          "Online payment is not implemented"
+          "Xendit"
         ]
       },
-      "critical": true
+      "critical": true,
+      "note": "Updated 2026-11-12: online payment (Xendit) and the 3-day minimum since Back-End commit 22b829f."
     },
     {
       "id": "db-p-002",
@@ -3335,9 +3340,10 @@
           "reference"
         ],
         "must_contain": [
-          "refunded is handled by the rental team"
+          "returned is handled by the rental team"
         ]
-      }
+      },
+      "note": "Updated 2026-11-12: online payment (Xendit) and the 3-day minimum since Back-End commit 22b829f."
     },
     {
       "id": "db-p-003",
@@ -3935,11 +3941,11 @@
           "database_record"
         ],
         "must_contain": [
-          "Yes",
-          "free from"
+          "free from",
+          "at least 3 days"
         ]
       },
-      "note": "From the 2026-10-31 unseen round (fresh_probe_v4); expected behaviour written from the fixture data."
+      "note": "From the 2026-10-31 unseen round (fresh_probe_v4); expected behaviour written from the fixture data. Updated 2026-11-12: online payment (Xendit) and the 3-day minimum since Back-End commit 22b829f."
     },
     {
       "id": "g-b01",
@@ -4064,10 +4070,10 @@
       "message": "how do I pay for my rental?",
       "expect": {
         "must_contain": [
-          "Online payment is not implemented"
+          "Xendit"
         ]
       },
-      "note": "From the 2026-10-31 unseen round (fresh_probe_v4); expected behaviour written from the fixture data."
+      "note": "From the 2026-10-31 unseen round (fresh_probe_v4); expected behaviour written from the fixture data. Updated 2026-11-12: online payment (Xendit) and the 3-day minimum since Back-End commit 22b829f."
     },
     {
       "id": "g-h02",

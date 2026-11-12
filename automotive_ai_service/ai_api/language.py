@@ -88,12 +88,19 @@ _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replace
     # Car problems in Tagalog / Taglish
     (r"\b(?:kapag|pag|kung)\s+(?:nag-?preno|nagpepreno|nagbe-?brake|nagbrake)\b", "when braking"),
     (r"\b(?:nag-?preno|nagpepreno)\b", "braking"),
-    (r"\b(?:ayaw|hindi)\s+(?:umandar|mag-?start|magstart|mag-?andar)\b", "won't start"),
+    # "Car wont start", "does not start", "didn't crank": the no-start wording the knowledge base names.
+    (r"\b(?:wont|won'?t|will not|does not|doesn'?t|doesnt|did not|didn'?t|cant|can'?t|cannot)\s+(?:start|crank|turn over)\b", "won't start"),
+    (r"\b(?:ayaw|hindi|di)\s+(?:na\s+)?(?:umandar|mag[- ]?start|magstart|mag[- ]?andar|nag[- ]?start|nag[- ]?aandar)\b", "won't start"),
     (r"\b(?:won'?t|wont|doesn'?t|does not|will not|can'?t|cannot|ayaw)\s+(?:turn|switch|mag)\s*on\b", "won't start"),
     (r"\b(?:flat|butas|pumutok)\s+(?:ang\s+)?gulong\b", "flat tire"),
     (r"\b(?:sa\s+)?(?:mataas na takbo|mabilis na takbo|high speed)\b", "at high speed"),
     (r"\b(?:may\s+)?(?:tulo|tumulo|tumutulo|natutulo|tagas|tumatagas)\b", "leaking"),
     (r"\b(?:usok|umuusok|mausok|nag-?uusok)\b", "smoke"),
+    # "Puting usok sa tambutso": white smoke from the exhaust.
+    (r"\b(?:puting|puti na)\s+(?=smoke\b)", "white "),
+    (r"\b(?:itim na|maitim na)\s+(?=smoke\b)", "black "),
+    (r"\b(?:asul na|bughaw na)\s+(?=smoke\b)", "blue "),
+    (r"\b(?:sa\s+)?(?:tambutso|tambucho)\b", "from the exhaust"),
     (r"\b(?:ingay|maingay|umiingay)\b", "noise"),
     (r"\b(?:kumakalampag|kalampag|kumakalansing)\b", "rattling noise"),
     (r"\b(?:umuuga|nanginginig|yumuyugyog|uga)\b", "shaking"),
@@ -113,6 +120,7 @@ _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replace
     (r"\b(?:ayusin|pagawa|ipagawa|ayos)\b", "fix"),
     (r"\bmga\s+", ""),
     (r"\b(bookings?|reservations?|rentals?|rental history)\s+(?:ko|namin)\b", r"my \1"),
+    (r"\b(?:the\s+)?(car|unit)\s+(?:ko|namin)\b", r"my \1"),  # "ang balik ng sasakyan ko": my car's return
     (r"\bkailangan\b", "need"),
     (r"\bano\b", "what"),
     (r"\bpara\s+(?=rent|book|reserve)", "to "),
@@ -132,6 +140,7 @@ pending confirmed completed rejected status approved extend extension password a
 vehicle vehicles sedan seater seaters seats seating capacity passengers people persons transmission automatic manual
 navigation aircon conditioning color colour mileage odometer engine brakes braking brake squeaking squealing grinding
 overheating overheat temperature coolant battery alternator exhaust smoke tires tire tyres puncture steering vibration
+vibrates vibrating policy policies
 leaking leak warning flashing blinking misfire starter maintenance service inspection revenue utilization fleet
 monday tuesday wednesday thursday friday saturday sunday january february march april june july august september october
 november december tomorrow weekend

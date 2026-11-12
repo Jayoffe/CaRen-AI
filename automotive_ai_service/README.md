@@ -246,8 +246,45 @@ retrieval behavior and selected answer safeguards. It does **not** establish
 mechanical factual correctness, citation support, or technician-level quality;
 those rubric items remain subject to documented human review.
 
+#### Chat answers
+
+Chat answers are composed from the matched entry only (never mixed with other
+entries) by `compose_chat_answer` in `ai_api/automotive_knowledge.py`, using
+these short fields of each entry: `answer` (direct answer), `key_causes` (short
+phrases), `actions` (safe owner steps), `stop` (immediate safety instruction),
+`drive_safety` (the answer to "is it safe to drive?"), `professional` (what needs
+a technician) and optional `condition_hints` (what ruling out a part means, for
+"the battery is new" follow-ups). The question shapes the answer: definition
+questions get the answer and one step, "why" questions the causes, "what should
+I do" questions the steps, and a problem happening right now gets the safety
+instruction first. Source names, file names and retrieval details stay in
+`data.evidence`; they are never part of the text. The long structured fields
+remain for `format_knowledge_answer` without `concise`.
+
+The conversation remembers the topic being discussed (`last_topic` in the
+conversation memory), so short follow-ups ("what if the coolant is full?", "is
+it safe to drive?", "how much will it cost?", "what else could it be?") are
+answered from the same entry without repeating what was already said. A message
+that clearly names another topic starts a new answer; a vague message ("my car
+makes a noise") gets a clarifying question.
+
+Measure answer quality (accuracy, relevance, length, follow-ups, safety,
+invented figures, retrieval, paraphrase consistency and source-label leakage)
+on `data/evaluation/answer_quality_v1.json` with:
+
+```powershell
+python scripts/evaluate_answer_quality.py
+```
+
+Results go to `data/reports/answer_quality_current.md` and `.json`;
+`answer_quality_baseline.*` holds the same set scored on the previous version.
+After editing `data/automotive_knowledge.json`, rebuild the retrieval index
+(`python -m data_pipeline.run_all --only knowledge`) and run
+this evaluation, `python -m data_pipeline.evaluate_knowledge`,
+`python scripts/evaluate_chatbot.py` and `python manage.py test`.
+
 To add a knowledge entry, add a unique document to the JSON `documents` list
-and provide every existing structured field. Use the exact vehicle maker's
+and provide every existing structured field, plus the chat fields above. Use the exact vehicle maker's
 owner's manual or service schedule for model-specific requirements. Do not add
 unverified service intervals, fluid specifications, diagnostic codes, failure
 probabilities, or repair estimates. Keep advice conservative, identify

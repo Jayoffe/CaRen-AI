@@ -8,6 +8,8 @@ from django.conf import settings
 from .fleet_service import analyze_fleet
 from .automotive_knowledge import (
     format_knowledge_answer,
+    compose_chat_answer,
+    has_chat_fields,
     retrieve_knowledge,
 )
 from .prediction_service import (
@@ -481,6 +483,7 @@ def _knowledge_response(knowledge, confidence, diagnostic_context, message):
         query=message,
         concise=True,
     )
+    shown_parts = compose_chat_answer(document, message)[1] if has_chat_fields(document) else []
     return build_response(
         document["category"],
         confidence,
@@ -488,6 +491,11 @@ def _knowledge_response(knowledge, confidence, diagnostic_context, message):
         {
             "knowledge_id": document["id"],
             "knowledge_ids": [item["id"] for item in documents],
+            "shown_parts": shown_parts,
+            # What the references cannot cover, for internal review; not part of the chat text.
+            "source_limitations": list(dict.fromkeys(
+                item["source_gap"] for item in documents if isinstance(item.get("source_gap"), str) and item["source_gap"]
+            )),
             "retrieval_score": knowledge["score"],
             "retrieved_passage_count": len(knowledge.get("passages", [])),
             "source_count": len(source_references),
