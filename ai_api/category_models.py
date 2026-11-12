@@ -50,6 +50,31 @@ WILSON_Z = 1.96
 USAGE_ORDER = {"occasional": 0, "weekly": 1, "several_per_week": 2, "daily": 3}
 STATUS_PENDING = "evaluated_pending"
 STATUS_ACCEPTED = "evaluated_accepted"
+# Simulated demonstration vehicles carry plates with this prefix (the SAMPLE- fleet in the database).
+SIMULATED_PLATE_PREFIX = "SAMPLE-"
+DEMONSTRATION_NOTICE = (
+    "Demonstration model: trained on simulated SAMPLE- vehicles, not on real fleet outcomes. Do not base maintenance "
+    "decisions on it; use the condition-based screening and a mechanic's inspection."
+)
+UNKNOWN_DATA_NOTICE = (
+    "The training data of this model was not recorded, so it may include simulated vehicles. Treat it as a demonstration "
+    "and rely on the condition-based screening."
+)
+
+
+def training_data_source(rows):
+    """How much of a training set comes from simulated SAMPLE- vehicles: real, mixed or simulated."""
+    simulated = sum(1 for row in rows if str(row.get("plate_number") or "").upper().startswith(SIMULATED_PLATE_PREFIX))
+    source = "real" if simulated == 0 else "simulated" if simulated == len(rows) else "mixed"
+    return {"source": source, "rows": len(rows), "simulated_rows": simulated}
+
+
+def demonstration_notice(entry):
+    """The warning a prediction from this registry entry must carry, or None for a model trained only on real outcomes."""
+    data = entry.get("training_data") or {}
+    if data.get("source") == "real":
+        return None
+    return DEMONSTRATION_NOTICE if data.get("source") in ("simulated", "mixed") else UNKNOWN_DATA_NOTICE
 STATUS_REJECTED = "evaluated_rejected"
 STATUS_SUPERSEDED = "superseded"
 RISK_ELEVATED = "elevated"
@@ -456,6 +481,8 @@ def train_category(category_key, rows, requested_by=None):
             "healthy": summary["healthy"],
             "excluded_by_reason": summary["excluded_by_reason"],
             "sha256": _dataset_sha(eligible),
+            # Simulated SAMPLE- vehicles make a model a demonstration only (see demonstration_notice).
+            "training_data": training_data_source(eligible),
         },
         "methodology": (
             "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only "
@@ -571,6 +598,7 @@ def _finish(category_key, report, model, threshold, names, requested_by, reasons
             "evaluation": {"acceptance_criteria_passed": passed},
             "feature_schema_version": FEATURE_SCHEMA_VERSION,
             "catalog_version": report["catalog_version"],
+            "training_data": report["dataset"].get("training_data"),
             "report": report,
         }
         section["versions"].append(entry)
@@ -726,7 +754,10 @@ def category_availability():
         if problem:
             result[key] = {"available": False, "status": problem[0], "reason": problem[1], "active_version": None}
         else:
-            result[key] = {"available": True, "status": "ready", "reason": None, "active_version": entry["model_version"]}
+            notice = demonstration_notice(entry)
+            result[key] = {"available": True, "status": "ready", "reason": None, "active_version": entry["model_version"],
+                           "demonstration": notice is not None, "notice": notice,
+                           "training_data_source": (entry.get("training_data") or {}).get("source", "not_recorded")}
     return result
 
 
@@ -770,6 +801,7 @@ def predict_category(category_key, payload, availability, section):
     elevated = score >= threshold
     horizon = entry["report"]["horizon_days"]
     label = entry["report"]["category_name"]
+    notice = demonstration_notice(entry)
     return {
         "available": True,
         "reason": None,
@@ -777,10 +809,14 @@ def predict_category(category_key, payload, availability, section):
         "model_score": round(score, 5),
         "threshold": round(threshold, 6),
         "horizon_days": horizon,
-        "model": {"name": entry["model_name"], "version": entry["model_version"]},
+        "model": {"name": entry["model_name"], "version": entry["model_version"], "demonstration": notice is not None},
+        "demonstration": notice is not None,
+        "notice": notice,
+        "training_data": entry.get("training_data"),
         "factors": factors,
         "explanation": (
-            f"The {label} model {'flags' if elevated else 'does not flag'} a verified fault within {horizon} days. "
+            ("Demonstration only: the" if notice else "The")
+            + f" {label} model {'flags' if elevated else 'does not flag'} a verified fault within {horizon} days. "
             + (f"Most influenced by: {', '.join(item['label'].lower() for item in factors)}." if factors else "")
         ),
         "evaluation": {key: entry["report"]["metrics"][key] for key in ("recall", "precision", "records", "faults")},

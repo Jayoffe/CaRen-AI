@@ -27,7 +27,7 @@ from . import chatbot_service as core
 from . import grounded_answers as grounded
 from . import planner
 from .automotive_knowledge import (
-    compose_chat_answer, compose_follow_up, has_chat_fields, knowledge_document, mentions, retrieve_knowledge,
+    _terms_match, compose_chat_answer, compose_follow_up, has_chat_fields, knowledge_document, mentions, retrieve_knowledge,
 )
 from .fleet_service import analyze_fleet
 from .language import correct_typos, normalize_message
@@ -135,7 +135,7 @@ COURTESY_LEAD = re.compile(
 COURTESY_WORDS = {"hi", "hello", "hey", "hiya", "heya", "good", "morning", "afternoon", "evening", "day", "noon", "am", "pm", "magandang", "umaga", "hapon",
                   "tanghali", "gabi", "araw", "kumusta", "kamusta", "musta", "excuse", "uhm", "um", "uh", "pls", "plz", "please", "sir", "ma'am", "maam",
                   "kuya", "ate", "boss", "yo", "sup", "wassup", "asap", "help"}
-THANKS_WORDS = {"thanks", "thank", "you", "u", "thx", "tnx", "ty", "salamat", "maraming", "marami", "many", "lot", "so", "much", "naman", "sana", "lang", "again"}
+THANKS_WORDS = {"thanks", "thank", "you", "u", "thx", "tnx", "ty", "salamat", "maraming", "marami", "many", "a", "lot", "so", "much", "naman", "sana", "lang", "again"}
 # A message made only of these acknowledges or closes the chat; it asks for nothing, so no records or references are looked up.
 ACK_WORDS = {"ok", "okay", "okey", "k", "kk", "sige", "noted", "got", "it", "understood", "alright", "cool", "nice", "great", "perfect", "awesome", "fine",
              "copy", "gotcha", "good", "ayos", "oo", "yes", "yup", "yep", "that", "that's", "helps", "helped", "for", "the", "help", "your", "time", "all", "ng", "po", "and", "one", "very"}
@@ -255,7 +255,9 @@ ACCIDENT_ANSWER = (
     "- Notify the rental team as soon as you can, and follow your rental agreement.\n"
     "The system does not record accident procedures, insurance coverage or liability terms, so confirm those with the rental team."
 )
-GUIDE_NOT_FOUND = UNRECORDED_POLICY
+# The first sentence stays UNRECORDED_POLICY: evaluations recognise an abstention by it.
+GUIDE_NOT_FOUND = (UNRECORDED_POLICY + " I can answer questions about booking, payment, cancellation, rental length and prices, "
+                   "deposits, and pickup and return.")
 OUT_OF_SCOPE_ANSWER = (
     "I can only answer from this system's data and its automotive references, and I don't have anything reliable on that. "
     "I can help with car problems, warning lights, trouble codes and maintenance, and with vehicles, prices and your bookings."
@@ -390,6 +392,8 @@ def _grounded_response(message, role, retrieval, vocabulary, memory=None, entiti
         sources = [{"name": "DriveRent database (read-only, authorised for this account)", "tools": sorted(all_status),
                     "data_as_of": retrieval.get("data_as_of")}] + sources
     updates = {"notes_shown": sorted(set(shown))}
+    if plan.get("pending_pickup"):
+        updates["pending_pickup"] = plan["pending_pickup"]
     period = next((r.get("args", {}).get("period") for r in results if isinstance(r, dict) and (r.get("args") or {}).get("period")), None)
     if period:
         updates["last_period"] = {"start_date": period["start_date"], "end_date": period["end_date"]}
@@ -715,16 +719,101 @@ def _grounded_answer(message, role, core_response, passages=None, source_types=F
     if curated is not None and has_chat_fields(curated):
         used = [best]
         answer, shown_parts = compose_chat_answer(curated, message)
+    elif best["source_type"] == "system_documentation":
+        used = [best]
+        answer = _focused_guide_text(best["text"], message)
+    elif best["source_type"] == "diagnostic_flowchart" and _flowchart_sentences(best["text"]):
+        used = [best]
+        answer = _flowchart_sentences(best["text"])
     else:
         answer = " ".join(f"{p['title']}. {p['text']}" if p is not best else p["text"] for p in used)
     if best["support"] < settings.CHATBOT_STRONG_RETRIEVAL_SUPPORT:
-        answer += " If that isn't what you meant, tell me a bit more about the problem."
+        answer += " If that isn't what you meant, tell me a bit more."
     intent = core_response.get("intent") if core_response.get("intent") not in {"unknown", None} else best["metadata"].get("category", "reference")
     data = {"retrieved_ids": [p["id"] for p in passages], "retrieval_scores": [p["score"] for p in passages]}
     if curated is not None:
         data.update(knowledge_id=curated["id"], knowledge_ids=[curated["id"]], shown_parts=shown_parts)
     response = core.build_response(intent, core_response.get("confidence", 0.0), answer, data)
     return _with_evidence(response, "reference", [_citation(p) for p in used], support=best["support"])
+
+
+# How-to and requirements questions keep the whole entry: every step or requirement matters. ("how do extend": normalised text.)
+GUIDE_PROCEDURE = re.compile(r"\b(?:how (?:do|can|should)(?: i| we)?|how to|steps?|procedure|process|paano|walk me through"
+                             r"|requirements?|required|needed|what do i need|kailangan)\b", re.IGNORECASE)
+GUIDE_FOCUS_MIN_WORDS = 60
+GUIDE_STOP_WORDS = {
+    "a", "an", "the", "i", "me", "my", "you", "your", "we", "is", "are", "was", "be", "do", "does", "did", "can", "could", "will", "would",
+    "should", "to", "of", "for", "in", "on", "at", "with", "and", "or", "it", "this", "that", "there", "what", "which", "who", "when", "where",
+    "why", "how", "any", "if", "about", "need", "have", "has", "get", "please", "po", "ba", "system", "driverent", "rent", "rental", "car",
+    "vehicle", "booking", "reservation", "reserve", "book",
+}
+# Question words that the guide words differently ("contract" is written "rental agreement").
+GUIDE_SYNONYMS = {
+    "contract": {"agreement"}, "sign": {"accept", "agreement"}, "longest": {"most", "maximum", "longer"}, "maximum": {"most", "longer"},
+    "max": {"most", "longer"}, "shortest": {"least", "minimum"}, "minimum": {"least"}, "refund": {"refund", "refunded", "refunds"},
+    "late": {"late-return", "return"}, "fee": {"fees", "charge", "charges"}, "fees": {"fee", "charge", "charges"},
+    "approval": {"approve", "automatically"}, "approved": {"approve", "automatically"}, "airport": {"location"},
+    "hours": {"hourly"}, "hour": {"hourly"}, "age": {"minimum-age", "age"}, "old": {"minimum-age", "age"},
+    "charge": {"fee", "fees"}, "charges": {"fee", "fees"}, "penalty": {"fee", "fees"},
+    "cancelling": {"cancellation"}, "canceling": {"cancellation"}, "cancel": {"cancellation"},
+}
+
+
+def _focused_guide_text(text, message):
+    """The sentences of a guide entry that answer this question ("what's the longest I can rent?" gets the limit, not
+    the whole booking procedure). The full entry is kept for how-to questions, short entries, or when no sentence
+    clearly matches better than the rest."""
+    words = text.split()
+    if len(words) < GUIDE_FOCUS_MIN_WORDS or GUIDE_PROCEDURE.search(message):
+        return text
+    sentences = [s for s in re.split(r"(?<=[.!?])\s+(?=[A-Z(])", text.strip()) if s]
+    if len(sentences) < 3:
+        return text
+    terms = {w for w in re.findall(r"[a-z0-9-]+", message.casefold()) if w not in GUIDE_STOP_WORDS and len(w) > 2}
+    terms |= {synonym for term in list(terms) for synonym in GUIDE_SYNONYMS.get(term, ())}
+    if not terms:
+        return text
+
+    def score(sentence):
+        # Hyphenated words count whole and by part ("advance-booking" matches "advance").
+        whole = re.findall(r"[a-z0-9-]+", sentence.casefold())
+        tokens = set(whole) | {part for word in whole for part in word.split("-") if part}
+        return sum(1 for term in terms if any(_terms_match(term, token) for token in tokens))
+
+    scores = [score(sentence) for sentence in sentences]
+    best = max(scores)
+    kept = [sentence for sentence, value in zip(sentences, scores) if value == best and value > 0]
+    # Only when the match is clear: a few sentences stand out and most of the entry is left out.
+    if not kept or len(kept) > 2 or sum(len(s.split()) for s in kept) > 0.6 * len(words):
+        return text
+    return " ".join(kept)
+
+
+FLOWCHART = re.compile(r"^(?P<system>[^–.]+?)\s+–\s+(?P<component>[^.]+)\.\s+Symptoms:\s+(?P<symptoms>[^.]+)\.\s+Diagnostic steps:\s+(?P<steps>.+?)\.?\s*$")
+
+
+def _flowchart_sentences(text):
+    """A diagnostic flowchart entry as plain sentences, or None if it is not in the flowchart shape.
+
+    "Fuel System – Fuel Injector. Symptoms: A; B. Diagnostic steps: X (possible results: ...); Y (...)." becomes
+    "This can point to the fuel injector (fuel system), which typically causes a and b. A mechanic would usually x, then y.";
+    the lists of possible results are left out."""
+    match = FLOWCHART.match(text.strip())
+    if not match:
+        return None
+
+    def lower(item):
+        # Lower case except acronyms ("ABS", "ECU", "M.A.P.").
+        return " ".join(word if sum(c.isupper() for c in word) > 1 else word.lower() for word in item.strip().split())
+
+    symptoms = [lower(item) for item in match.group("symptoms").split(";") if item.strip()]
+    steps = [lower(re.sub(r"\s*\(possible results:[^)]*\)", "", item)) for item in match.group("steps").split(";") if item.strip()]
+    if not symptoms or not steps:
+        return None
+    component, system = lower(match.group("component")), lower(match.group("system"))
+    step_text = steps[0] if len(steps) == 1 else ", then ".join(steps)
+    return (f"This can point to the {component} in the {system}. Typical signs: {'; '.join(symptoms)}. "
+            f"A mechanic would usually {step_text}.")
 
 
 def _fleet_risk_response(database_context):
@@ -910,6 +999,8 @@ def _save_memory(conversation_id, scope, memory, entities, intent, vehicles=None
               # Explanations already shown in this conversation, and the last date range asked about.
               "notes_shown": (updates or {}).get("notes_shown", memory.get("notes_shown", [])),
               "last_period": (updates or {}).get("last_period", memory.get("last_period")),
+              # A pickup date waiting for its return date; kept for the next message only.
+              "pending_pickup": (updates or {}).get("pending_pickup"),
               "last_topic": (updates or {})["last_topic"] if "last_topic" in (updates or {}) else memory.get("last_topic")}
     try:
         conversation = Conversation.objects.filter(id=conversation_id).first()

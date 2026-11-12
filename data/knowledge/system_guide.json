@@ -137,9 +137,18 @@
         "longer rental",
         "change my dates",
         "change reservation dates",
-        "keep the car longer"
+        "keep the car longer",
+        "how do i extend my booking",
+        "extend my booking",
+        "extend booking",
+        "extend my reservation",
+        "how do i extend",
+        "extend the rental",
+        "add days to my booking",
+        "pa-extend",
+        "i-extend ang booking"
       ],
-      "text": "A reservation's dates cannot be changed or extended in the system: there is no extend or edit-dates action. The rental agreement says any extension needs administrator approval and an updated agreement, so ask the rental team. To rent on other dates, create a new reservation (3 to 7 days, or up to 21 days as a special-duration request) and, if needed, cancel the old one from My Reservations (/users/reservations) while it is unpaid.",
+      "text": "A reservation's dates cannot be changed or extended in the system: there is no reschedule, extend or edit-dates action. The rental agreement says any extension needs administrator approval and an updated agreement, so ask the rental team. To rent on other dates, create a new reservation (3 to 7 days, or up to 21 days as a special-duration request) and, if needed, cancel the old one from My Reservations (/users/reservations) while it is unpaid.",
       "code_references": [
         "Back-End/app/libraries/RentalAgreement.php",
         "Back-End/app/libraries/ReservationPolicy.php",
@@ -287,7 +296,13 @@
         "who can rent",
         "what are your requirements",
         "ano ang requirements",
-        "anong kailangan para mag rent"
+        "anong kailangan para mag rent",
+        "what's needed to rent",
+        "what is needed to rent",
+        "needed to rent a car",
+        "what do i need to rent a car",
+        "what is required to rent",
+        "what are the requirements to rent a car"
       ],
       "text": "To reserve a vehicle you need a signed-in, active customer account; administrator accounts cannot create reservations. The reservation form asks for the vehicle, a pickup date and a return date, and you must accept the rental agreement: the pickup date cannot be in the past, and the rental must be 3 to 7 days (up to 21 days as a special-duration request) and meet the vehicle's own minimum. The rental agreement says you must present a valid driver's licence and follow DriveRent's rental rules before pickup. Your profile (/users/profile) stores your driver's licence number and expiry date and a photo of you holding your licence, but the reservation form does not check the profile, so the system does not block a booking when no licence is saved, and the system stores no minimum-age rule or other document requirement, so ask the rental team what else they check at pickup.",
       "code_references": [
@@ -491,9 +506,15 @@
         "approve a reservation",
         "how do i approve a reservation",
         "confirm a booking",
-        "reject a reservation"
+        "reject a reservation",
+        "mark a reservation as completed",
+        "how do i mark a reservation as completed",
+        "mark as completed",
+        "mark it completed",
+        "complete a rental",
+        "how do i complete a reservation"
       ],
-      "text": "Administrators see reservations at Reservations (/admin/reservations), with past ones under Reservation History (/admin/reservations/history) and payments under Payment History (/admin/payments). Reservations are confirmed automatically by a verified payment, not by hand. An administrator can cancel an unpaid pending or confirmed reservation (a paid one cannot be cancelled in the system; its refund is arranged outside it), record the vehicle handover during the rental period once it is paid, and record the return, which completes it. Dates and prices cannot be edited.",
+      "text": "Administrators see reservations at Reservations (/admin/reservations), with past ones under Reservation History (/admin/reservations/history) and payments under Payment History (/admin/payments). Reservations are confirmed automatically by a verified payment, not by hand. An administrator can cancel an unpaid pending or confirmed reservation (a paid one cannot be cancelled in the system; its refund is arranged outside it), record the vehicle handover during the rental period once it is paid, and record the return, which marks the reservation completed. Dates and prices cannot be edited.",
       "code_references": [
         "Back-End/app/models/ReservationModel.php::ADMIN_TRANSITIONS, update_vehicle_use",
         "Front-End/src/App.jsx"

@@ -199,6 +199,9 @@ YES_NO = re.compile(r"^(?:does|do|is|are|has|have|may|meron|can|would|could|with
 # Words that ask for a broader list, so the question is not about the vehicle discussed before.
 BROADER_LIST = re.compile(r"\b(?:all|list|lahat|options|others?|every|any other|ibang|mga)\b")
 ELLIPTICAL = re.compile(r"^(?:and|what about|how about|eh|yung|paano yung|e di|so)\b")
+# A reply that is only dates ("2026-12-09", "from 2026-12-10 to 2026-12-14") continues the vehicle being discussed.
+DATES_ONLY = re.compile(r"(?:\s*(?:\d{4}-\d{2}-\d{2}|from|to|until|till|til|hanggang|mula|sa|on|the|and|return(?:ing)?(?: on)?|pickup(?: on)?"
+                        r"|pick up(?: on)?|po|lang|[-,.?!])\s*)+")
 PRONOUN = re.compile(r"\b(?:it(?! (?:true|possible|ok|okay|allowed|safe|normal|required)\b)|this one|that one|this car|that car|yan|iyan|yun|iyon|ito"
                      r"|(?:the )?(?:vehicle|car|one) i (?:selected|chose|picked|clicked)|selected (?:vehicle|car))\b")
 # Questions about the assistant's own access are answered from the guide.
@@ -308,6 +311,9 @@ ATTRIBUTES = [
 SEATS_RANKING = re.compile(r"\b(?:most|more|biggest|largest|maximum) (?:seats|seating|people|passengers|space)\b|\bbig(?:gest)? (?:family|group)\b"
                            r"|\b(?:family|group|barkada) (?:trip|outing|car)\b|\bpinakamaluwag\b|\bpinakamalaki\b|\bmaraming (?:tao|upuan)\b|\bbiggest\b|\blargest\b"
                            r"|\b(?:holds?|carr(?:y|ies)|fits?|takes?) the most\b")
+# "Which car is good for a long drive?": no comfort rating is stored, so the roomiest vehicles are listed first, with that said.
+LONG_TRIP = re.compile(r"\b(?:long|longer|mahabang) (?:drives?|trips?|road trips?|distance|travel|biyahe)\b|\blong-distance\b|\bmalayuan\b"
+                       r"|\bbiyaheng? malayo\b")
 # Weekly or monthly rates (only daily rates are stored).
 RATE_PERIOD = re.compile(r"\b(?:weekly|monthly|per week|per month|a week rate|week rates?|month rates?|lingguhan|buwanan)\b")
 HOURLY = re.compile(r"\b(?:hourly|per hour|an hour|\d+\s*(?:hours?|hrs?|oras)|(?:one|two|three|four|five|six|few|couple of) hours?)\b")
@@ -340,6 +346,10 @@ PAYMENT_STATUS = re.compile(r"\b(?:did|has|have|was|is) (?:my |the )?payments? (
                             r"|\b(?:have|did) i (?:already )?paid\b|\bam i (?:already )?paid\b|\bi (?:already )?paid\b.*\b(?:still|but|why|pending|not)\b"
                             r"|\bis (?:my |the )?(?:booking|reservation|rental)(?: #?\d+)? (?:already )?paid\b|\b(?:booking|reservation) (?:is )?(?:not )?paid\b"
                             r"|\bpay na (?:ba )?(?:ako|ko)\b|\bbayad na (?:ba )?(?:ako|ko|yung|the)\b|\bnabayaran\b|\bpumasok (?:na )?(?:ba )?(?:ang |yung |the )?pay")
+# "Which cars need reassessment?", "overdue assessments", "never assessed" (administrators): the monthly vehicle assessment.
+REASSESSMENT = re.compile(r"\bre-?assess\w*\b|\bassessments? (?:are |is )?(?:due|overdue|late)\b|\b(?:due|overdue|need\w*|late) (?:for )?(?:an? |the )?(?:monthly )?assessments?\b"
+                          r"|\bnever (?:been )?assessed\b|\bnot (?:yet |been )?assessed\b|\bmonthly (?:vehicle )?(?:assessments?|checks?)\b"
+                          r"|\b(?:last|latest) assess(?:ed|ment)\b|\bwhen (?:was|were) .*\bassessed\b")
 # "Who has the most bookings?", "top customers" (administrators): customers ranked by reservation count.
 CUSTOMER_RANKING = re.compile(r"\b(?:who|which customers?|which renters?|sino)\b.*\b(?:most|pinakamaraming|pinakamadami)\b"
                               r"|\btop (?:customers?|renters?|clients?)\b|\b(?:best|frequent|loyal|regular) (?:customers?|renters?|clients?)\b"
@@ -507,7 +517,8 @@ class Understanding:
         self.equipment = next(({"name": item, "terms": list(terms)} for item, terms in EQUIPMENT.items()
                                if any(re.search(rf"\b{re.escape(term)}s?\b", text) for term in terms)), None)
         self.attribute = next((key for key, pattern in ATTRIBUTES if pattern.search(text)), None)
-        self.seats_ranking = bool(SEATS_RANKING.search(text))
+        self.long_trip = bool(LONG_TRIP.search(text))
+        self.seats_ranking = bool(SEATS_RANKING.search(text)) or self.long_trip
         self.rate_period = bool(RATE_PERIOD.search(text))
         self.hourly = bool(HOURLY.search(text))
         year = re.search(r"\b(20[0-3]\d|19[89]\d)\s*(?:or )?(?:newer|and (?:newer|up|above)|pataas|onwards)\b", text)
@@ -628,6 +639,10 @@ def plan(message, role, vocabulary=None, memory=None):
     u = Understanding(message, vocabulary)
     memory = memory or {}
     admin = role == "admin"
+    pending = memory.get("pending_pickup")
+    if pending and u.single_date and not u.rental_days and not u.start_date and u.single_date > pending:
+        # The pickup date came in the previous message ("available on 2026-12-05?"); this one is the return date.
+        u.start_date, u.end_date, u.single_date = pending, u.single_date, None
 
     # Other people's records or contact details.
     contact = re.search(r"\b(?:phone|phones|email|emails|address|addresses|contact|contacts|personal information)\b", u.text)
@@ -671,6 +686,8 @@ def plan(message, role, vocabulary=None, memory=None):
             result["topic"] = topic
             return result
 
+    if not admin and REASSESSMENT.search(u.text) and not HOW_TO_DO.search(u.text):
+        return _direct("admin_only", u)  # vehicle assessments are fleet records
     if admin:
         admin_plan = _admin_lookup_plan(u)
         if admin_plan:
@@ -793,7 +810,7 @@ def plan(message, role, vocabulary=None, memory=None):
 
     filters = _vehicle_filters(u)
     follow_up = False
-    elliptical = ELLIPTICAL.search(u.text) or PRONOUN.search(u.text) or len(u.tokens) <= 6
+    elliptical = ELLIPTICAL.search(u.text) or PRONOUN.search(u.text) or len(u.tokens) <= 6 or DATES_ONLY.fullmatch(u.text)
     if not asks_vehicle and memory.get("last_vehicles") and (u.rental_days or u.has("price", "deposit", "specs", "availability") or u.start_date) \
             and elliptical and not BROADER_LIST.search(u.text):
         # "How much for 3 days?" after asking about a vehicle refers to that vehicle.
@@ -889,6 +906,8 @@ def plan(message, role, vocabulary=None, memory=None):
         result["hourly"] = True
         if purpose in ("listing", "availability", "details"):
             result["purpose"] = "price"
+    if u.long_trip and result.get("rank_by") == "seats":
+        result["long_trip"] = True
     if u.stock_question and (u.models or u.makes or u.categories) and purpose in ("price", "listing", "details"):
         result["stock_check"] = True
     if purpose == "compare":
@@ -898,6 +917,7 @@ def plan(message, role, vocabulary=None, memory=None):
         result["period_from_words"] = True
     if u.single_date and not u.rental_days and not u.start_date:
         result["clarification"] = "return_date"
+        result["pending_pickup"] = u.single_date  # remembered for one turn: the next date is the return date
     return result
 
 
@@ -909,6 +929,8 @@ def _admin_lookup_plan(u):
     vehicle = {k: v for k, v in _vehicle_filters(u).items() if k in ("makes", "models", "categories")}
     if u.vehicle_ids:
         vehicle["vehicle_ids"] = u.vehicle_ids
+    if REASSESSMENT.search(text):
+        return _plan("reassessment_due", u, [("assessments.due", vehicle)])
     period = {k: v for k, v in (("from", u.start_date), ("to", u.end_date)) if v}
     period.update(_report_period(text))
     if re.search(r"\b(?:revenue|income|earnings?|earn|earned|sales|kita|kinita)\b|\bbook(?:ed|ing|ings)? (?:value|amount|total)\b"
@@ -1126,7 +1148,11 @@ def _with_remembered_period(result, message, memory):
     if not result or not period or result.get("intent") != "vehicles" or not result.get("retrievals"):
         return result
     request = result["retrievals"][0]
-    if "start_date" in request["args"] or not re.match(r"^(?:and|what about|how about|eh|yung|e ang|paano ang)\b", message.strip().casefold()):
+    text = message.strip().casefold()
+    # "How much is that?" / "what's the total?" right after a dated check prices those dates.
+    price_follow_up = result.get("follow_up") and "rental_days" not in request["args"] and re.search(
+        r"^(?:so )?(?:how much(?: is| would)? (?:it|that|this|those dates|for those dates)|what(?:'s| is) the total|total|magkano (?:yan|iyan|yun|iyon|lahat)|how much (?:in total|all in all))\b", text)
+    if "start_date" in request["args"] or not (re.match(r"^(?:and|what about|how about|eh|yung|e ang|paano ang)\b", text) or price_follow_up):
         return result
     request["args"].update(start_date=period["start_date"], end_date=period["end_date"])
     request["args"].pop("rental_days", None)

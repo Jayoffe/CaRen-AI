@@ -1194,7 +1194,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:45.290917+00:00"
+          "accepted_at": "2026-11-08T13:29:45.290917+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 214,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1362,7 +1368,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:45.598019+00:00"
+          "accepted_at": "2026-11-08T13:29:45.598019+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 240,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1530,7 +1542,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:45.846268+00:00"
+          "accepted_at": "2026-11-08T13:29:45.846268+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 250,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1706,7 +1724,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:46.140075+00:00"
+          "accepted_at": "2026-11-08T13:29:46.140075+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 230,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1882,7 +1906,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:46.413643+00:00"
+          "accepted_at": "2026-11-08T13:29:46.413643+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 226,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -2078,6 +2108,12 @@
               "Recall: required at least 0.85, got 0.6923.",
               "Recall, 95% lower bound: required at least 0.6, got 0.4237."
             ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 210,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
           }
         }
       ]
@@ -2259,6 +2295,12 @@
             "decision_reasons": [
               "Recall, 95% lower bound: required at least 0.5, got 0.4902."
             ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 226,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
           }
         }
       ]
@@ -2447,6 +2489,12 @@
             "decision_reasons": [
               "Recall, 95% lower bound: required at least 0.5, got 0.4677."
             ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 242,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
           }
         }
       ]

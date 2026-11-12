@@ -674,6 +674,30 @@ class PaymentAndAdminAnswerTests(TestCase):
         customer = plan_message("who has the most bookings", "customer", FLEET_VOCABULARY, {})
         self.assertFalse((customer or {}).get("retrievals"), customer)
 
+    def test_reassessment_questions_are_for_administrators(self):
+        for message in ("which cars need reassessment", "overdue assessments", "which vehicles have never been assessed"):
+            plan = plan_message(message, "admin", FLEET_VOCABULARY, {})
+            self.assertEqual([r["tool"] for r in plan["retrievals"]], ["assessments.due"], message)
+            customer = plan_message(message, "customer", FLEET_VOCABULARY, {})
+            self.assertEqual((customer or {}).get("direct"), "admin_only", message)
+        self.assertEqual(plan_message("when was the hilux last assessed", "admin", FLEET_VOCABULARY, {})["retrievals"][0]["args"]["models"],
+                         ["Hilux"])
+        self.assertIsNone(plan_message("how do i do a reassessment", "admin", FLEET_VOCABULARY, {}))
+
+    def test_reassessment_answer_lists_overdue_first(self):
+        plan = plan_message("which cars need reassessment", "admin", FLEET_VOCABULARY, {})
+        vehicles = [
+            {"id": 1, "make": "Kia", "model": "Picanto", "plate_number": "KIA 1", "status": "current", "due_on": "2026-12-20", "days_until_due": 30},
+            {"id": 2, "make": "Toyota", "model": "Hilux", "plate_number": "TYH 2", "status": "overdue", "due_on": "2026-11-01", "days_until_due": -11},
+            {"id": 3, "make": "Ford", "model": "Territory", "plate_number": None, "status": "never_assessed", "due_on": None, "days_until_due": None},
+        ]
+        text = self.compose(plan, "assessments.due", {"vehicles": vehicles}, "admin")
+        self.assertTrue(text.startswith("Overdue: 1\n- Toyota Hilux (TYH 2): due 2026-11-01, 11 day(s) late"), text)
+        self.assertIn("Never assessed: 1", text)
+        self.assertIn("Up to date: 1 vehicle(s).", text)
+        current = self.compose(plan, "assessments.due", {"vehicles": vehicles[:1]}, "admin")
+        self.assertIn("up to date", current)
+
     def test_reservations_this_month_cover_the_whole_month(self):
         args = plan_message("how many reservations this month", "admin", FLEET_VOCABULARY, {})["retrievals"][0]["args"]
         self.assertTrue(args["from"].endswith("-01"), args)
@@ -688,3 +712,65 @@ class PaymentAndAdminAnswerTests(TestCase):
         self.assertEqual(ask("why is my car using so much fuel")["data"]["knowledge_id"], "high_fuel_consumption")
         self.assertIn("no hourly rate", ask("can i rent for just a few hours")["answer"])
         self.assertIn("no advance-booking limit", ask("how far in advance should i book")["answer"])
+
+    @skipUnless(INDEX_BUILT, "knowledge index not built")
+    def test_thanks_and_extension_are_not_captured_by_new_keywords(self):
+        # Found by the 2026-11-12 regression run: "a lot" matched a fuel keyword, "my booking" the statuses entry.
+        for message in ("thanks a lot", "pls thanks a lot"):
+            self.assertEqual(answer_chat(message, viewer_role="customer", retrieval_protocol=1)["intent"], "goodbye", message)
+        tools, result = [], plan_message("how do i extend my booking", "customer", FLEET_VOCABULARY, {})
+        self.assertTrue(result and result.get("guide"), result)
+        from .assistant import _grounded_answer
+        guide = _grounded_answer("how do i extend my booking", "customer", {"intent": None, "confidence": 0.0},
+                                 source_types={"system_documentation"})
+        self.assertIn("extended", guide["answer"])
+
+
+class AnswerShapeTests(TestCase):
+    """Focused guide answers, readable flowchart answers and multi-turn dates (2026-11-12)."""
+
+    def test_narrow_policy_questions_get_the_matching_sentences(self):
+        from .assistant import _focused_guide_text
+        text = ("Open Vehicles, choose a vehicle, and select Reserve to open the reservation form for the dates you want to rent. "
+                "Pick a pickup date (today or any later date; there is no advance-booking limit) and a return date for the rental. "
+                "Rentals must be at least 3 days and at most 7 days; 8 to 21 days must be sent as a special-duration request. "
+                "You must accept the rental agreement before submitting the reservation form on the page. "
+                "The reservation is confirmed automatically once the payment is verified by the payment provider.")
+        self.assertTrue(_focused_guide_text(text, "what's the longest i can rent").startswith("Rentals must be at least 3 days"))
+        self.assertEqual(_focused_guide_text(text, "do i need to sign a contract"),
+                         "You must accept the rental agreement before submitting the reservation form on the page.")
+        self.assertEqual(_focused_guide_text(text, "how do i book a car"), text)  # procedures keep every step
+        self.assertEqual(_focused_guide_text(text, "tell me everything"), text)   # no clear match: the whole entry
+
+    def test_flowchart_entries_read_as_sentences(self):
+        from .assistant import _flowchart_sentences
+        text = ("Electrical System – Wiper Motor. Symptoms: Wipers not working; Wipers operate intermittently. Diagnostic steps: "
+                "Test power to wiper motor (possible results: No power, Power present); Inspect wiper motor linkage for wear "
+                "(possible results: Worn, Good).")
+        self.assertEqual(_flowchart_sentences(text),
+                         "This can point to the wiper motor in the electrical system. Typical signs: wipers not working; wipers operate "
+                         "intermittently. A mechanic would usually test power to wiper motor, then inspect wiper motor linkage for wear.")
+        self.assertIn("ABS warning light", _flowchart_sentences(
+            "ABS System – ABS Control Module. Symptoms: ABS warning light on. Diagnostic steps: Check ABS fuse (possible results: Blown)."))
+        self.assertIsNone(_flowchart_sentences("Not a flowchart entry."))
+
+    def test_long_drive_lists_the_roomiest_vehicles_first(self):
+        plan = plan_message("which car is good for a long drive", "customer", FLEET_VOCABULARY, {})
+        self.assertEqual((plan["purpose"], plan["rank_by"], plan.get("long_trip")), ("ranking", "seats", True))
+
+    def test_pickup_date_waits_for_the_return_date(self):
+        first = plan_message("is the staria available on 2026-12-05", "customer", FLEET_VOCABULARY, {})
+        self.assertEqual(first["pending_pickup"], "2026-12-05")
+        memory = {"pending_pickup": "2026-12-05", "last_vehicles": [{"make": "Hyundai", "model": "Staria"}]}
+        second = plan_message("2026-12-09", "customer", FLEET_VOCABULARY, memory)
+        args = second["retrievals"][0]["args"]
+        self.assertEqual((args["models"], args["start_date"], args["end_date"]), (["Staria"], "2026-12-05", "2026-12-09"))
+        ranged = plan_message("from 2026-12-10 to 2026-12-14", "customer", FLEET_VOCABULARY,
+                              {"last_vehicles": [{"make": "Hyundai", "model": "Staria"}]})
+        self.assertEqual(ranged["retrievals"][0]["args"]["models"], ["Staria"])
+
+    def test_price_follow_up_reuses_the_dates_just_checked(self):
+        memory = {"last_vehicles": [{"make": "Toyota", "model": "Hilux"}], "last_period": {"start_date": "2026-12-01", "end_date": "2026-12-05"}}
+        for message in ("how much is that", "what's the total", "magkano yan"):
+            args = plan_message(message, "customer", FLEET_VOCABULARY, memory)["retrievals"][0]["args"]
+            self.assertEqual((args.get("start_date"), args.get("end_date")), ("2026-12-01", "2026-12-05"), message)

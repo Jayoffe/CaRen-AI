@@ -501,9 +501,11 @@
           "cancel and create"
         ],
         "sources": [
-          "sys:sys_cancellation"
+          "sys:sys_cancellation",
+          "sys:sys_rental_extension"
         ]
-      }
+      },
+      "note": "Updated 2026-11-12: the extension entry also answers date changes (no reschedule; cancel and create a new reservation)."
     },
     {
       "id": "sys-009",

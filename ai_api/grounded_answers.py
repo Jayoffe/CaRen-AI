@@ -107,6 +107,7 @@ def compose(plan, results, role, vocabulary=None, guide=None, fleet_risk=None, s
         "maintenance_recurring": _maintenance_recurring, "maintenance_inspections": _maintenance_inspections,
         "maintenance_prediction": _maintenance_prediction, "maintenance_costs": _maintenance_costs,
         "vehicle_status": _vehicle_status, "revenue": _revenue, "utilization": _utilization,
+        "reassessment_due": _reassessment_due,
     }.get(intent)
     if handler is None:
         return "I couldn't work out which records answer that. Could you rephrase it?", data
@@ -232,6 +233,8 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
     elif purpose == "ranking" and plan.get("rank_by") == "seats":
         by_seats = sorted(vehicles, key=lambda v: v.get("seating_capacity") or 0, reverse=True)
         top = by_seats[0]
+        if plan.get("long_trip"):
+            lines.append("No comfort rating is recorded, but roomier vehicles are usually easier on a long drive, so here they are by size.")
         tied = [label[id(v)] for v in by_seats if v.get("seating_capacity") == top.get("seating_capacity")]
         lines.append(f"The {_join(tied)} {'seat' if len(tied) > 1 else 'seats'} the most people: {top.get('seating_capacity')} seats.")
         if len(by_seats) > 1:
@@ -279,7 +282,11 @@ def _vehicles(plan, by_tool, role, vocabulary, guide, fleet_risk, notes):
         notes.add(lines, "quote_rule")
     elif purpose == "availability" or purpose == "status":
         lines += _availability_lines(vehicles, data, role, purpose, label)
-        if role != "admin" and not data.get("period"):
+        if plan.get("pending_pickup") and not data.get("period"):
+            # "Is the Staria available on 2026-12-05?": the pickup is known; the period needs a return date.
+            lines.append(f"To check {plan['pending_pickup']} against existing bookings I need the return date too: rentals are 3 to 7 days "
+                         "(up to 21 as a special-duration request). When will you return it?")
+        elif role != "admin" and not data.get("period"):
             notes.add(lines, "dates_hint")
     elif purpose == "details":
         if len(vehicles) == 1:
@@ -785,6 +792,37 @@ def _reservation_summary(plan, by_tool, role, vocabulary, guide, fleet_risk, not
               f"{r['status']}, " + (money(r['total_amount']) if r.get("total_amount") is not None else "no total") for r in rows[:10]]
     if len(rows) > 10:
         lines.append(f"Showing 10 of {len(rows)}; see Reservations in the admin pages for the rest.")
+    return "\n".join(lines)
+
+
+def _reassessment_due(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None):
+    """Monthly vehicle reassessments (administrators): overdue first, then due within 7 days, then never assessed."""
+    data = by_tool["assessments.due"].get("data") or {}
+    vehicles = data.get("vehicles") or []
+    if not vehicles:
+        return "No vehicles matched, so there are no reassessments to report."
+
+    def label(v):
+        return name(v) + (f" ({v['plate_number']})" if v.get("plate_number") else "")
+
+    groups = (
+        ("overdue", "Overdue", lambda v: f"due {v['due_on']}, {abs(v['days_until_due'] or 0)} day(s) late"),
+        ("due_soon", "Due within 7 days", lambda v: f"due {v['due_on']}"),
+        ("never_assessed", "Never assessed", lambda v: "no assessment recorded"),
+    )
+    lines = []
+    for status, heading, detail in groups:
+        rows = sorted((v for v in vehicles if v.get("status") == status), key=lambda v: (v.get("days_until_due") or 0, label(v)))
+        if rows:
+            lines.append(f"{heading}: {len(rows)}")
+            lines += [f"- {label(v)}: {detail(v)}" for v in rows[:10]]
+    current = sum(1 for v in vehicles if v.get("status") == "current")
+    if not lines:
+        return (f"All {current} vehicle(s) are up to date with the monthly reassessment."
+                if current else "No reassessment status is recorded for these vehicles.")
+    if current:
+        lines.append(f"Up to date: {current} vehicle(s).")
+    lines.append("Assess them from Predictive Maintenance (/admin/maintenance/predictions).")
     return "\n".join(lines)
 
 

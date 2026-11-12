@@ -334,6 +334,30 @@ class RegistryAndPredictionTests(IsolatedRegistry):
         low = analyze_assessment(self.payload(rating="excellent"))
         self.assertEqual(next(item for item in low["components"] if item["component_key"] == "brakes")["prediction"]["risk_level"], "not_elevated")
 
+    def test_models_trained_on_sample_vehicles_are_labelled_demonstrations(self):
+        # Rows with SYNTH- plates stand for real vehicles: no notice.
+        self.accepted()
+        real = analyze_assessment(self.payload(rating="critical"))
+        brakes = next(item for item in real["components"] if item["component_key"] == "brakes")
+        self.assertFalse(brakes["prediction"]["demonstration"])
+        self.assertIsNone(brakes["prediction"]["notice"])
+        self.assertEqual(brakes["prediction"]["training_data"]["source"], "real")
+        # The same data on SAMPLE- vehicles: every prediction says it is a demonstration.
+        rows = [dict(row, plate_number=f"SAMPLE-{row['vehicle_id']}") for row in synthetic_rows(seed=11)]
+        entry = train_category("brakes", rows)
+        self.assertEqual(entry["training_data"], {"source": "simulated", "rows": entry["report"]["dataset"]["rows"],
+                                                  "simulated_rows": entry["report"]["dataset"]["rows"]})
+        promote_model("brakes", entry["model_version"], 1)
+        demo = analyze_assessment(self.payload(rating="critical"))
+        brakes = next(item for item in demo["components"] if item["component_key"] == "brakes")
+        self.assertTrue(brakes["prediction"]["demonstration"])
+        self.assertIn("simulated SAMPLE- vehicles", brakes["prediction"]["notice"])
+        self.assertTrue(brakes["prediction"]["explanation"].startswith("Demonstration only"))
+        self.assertTrue(brakes["ai_model"]["demonstration"])
+        self.assertEqual(demo["predictive_capability"]["demonstration_categories"], ["brakes"])
+        self.assertIn("demonstration models", demo["predictive_capability"]["reason"])
+        self.assertTrue(category_availability()["brakes"]["demonstration"])
+
     def test_categories_unlock_independently(self):
         self.accepted("brakes")
         train_category("engine", synthetic_rows("engine", signal=False))
