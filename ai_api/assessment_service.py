@@ -500,6 +500,12 @@ def analyze_assessment(payload):
 
     model_status = maintenance_model_status()
     enabled = [item["component_key"] for item in results if item["prediction"]["available"]]
+    demonstration = [item["component_key"] for item in results if item["prediction"].get("demonstration")]
+    reason = ("Only categories with an accepted model have a prediction. Condition-based screening covers every category."
+              if enabled else "No model is validated for predicting failures on this fleet. Condition-based screening is reported instead.")
+    if demonstration:
+        reason = (f"{len(demonstration)} of these predictions come from demonstration models trained on simulated SAMPLE- vehicles, "
+                  "not real fleet outcomes; do not base maintenance decisions on them. " + reason)
     return {
         "status": "success",
         "assessment_id": payload["assessment_id"],
@@ -513,12 +519,11 @@ def analyze_assessment(payload):
         },
         "predictive_capability": {
             "status": "partial" if enabled else "unavailable",
-            "label": f"Available for {len(enabled)} of {len(results)} categories" if enabled else INSUFFICIENT_DATA,
-            "reason": (
-                "Only categories with an accepted model have a prediction. Condition-based screening covers every category."
-                if enabled else "No model is validated for predicting failures on this fleet. Condition-based screening is reported instead."
-            ),
+            "label": (f"Available for {len(enabled)} of {len(results)} categories" if enabled else INSUFFICIENT_DATA)
+                     + (" (demonstration models)" if demonstration and len(demonstration) == len(enabled) else ""),
+            "reason": reason,
             "categories": enabled,
+            "demonstration_categories": demonstration,
             "registered_model_status": model_status.get("status"),
         },
         "safety_warnings": warnings,

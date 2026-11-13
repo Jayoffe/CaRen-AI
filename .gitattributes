@@ -1,0 +1,7 @@
+# Model artifacts, evaluation reports and the knowledge index are verified by
+# SHA-256 against hashes recorded when they were built. Store them byte-for-byte
+# so a Linux deployment checks out exactly the bytes that were evaluated on Windows
+# (without this, core.autocrlf rewrites CRLF to LF and every hash check fails).
+trained_models/** -text
+data/processed/knowledge_index/** -text
+*.joblib binary

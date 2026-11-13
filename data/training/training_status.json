@@ -119,9 +119,9 @@
       "status": "evaluated_accepted",
       "task": "custom automotive chatbot intent classification",
       "dataset": "data\\chatbot_intents.json",
-      "source_sha256": "458ca32c4691666d662a50b1760dfd97a1c0634bd4247d3f6c1e5d5cbf5d5782",
-      "training_records": 2175,
-      "test_records": 726,
+      "source_sha256": "6ea21141d3e8bd48dbdd739b3fc6478d980835065e82b5222f851c2f9fbd8e2a",
+      "training_records": 2240,
+      "test_records": 747,
       "model_version": "1.0",
       "feature_schema": {
         "vectorizer": "TfidfVectorizer",
@@ -133,18 +133,18 @@
         ],
         "sublinear_tf": true
       },
-      "artifact_sha256": "db9bf1c5d195b8261ff6e35122965cdd0c9ee5e3f6754e70b59390a27077411c",
+      "artifact_sha256": "b1dbe55065b96a7874c92e52d58db4c2f73c31e0865c562577fab95861d592ea",
       "metrics": {
-        "accuracy": 0.9187,
-        "macro_f1": 0.7966,
-        "weighted_f1": 0.9191,
-        "baseline_accuracy": 0.6612,
-        "baseline_macro_f1": 0.0346
+        "accuracy": 0.9197,
+        "macro_f1": 0.8027,
+        "weighted_f1": 0.9199,
+        "baseline_accuracy": 0.6426,
+        "baseline_macro_f1": 0.034
       },
       "artifact_path": "trained_models\\chatbot_nlp.joblib",
       "eligible_for_inference": true,
       "reason": "Authored-intent holdout met the internal macro-F1 threshold.",
-      "updated_at": "2026-10-31T14:25:54.261006+00:00"
+      "updated_at": "2026-11-13T00:30:25.751782+00:00"
     }
   }
 }

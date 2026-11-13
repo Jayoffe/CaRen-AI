@@ -2696,7 +2696,17 @@
         "what cars can I rent this week",
         "may sasakyan pa ba para sa weekend",
         "any open units next week",
-        "pwede pa bang mag rent ngayong araw"
+        "pwede pa bang mag rent ngayong araw",
+        "meron pa bang bakanteng sasakyan sa linggo",
+        "may available ba kayong kotse ngayong weekend",
+        "libre pa ba yung van sa sabado",
+        "anong mga unit ang pwedeng rentahan ngayon",
+        "may natitira pa bang sasakyan para bukas",
+        "is there any vehicle left for next friday",
+        "can i still get a car for this weekend",
+        "which units are open on the 20th",
+        "do you still have a free car for tomorrow morning",
+        "pwede pa bang magpa-reserve ng van sa disyembre"
       ]
     },
     {
@@ -2725,7 +2735,17 @@
         "What daily prices are shown for the rental fleet?",
         "Please compare car hire costs per day",
         "What rate is listed for renting a vehicle?",
-        "Where do I find the per-day charge for a car?"
+        "Where do I find the per-day charge for a car?",
+        "magkano ang upa ng suv kada araw",
+        "presyo ng van pang tatlong araw",
+        "magkano kung isang linggo ko gagamitin",
+        "how much is the daily rate of your pickup",
+        "what's the price of renting a hatchback for four days",
+        "total cost for a five day rental",
+        "may discount ba pag matagal ang rent",
+        "magkano ang pinakamurang unit nyo",
+        "how much would a week with the mpv come to",
+        "rate per day ng sedan po"
       ]
     },
     {
@@ -2767,7 +2787,17 @@
         "do tourists need an international driving permit",
         "anong papeles ang kailangan",
         "what are the conditions for renting",
-        "pwede ba student permit"
+        "pwede ba student permit",
+        "ano ang kailangan para makapag rent",
+        "anong dokumento ang dadalhin ko",
+        "kailangan ba ng lisensya para umupa",
+        "what papers should i bring to rent",
+        "do you need my driver's license before i book",
+        "is a valid id enough to rent a car",
+        "what do renters have to provide",
+        "requirements po para sa rental",
+        "can a tourist with a foreign license rent",
+        "may age limit ba ang pag rent"
       ]
     },
     {
@@ -2797,12 +2827,22 @@
         "How do I complete the steps to submit a reservation for a car?",
         "Tell me the steps to create a rental booking",
         "Can you walk me through requesting a reservation?",
-        "How do I send a booking request for a vehicle?"
+        "How do I send a booking request for a vehicle?",
+        "paano magpa-reserve ng sasakyan",
+        "pano ako magbu-book ng kotse online",
+        "gusto ko mag book ng van",
+        "how do i make a reservation on the website",
+        "where do i book a car",
+        "steps to reserve a vehicle online",
+        "can i book through this app",
+        "i want to reserve a car for my trip",
+        "how long before my reservation is confirmed",
+        "do i need to sign the rental agreement to book"
       ]
     },
     {
       "tag": "rental_duration",
-      "answer": "Rental periods, minimum durations, and extensions are subject to the vehicle's current listing and the rental team's approval. Check the reservation details for the applicable dates and terms.",
+      "answer": "Rentals are 3 to 7 days, or up to 21 days as a special-duration request; a vehicle's own minimum can be longer. Dates cannot be changed in the system, and an extension needs administrator approval and an updated rental agreement.",
       "patterns": [
         "How long can I rent a car for?",
         "What is the minimum rental period?",
@@ -2839,12 +2879,20 @@
         "how long can I rent the car",
         "ilang araw max na renta",
         "is there a limit on rental length",
-        "pwede ba long term na renta"
+        "pwede ba long term na renta",
+        "ilang araw ang pinakamaikling upa",
+        "hanggang ilang araw pwede mag rent",
+        "pwede ba dalawang araw lang",
+        "what is the shortest rental you allow",
+        "what's the maximum number of days i can rent",
+        "can i keep the car for three weeks",
+        "how many days at most for one booking",
+        "pwede ba i-extend yung rental ko"
       ]
     },
     {
       "tag": "deposits_payments",
-      "answer": "Deposit amounts and accepted payment methods must be verified against current rental policy. I cannot confirm that a payment was made or processed; check the booking or contact the rental team.",
+      "answer": "Reservations are paid online through Xendit from My Reservations, and a booking is confirmed once the payment is verified. The security deposit is handled separately by the rental team. Ask \"did my payment go through?\" to check a booking.",
       "patterns": [
         "Do I need to pay a deposit for the rental?",
         "How much is the security deposit?",
@@ -2881,7 +2929,17 @@
         "what payment methods do you accept",
         "kailan ibabalik ang deposit ko",
         "can I pay by bank transfer",
-        "is there a down payment"
+        "is there a down payment",
+        "paano magbayad ng reservation",
+        "pwede ba gcash pambayad",
+        "tumatanggap ba kayo ng credit card",
+        "how do i pay for my booking online",
+        "is the security deposit refundable",
+        "can i pay cash at pickup",
+        "my payment link expired what do i do",
+        "magkano ang deposit ng van",
+        "is the deposit part of the online payment",
+        "where can i see my payment history"
       ]
     },
     {
@@ -2923,7 +2981,17 @@
         "gaano kalaki ang trunk",
         "is there a child seat",
         "does the sedan have bluetooth audio",
-        "ilang pinto ang kotse"
+        "ilang pinto ang kotse",
+        "may aircon ba ang lahat ng sasakyan nyo",
+        "ilan ang upuan ng mpv",
+        "automatic ba o manual ang pickup",
+        "does the suv come with gps",
+        "which cars have a dash camera",
+        "is the van diesel or gasoline",
+        "how many passengers fit in the hatchback",
+        "does the sedan have usb charging",
+        "anong kulay ng available na suv",
+        "which unit has the biggest trunk"
       ]
     },
     {
@@ -2965,7 +3033,15 @@
         "what happens when I return the car",
         "pickup location po",
         "where should I park when returning",
-        "sino ang mag aabot ng susi"
+        "sino ang mag aabot ng susi",
+        "pwede ba sa airport kunin",
+        "where do i pick up the rental car",
+        "what time should i return the vehicle",
+        "do i have to return it with a full tank",
+        "can someone else return the car for me",
+        "what happens when i return the car late",
+        "kailan ko ibabalik ang van",
+        "is fuel included in the rental"
       ]
     },
     {
@@ -2995,7 +3071,17 @@
         "Can I edit the pickup date on my reservation?",
         "How do I request a new date for my car hire?",
         "Are cancellations handled through the reservation page?",
-        "Can someone update the dates on my rental request?"
+        "Can someone update the dates on my rental request?",
+        "paano i-cancel ang reservation ko",
+        "pwede ba palitan ang petsa ng booking",
+        "may bayad ba pag nag cancel",
+        "how do i cancel my reservation",
+        "can i move my booking to another date",
+        "will i get a refund if i cancel",
+        "can i cancel after paying",
+        "i want to change the dates of my rental",
+        "is there a cancellation fee",
+        "pa-cancel po ng booking ko"
       ]
     },
     {

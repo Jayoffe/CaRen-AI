@@ -5,6 +5,7 @@ message is tested on the Back-End side (Back-End/tests/chat_intent_router_test.p
 end to end by scripts/evaluate_chatbot.py.
 """
 import json
+import re
 from pathlib import Path
 from unittest import skipUnless
 from unittest.mock import patch
@@ -233,14 +234,14 @@ class GuideAndSymptomTests(TestCase):
 
     def test_white_smoke_answer_covers_condensation_coolant_and_head_gasket(self):
         answer = answer_chat("white smoke from exhaust", viewer_role="customer")["answer"]
-        self.assertTrue(answer.startswith("Direct answer: Thin white vapour"))
+        self.assertTrue(answer.startswith("Thin white vapour"))
         for text in ("condensation", "coolant", "head gasket", "overheat"):
             self.assertIn(text, answer)
         self.assertIn("one possible cause", answer)
 
     def test_squeaking_brakes_answer_leads_with_noise_causes(self):
         answer = answer_chat("my brakes are squeaking when I stop", viewer_role="customer")["answer"]
-        self.assertTrue(answer.startswith("Direct answer: A squeak or squeal when braking"))
+        self.assertTrue(answer.startswith("A squeak or squeal when braking"))
         for text in ("wear indicator", "moisture", "Grinding"):
             self.assertIn(text, answer)
 
@@ -361,3 +362,515 @@ class RootCauseRegressionTests(TestCase):
             reply = answer_chat(message, viewer_role="customer", retrieval_protocol=1, vocabulary=VOCABULARY)
             self.assertEqual(reply["intent"], "goodbye", message)
         self.assertEqual(answer_chat("Yo!", viewer_role="customer", retrieval_protocol=1, vocabulary=VOCABULARY)["intent"], "greeting")
+
+
+@skipUnless(INDEX_BUILT, "knowledge index not built")
+class AnswerQualityTests(TestCase):
+    """Answer-quality regressions found on 2026-11-12 (scripts/evaluate_answer_quality.py has the full set)."""
+
+    LEAKS = ("From the automotive", "reference notes", "Direct answer:", "Source limitation", "Possible causes and mechanisms",
+             "Safe preliminary checks", "not a confirmed diagnosis", ".json", "OBDex", "SAE J2012")
+
+    def ask(self, message, conversation_id=None):
+        return answer_chat(message, viewer_role="customer", conversation_id=conversation_id,
+                           conversation_scope="customer:quality-test" if conversation_id else None, retrieval_protocol=1)
+
+    def test_answers_are_short_and_carry_no_source_labels(self):
+        for message in ("What should I do if my tire is flat?", "Why is my car overheating?", "My steering is heavy", "What is P0420?",
+                        "Transmission slipping", "What does the ABS light mean?"):
+            answer = self.ask(message)["answer"]
+            self.assertLessEqual(len(answer.split()), 130, message)
+            for leak in self.LEAKS:
+                self.assertNotIn(leak, answer, message)
+
+    def test_flat_tire_answer_stays_on_tires(self):
+        answer = self.ask("What should I do if my tire is flat?")["answer"]
+        self.assertTrue(answer.startswith("If your tire is flat, slow down gradually and pull over"))
+        for unrelated in ("steering", "transmission", "engine"):
+            self.assertNotIn(unrelated, answer.casefold())
+
+    def test_follow_up_narrows_causes_without_repeating(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000001"
+        first = self.ask("Why is my car overheating?", conversation)["answer"]
+        follow_up = self.ask("What if the coolant is full?", conversation)
+        self.assertEqual(follow_up["data"]["knowledge_id"], "engine_overheating")
+        self.assertIn("radiator fan", follow_up["answer"])
+        self.assertNotIn("low coolant", follow_up["answer"])
+        self.assertLess(len(follow_up["answer"]), len(first) / 1.5)
+
+    def test_safety_follow_up_gets_a_direct_answer(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000002"
+        self.ask("My steering is heavy", conversation)
+        answer = self.ask("Is it safe to drive?", conversation)["answer"]
+        self.assertTrue(answer.startswith("Not until it's checked"))
+
+    def test_ruling_out_a_part_uses_what_that_tells_a_technician(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000003"
+        self.ask("my car won't start", conversation)
+        answer = self.ask("the lights work fine though", conversation)["answer"]
+        self.assertIn("starter", answer)
+        self.assertNotIn("pre-rental", answer.casefold())
+
+    def test_topic_change_starts_a_new_answer(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000004"
+        self.ask("Why is my car overheating?", conversation)
+        response = self.ask("What about a flat tire?", conversation)
+        self.assertEqual(response["data"]["knowledge_id"], "tire_puncture")
+
+    def test_vague_symptoms_get_a_clarifying_question(self):
+        for message in ("My car makes a noise", "Something is wrong with my car", "A light came on on my dashboard"):
+            response = self.ask(message)
+            self.assertEqual(response["intent"], "clarification_needed", message)
+            self.assertTrue(response["answer"].endswith("?") or "?" in response["answer"], message)
+
+    def test_unrelated_questions_are_declined_not_matched_on_stray_words(self):
+        for message in ("Who won the NBA finals?", "What is the capital of France", "Recommend a good movie to watch"):
+            response = self.ask(message)
+            self.assertTrue(response["data"].get("abstained") or response["intent"] == "unknown", message)
+
+    def test_car_problems_that_name_a_fuel_or_gearbox_are_not_inventory_searches(self):
+        for message, topic in (("I smell gasoline near the car", "fuel_leak_smell"), ("It's hard to shift gears in my manual car", "gear_shifting_difficulty"),
+                               ("I put diesel in my petrol car", "wrong_fuel")):
+            response = self.ask(message)
+            self.assertNotEqual(response.get("status"), "needs_data", message)
+            self.assertEqual(response["data"]["knowledge_id"], topic, message)
+        self.assertEqual(self.ask("Do you have manual cars available?")["status"], "needs_data")
+
+    def test_safety_critical_situations_lead_with_what_to_do(self):
+        expected = {"my car caught fire": "vehicle_fire", "My brakes are not working while driving": "brake_failure",
+                    "My brakes feel spongy": "brake_pedal_soft", "I smell burning plastic from the dashboard": "electrical_burning_smell",
+                    "my car battery is swollen": "battery_hazard", "My tire blew out on the highway": "tire_blowout"}
+        for message, topic in expected.items():
+            response = self.ask(message)
+            self.assertEqual(response["data"]["knowledge_id"], topic, message)
+            self.assertRegex(response["answer"].casefold(), r"stop|pull over|don't|get everyone out|hold the steering", message)
+
+    def test_dtc_answer_is_short_and_follow_ups_are_focused(self):
+        conversation = "7a4c2a1e-0000-4000-8000-000000000005"
+        first = self.ask("What is P0420?", conversation)["answer"]
+        self.assertNotIn("GM uses", first)
+        self.assertLessEqual(len(first.split()), 110)
+        serious = self.ask("is it serious?", conversation)
+        self.assertEqual(serious["data"]["focus"], "safety")
+        self.assertIn("flashing", serious["answer"])
+        detailed = self.ask("Explain P0420 in detail")["answer"]
+        self.assertIn("GM", detailed)
+
+    def test_stated_figures_are_not_invented(self):
+        for message in ("What tire pressure should my Toyota Vios have?", "How many liters of oil does my engine take?",
+                        "What is the torque for the wheel nuts on my car?"):
+            answer = self.ask(message).get("answer") or ""
+            self.assertNotRegex(answer, r"\b\d+(?:\.\d+)?\s*(?:psi|bar|kpa|nm|liters?|litres?|quarts?)\b", message)
+
+
+FLEET_VOCABULARY = {
+    "makes": ["Ford", "Toyota", "Hyundai", "Kia"],
+    "models": [{"make": "Ford", "model": "Territory"}, {"make": "Toyota", "model": "Hilux"},
+               {"make": "Hyundai", "model": "Staria"}, {"make": "Kia", "model": "Picanto"}],
+    "categories": ["SUV", "Pickup", "Van", "Hatchback"],
+}
+
+
+class PlannerWordingTests(TestCase):
+    """Wordings that were misread on 2026-11-12, found by questions run through the Back-End retrieval."""
+
+    def plan(self, message, role="customer"):
+        return plan_message(correct_typos(message), role, FLEET_VOCABULARY, {})
+
+    def tools(self, message):
+        result = self.plan(message)
+        return [r["tool"] for r in (result or {}).get("retrievals", [])], result
+
+    def test_pick_up_is_not_the_pickup_category(self):
+        tools, result = self.tools("can i pick up the car at the airport")
+        self.assertEqual(tools, [], result)
+        _, result = self.tools("do you have a pickup truck")
+        self.assertEqual(result["retrievals"][0]["args"].get("categories"), ["Pickup"])
+
+    def test_how_is_the_named_vehicle_is_a_vehicle_question(self):
+        _, result = self.tools("how is the territory")
+        self.assertEqual(result["retrievals"][0]["args"].get("models"), ["Territory"])
+        self.assertIsNone(self.plan("how is the city traffic today"))
+
+    def test_your_cars_lists_the_fleet(self):
+        for message in ("mga sasakyan nyo po", "your cars", "show what i can book", "what can i rent"):
+            tools, _ = self.tools(message)
+            self.assertEqual(tools, ["vehicles.search"], message)
+
+    def test_booking_an_unlisted_car_reports_it_missing(self):
+        result = self.plan("i want to book the vios tomorrow")
+        self.assertIn("Toyota Vios", result["requested"]["unknown_names"])
+
+    def test_stock_question_about_a_category_is_answered_yes_first(self):
+        self.assertTrue(self.plan("meron ba kayong van").get("stock_check"))
+
+    def test_general_comparisons_are_knowledge_questions(self):
+        for message in ("what is the difference between diesel and gasoline", "diesel vs gasoline"):
+            self.assertIsNone(self.plan(message), message)
+        self.assertTrue(self.plan("compare the hilux and the territory")["retrievals"])
+
+    def test_tagalog_return_of_my_car_is_my_booking(self):
+        tools, _ = self.tools("kailan ang balik ng sasakyan ko")
+        self.assertEqual(tools, ["bookings.mine"])
+        self.assertIn("won't start", normalize_message(correct_typos("ayaw mag start ng kotse")))
+
+
+@skipUnless(INDEX_BUILT, "knowledge index not built")
+class KnowledgeCoverageTests(TestCase):
+    """Car questions that had no topic, or the wrong one, on 2026-11-12."""
+
+    def ask(self, message):
+        return answer_chat(message, viewer_role="customer", retrieval_protocol=1)
+
+    def test_new_topics_are_found(self):
+        expected = {
+            "how do i jump start a car": "jump_start",
+            "what's the difference between cvt and automatic": "transmission_types",
+            "what is engine braking": "engine_braking",
+            "how do i change a flat tire": "changing_a_tire",
+            "my car vibrates when idle": "idle_vibration",
+            "the ac smells bad": "ac_musty_smell",
+            "what is the difference between diesel and gasoline": "diesel_vs_gasoline",
+            "can i use regular gas instead of premium": "fuel_grade",
+            "how do i turn on the hazard lights": "hazard_lights",
+            "my headlights are dim": "dim_headlights",
+            "how often should i change brake pads": "brake_wear",
+            "what is coolant": "coolant_maintenance",
+            "ayaw mag start ng kotse": "battery_charging_starting",
+            "My aircon is blowing warm air": "hvac_air_conditioning",
+            "My engine is misfiring": "engine_misfire",
+        }
+        for message, topic in expected.items():
+            response = self.ask(message)
+            self.assertEqual((response.get("data") or {}).get("knowledge_id"), topic, message)
+
+    def test_abs_function_is_explained(self):
+        self.assertIn("stops the wheels from locking", self.ask("what does abs do")["answer"])
+
+    def test_steering_wheel_shaking_without_a_when_asks_when(self):
+        for message in ("my steering wheel is shaking", "nanginginig ang manibela"):
+            self.assertEqual(self.ask(message)["intent"], "clarification_needed", message)
+        self.assertEqual(self.ask("My steering wheel shakes at high speed")["data"]["knowledge_id"], "high_speed_vibration")
+
+
+@skipUnless(INDEX_BUILT, "knowledge index not built")
+class CurrentPolicyTests(TestCase):
+    """Rental rules since Back-End commit 22b829f: Xendit payments confirm reservations; rentals are 3 to 21 days."""
+
+    def ask(self, message):
+        return answer_chat(message, viewer_role="customer", retrieval_protocol=1)
+
+    def test_payment_answers_describe_online_payment(self):
+        for message in ("how do i pay", "is online payment available", "can i pay with gcash"):
+            answer = self.ask(message)["answer"]
+            self.assertIn("Xendit", answer, message)
+            self.assertNotIn("not implemented", answer, message)
+
+    def test_reservations_are_confirmed_by_payment_not_by_an_administrator(self):
+        self.assertIn("confirmed automatically", self.ask("how long does approval take")["answer"])
+        self.assertNotIn("waits for an administrator", self.ask("how do i book a car")["answer"])
+
+    def test_paid_reservations_are_refunded_by_an_administrator(self):
+        self.assertIn("refund", self.ask("can i cancel after paying")["answer"])
+
+    def test_fuel_and_pickup_location_questions_use_the_pickup_guide(self):
+        for message in ("is fuel included", "can i pick up the car at the airport"):
+            self.assertEqual(self.ask(message)["intent"], "pickup_return", message)
+
+
+BACKEND = Path(settings.BASE_DIR).parent / "Back-End"
+
+
+@skipUnless((BACKEND / "app" / "libraries" / "ReservationPolicy.php").exists(), "Back-End not checked out next to the AI service")
+class GuideMatchesBackEndTests(TestCase):
+    """The system guide is written by hand from the Back-End; these fail when a Back-End rule changes and the guide does not."""
+
+    def setUp(self):
+        guide = json.loads((Path(settings.BASE_DIR) / "data" / "knowledge" / "system_guide.json").read_text(encoding="utf-8"))
+        self.texts = {doc["id"]: doc["text"] for doc in guide["documents"]}
+        policy = (BACKEND / "app" / "libraries" / "ReservationPolicy.php").read_text(encoding="utf-8")
+        self.limits = {name: int(value) for name, value in re.findall(r"const (\w+) = (\d+);", policy)}
+
+    def test_rental_length_limits_match_reservation_policy(self):
+        minimum, standard, special = (self.limits["MINIMUM_RENTAL_DAYS"], self.limits["STANDARD_MAXIMUM_DAYS"],
+                                      self.limits["SPECIAL_MAXIMUM_DAYS"])
+        for doc_id in ("sys_booking_flow", "sys_pricing_rules", "sys_rental_requirements", "sys_rental_extension"):
+            text = self.texts[doc_id]
+            self.assertIn(str(special), text, doc_id)
+            self.assertTrue(f"{minimum} to {standard}" in text or f"at least {minimum} days" in text, doc_id)
+
+    def test_payment_answers_match_the_payment_code(self):
+        payments = (BACKEND / "app" / "controllers" / "PaymentController.php").exists()
+        self.assertEqual("not implemented" in self.texts["sys_payments"], not payments)
+        model = (BACKEND / "app" / "models" / "ReservationModel.php").read_text(encoding="utf-8")
+        # Administrators cannot confirm a pending reservation by hand when only a payment confirms it.
+        pending_moves = re.search(r"ADMIN_TRANSITIONS = \[.*?'pending'\s*=>\s*\[([^\]]*)\]", model, re.S).group(1)
+        automatic = "'confirmed'" not in pending_moves
+        for doc_id in ("sys_booking_flow", "sys_reservation_statuses"):
+            self.assertEqual("confirmed automatically" in self.texts[doc_id], automatic, doc_id)
+
+    def test_cancellation_refund_and_handover_rules_match_the_reservation_code(self):
+        model = (BACKEND / "app" / "models" / "ReservationModel.php").read_text(encoding="utf-8")
+        cancellation = self.texts["sys_cancellation"]
+        # Customers cancel only blocking (pending or confirmed) reservations.
+        blocking = re.search(r"BLOCKING_STATUSES = \[([^\]]*)\]", model).group(1)
+        if "'pending'" in blocking and "'confirmed'" in blocking:
+            self.assertIn("pending or confirmed", cancellation)
+        # A paid reservation needs a refund instead of a cancellation.
+        self.assertEqual("payment_refund_required" in model, "refund" in cancellation)
+        # A handed-over vehicle must be returned before its reservation can be cancelled.
+        self.assertEqual("'vehicle_in_use'" in model, "handed-over" in cancellation)
+        # Handover needs a verified payment.
+        handover_needs_payment = re.search(r"'payment_required'\s*\)", model) is not None or "abort('payment_required')" in model
+        for doc_id in ("sys_pickup_return", "sys_admin_reservations"):
+            self.assertEqual("paid" in self.texts[doc_id], handover_needs_payment, doc_id)
+
+    def test_licence_requirement_matches_the_rental_agreement(self):
+        agreement = (BACKEND / "app" / "libraries" / "RentalAgreement.php").read_text(encoding="utf-8")
+        if "valid driver license" in agreement:
+            self.assertIn("valid driver's licence", self.texts["sys_rental_requirements"])
+
+
+class RentalLengthAnswerTests(TestCase):
+    def compose(self, quote, period=None):
+        from . import grounded_answers as grounded
+        vehicle = {"make": "Hyundai", "model": "Staria", "daily_rental_price": 5200.0, "security_deposit": 9000.0,
+                   "minimum_rental_duration": 3, "quote": quote, "available_for_period": True if period else None}
+        data = {"vehicles": [vehicle], "rental_days": quote["rental_days"]}
+        if period:
+            data["period"] = period
+        tool = "vehicles.search" if period else "vehicles.quote"
+        plan = {"intent": "vehicles", "purpose": "availability" if period else "quote",
+                "retrievals": [{"tool": tool, "args": {}}], "requested": {"models": ["Staria"]}}
+        return grounded.compose(plan, [{"tool": tool, "status": "ok", "data": data}], "customer")[0]
+
+    def quote(self, days, **flags):
+        return {"rental_days": days, "daily_rate": 5200.0, "base_total": 5200.0 * days, "meets_minimum": days >= 3,
+                "minimum_days": 3, "standard_maximum_days": 7, "maximum_days": 21, "security_deposit": 9000.0, **flags}
+
+    def test_one_free_day_is_not_presented_as_bookable(self):
+        text = self.compose(self.quote(1), {"start_date": "2026-11-14", "end_date": "2026-11-15"})
+        self.assertFalse(text.startswith("Yes"), text)
+        self.assertIn("at least 3 days", text)
+
+    def test_long_rentals_mention_the_special_request_and_the_limit(self):
+        self.assertIn("special-duration request", self.compose(self.quote(10, special_request_required=True)))
+        self.assertIn("can't be longer than 21 days", self.compose(self.quote(30, exceeds_maximum=True)))
+
+
+class PaymentAndAdminAnswerTests(TestCase):
+    """Payment status for customers, and administrator rankings and periods (2026-11-12)."""
+
+    def compose(self, plan, tool, data, role):
+        from . import grounded_answers as grounded
+        return grounded.compose(plan, [{"tool": tool, "status": "ok", "data": data}], role)[0]
+
+    def test_payment_status_questions_use_the_customers_own_bookings(self):
+        for message in ("did my payment go through", "is my booking paid", "have i paid", "nagbayad na ba ako", "my payment failed"):
+            result = plan_message(correct_typos(message), "customer", FLEET_VOCABULARY, {})
+            self.assertEqual((result["intent"], result["purpose"]), ("own_bookings", "payment"), message)
+        for message in ("how do i pay", "can i pay with gcash"):
+            self.assertIsNone(plan_message(correct_typos(message), "customer", FLEET_VOCABULARY, {}), message)
+
+    def test_payment_status_answer_explains_each_state(self):
+        plan = plan_message("did my payment go through", "customer", FLEET_VOCABULARY, {})
+        rows = [{"id": 41, "make": "Toyota", "model": "Hilux", "start_date": "2026-12-01", "end_date": "2026-12-04", "rental_days": 3,
+                 "total_amount": 8250.0, "status": "pending", "payment_status": "failed", "returned": False}]
+        text = self.compose(plan, "bookings.mine", {"reservations": rows, "total_count": 1, "all_records_count": 1}, "customer")
+        self.assertIn("didn't go through", text)
+        self.assertIn("My Reservations", text)
+        rows[0].update(status="confirmed", payment_status="paid")
+        text = self.compose(plan, "bookings.mine", {"reservations": rows, "total_count": 1, "all_records_count": 1}, "customer")
+        self.assertIn("verified", text)
+        self.assertNotIn("retry", text.casefold())
+
+    def test_customer_ranking_is_for_administrators_only(self):
+        plan = plan_message("who has the most bookings", "admin", FLEET_VOCABULARY, {})
+        self.assertTrue(plan.get("rank_customers"))
+        rows = [{"id": i, "customer_name": name, "make": "Kia", "model": "Picanto", "start_date": "2026-12-01",
+                 "end_date": "2026-12-04", "status": "confirmed", "total_amount": 4350.0}
+                for i, name in enumerate(["Ana Cruz", "Ben Lim", "Ana Cruz"], start=1)]
+        text = self.compose(plan, "reservations.summary", {"reservations": rows, "total_count": 3, "all_records_count": 3}, "admin")
+        self.assertTrue(text.startswith("Ana Cruz has the most reservations: 2"), text)
+        customer = plan_message("who has the most bookings", "customer", FLEET_VOCABULARY, {})
+        self.assertFalse((customer or {}).get("retrievals"), customer)
+
+    def test_reassessment_questions_are_for_administrators(self):
+        for message in ("which cars need reassessment", "overdue assessments", "which vehicles have never been assessed"):
+            plan = plan_message(message, "admin", FLEET_VOCABULARY, {})
+            self.assertEqual([r["tool"] for r in plan["retrievals"]], ["assessments.due"], message)
+            customer = plan_message(message, "customer", FLEET_VOCABULARY, {})
+            self.assertEqual((customer or {}).get("direct"), "admin_only", message)
+        self.assertEqual(plan_message("when was the hilux last assessed", "admin", FLEET_VOCABULARY, {})["retrievals"][0]["args"]["models"],
+                         ["Hilux"])
+        self.assertIsNone(plan_message("how do i do a reassessment", "admin", FLEET_VOCABULARY, {}))
+
+    def test_reassessment_answer_lists_overdue_first(self):
+        plan = plan_message("which cars need reassessment", "admin", FLEET_VOCABULARY, {})
+        vehicles = [
+            {"id": 1, "make": "Kia", "model": "Picanto", "plate_number": "KIA 1", "status": "current", "due_on": "2026-12-20", "days_until_due": 30},
+            {"id": 2, "make": "Toyota", "model": "Hilux", "plate_number": "TYH 2", "status": "overdue", "due_on": "2026-11-01", "days_until_due": -11},
+            {"id": 3, "make": "Ford", "model": "Territory", "plate_number": None, "status": "never_assessed", "due_on": None, "days_until_due": None},
+        ]
+        text = self.compose(plan, "assessments.due", {"vehicles": vehicles}, "admin")
+        self.assertTrue(text.startswith("Overdue: 1\n- Toyota Hilux (TYH 2): due 2026-11-01, 11 day(s) late"), text)
+        self.assertIn("Never assessed: 1", text)
+        self.assertIn("Up to date: 1 vehicle(s).", text)
+        current = self.compose(plan, "assessments.due", {"vehicles": vehicles[:1]}, "admin")
+        self.assertIn("up to date", current)
+
+    def test_reservations_this_month_cover_the_whole_month(self):
+        args = plan_message("how many reservations this month", "admin", FLEET_VOCABULARY, {})["retrievals"][0]["args"]
+        self.assertTrue(args["from"].endswith("-01"), args)
+        self.assertGreaterEqual(args["to"], args["from"])
+        self.assertIn(args["to"][-2:], ("28", "29", "30", "31"))
+
+    @skipUnless(INDEX_BUILT, "knowledge index not built")
+    def test_fuel_economy_hourly_and_advance_booking_answers(self):
+        def ask(message):
+            return answer_chat(message, viewer_role="customer", retrieval_protocol=1)
+        self.assertIn("fuel type but not its consumption", ask("which car has the best fuel economy")["answer"])
+        self.assertEqual(ask("why is my car using so much fuel")["data"]["knowledge_id"], "high_fuel_consumption")
+        self.assertIn("no hourly rate", ask("can i rent for just a few hours")["answer"])
+        self.assertIn("no advance-booking limit", ask("how far in advance should i book")["answer"])
+
+    @skipUnless(INDEX_BUILT, "knowledge index not built")
+    def test_thanks_and_extension_are_not_captured_by_new_keywords(self):
+        # Found by the 2026-11-12 regression run: "a lot" matched a fuel keyword, "my booking" the statuses entry.
+        for message in ("thanks a lot", "pls thanks a lot"):
+            self.assertEqual(answer_chat(message, viewer_role="customer", retrieval_protocol=1)["intent"], "goodbye", message)
+        tools, result = [], plan_message("how do i extend my booking", "customer", FLEET_VOCABULARY, {})
+        self.assertTrue(result and result.get("guide"), result)
+        from .assistant import _grounded_answer
+        guide = _grounded_answer("how do i extend my booking", "customer", {"intent": None, "confidence": 0.0},
+                                 source_types={"system_documentation"})
+        self.assertIn("extended", guide["answer"])
+
+
+class AnswerShapeTests(TestCase):
+    """Focused guide answers, readable flowchart answers and multi-turn dates (2026-11-12)."""
+
+    def test_narrow_policy_questions_get_the_matching_sentences(self):
+        from .assistant import _focused_guide_text
+        text = ("Open Vehicles, choose a vehicle, and select Reserve to open the reservation form for the dates you want to rent. "
+                "Pick a pickup date (today or any later date; there is no advance-booking limit) and a return date for the rental. "
+                "Rentals must be at least 3 days and at most 7 days; 8 to 21 days must be sent as a special-duration request. "
+                "You must accept the rental agreement before submitting the reservation form on the page. "
+                "The reservation is confirmed automatically once the payment is verified by the payment provider.")
+        self.assertTrue(_focused_guide_text(text, "what's the longest i can rent").startswith("Rentals must be at least 3 days"))
+        self.assertEqual(_focused_guide_text(text, "do i need to sign a contract"),
+                         "You must accept the rental agreement before submitting the reservation form on the page.")
+        self.assertEqual(_focused_guide_text(text, "how do i book a car"), text)  # procedures keep every step
+        self.assertEqual(_focused_guide_text(text, "tell me everything"), text)   # no clear match: the whole entry
+
+    def test_flowchart_entries_read_as_sentences(self):
+        from .assistant import _flowchart_sentences
+        text = ("Electrical System – Wiper Motor. Symptoms: Wipers not working; Wipers operate intermittently. Diagnostic steps: "
+                "Test power to wiper motor (possible results: No power, Power present); Inspect wiper motor linkage for wear "
+                "(possible results: Worn, Good).")
+        self.assertEqual(_flowchart_sentences(text),
+                         "This can point to the wiper motor in the electrical system. Typical signs: wipers not working; wipers operate "
+                         "intermittently. A mechanic would usually test power to wiper motor, then inspect wiper motor linkage for wear.")
+        self.assertIn("ABS warning light", _flowchart_sentences(
+            "ABS System – ABS Control Module. Symptoms: ABS warning light on. Diagnostic steps: Check ABS fuse (possible results: Blown)."))
+        self.assertIsNone(_flowchart_sentences("Not a flowchart entry."))
+
+    def test_long_drive_lists_the_roomiest_vehicles_first(self):
+        plan = plan_message("which car is good for a long drive", "customer", FLEET_VOCABULARY, {})
+        self.assertEqual((plan["purpose"], plan["rank_by"], plan.get("long_trip")), ("ranking", "seats", True))
+
+    def test_pickup_date_waits_for_the_return_date(self):
+        first = plan_message("is the staria available on 2026-12-05", "customer", FLEET_VOCABULARY, {})
+        self.assertEqual(first["pending_pickup"], "2026-12-05")
+        memory = {"pending_pickup": "2026-12-05", "last_vehicles": [{"make": "Hyundai", "model": "Staria"}]}
+        second = plan_message("2026-12-09", "customer", FLEET_VOCABULARY, memory)
+        args = second["retrievals"][0]["args"]
+        self.assertEqual((args["models"], args["start_date"], args["end_date"]), (["Staria"], "2026-12-05", "2026-12-09"))
+        ranged = plan_message("from 2026-12-10 to 2026-12-14", "customer", FLEET_VOCABULARY,
+                              {"last_vehicles": [{"make": "Hyundai", "model": "Staria"}]})
+        self.assertEqual(ranged["retrievals"][0]["args"]["models"], ["Staria"])
+
+    def test_price_follow_up_reuses_the_dates_just_checked(self):
+        memory = {"last_vehicles": [{"make": "Toyota", "model": "Hilux"}], "last_period": {"start_date": "2026-12-01", "end_date": "2026-12-05"}}
+        for message in ("how much is that", "what's the total", "magkano yan"):
+            args = plan_message(message, "customer", FLEET_VOCABULARY, memory)["retrievals"][0]["args"]
+            self.assertEqual((args.get("start_date"), args.get("end_date")), ("2026-12-01", "2026-12-05"), message)
+
+
+class GapFixTests(TestCase):
+    """The gaps closed on 2026-11-13: cross-turn comparisons, longer-lived pickup dates, revenue breakdowns,
+    the classifier overriding vague rule plans, and new knowledge and policy coverage."""
+
+    TWO_CARS = {"last_vehicles": [{"make": "Ford", "model": "Territory"}, {"make": "Hyundai", "model": "Staria"}]}
+
+    def test_comparisons_can_refer_to_the_vehicles_shown_before(self):
+        for message in ("compare them", "which one is cheaper", "alin ang mas mura"):
+            plan = plan_message(correct_typos(message), "customer", FLEET_VOCABULARY, self.TWO_CARS)
+            self.assertEqual(plan["purpose"], "compare", message)
+            self.assertEqual(plan["retrievals"][0]["args"]["models"], ["Staria", "Territory"], message)
+        self.assertEqual(plan_message("which one is cheaper", "customer", FLEET_VOCABULARY, self.TWO_CARS)["compare"]["lead"], "cheaper")
+
+    def test_cheaper_question_names_the_cheaper_vehicle_first(self):
+        from . import grounded_answers as grounded
+        plan = plan_message("which one is cheaper", "customer", FLEET_VOCABULARY, self.TWO_CARS)
+        vehicles = [{"make": "Ford", "model": "Territory", "daily_rental_price": 3350.0, "seating_capacity": 5},
+                    {"make": "Hyundai", "model": "Staria", "daily_rental_price": 5200.0, "seating_capacity": 11}]
+        text = grounded.compose(plan, [{"tool": "vehicles.search", "status": "ok", "data": {"vehicles": vehicles}}], "customer")[0]
+        self.assertIn("The Ford Territory is cheaper at PHP 3,350.00 per day", text)
+
+    def test_pending_pickup_survives_a_question_in_between_and_clears_once_used(self):
+        from .assistant import _pending_pickup
+        kept = _pending_pickup({"pending_pickup": "2026-12-05", "pending_pickup_left": 3}, {})
+        self.assertEqual(kept, {"pending_pickup": "2026-12-05", "pending_pickup_left": 2})
+        self.assertEqual(_pending_pickup({"pending_pickup": "2026-12-05", "pending_pickup_left": 1}, {})["pending_pickup"], None)
+        self.assertEqual(_pending_pickup(kept, {"pending_pickup": None})["pending_pickup"], None)
+        self.assertEqual(_pending_pickup({}, {"pending_pickup": "2026-12-20"})["pending_pickup_left"], 3)
+
+    def test_revenue_breakdowns_by_car_and_by_customer(self):
+        from . import grounded_answers as grounded
+        for message, breakdown in (("revenue per car", "vehicle"), ("which car earns the most", "vehicle"),
+                                   ("top customers by revenue", "customer")):
+            self.assertEqual(plan_message(message, "admin", FLEET_VOCABULARY, {}).get("breakdown"), breakdown, message)
+        self.assertEqual(plan_message("which car earns the most", "customer", FLEET_VOCABULARY, {})["direct"], "admin_only")
+        plan = plan_message("revenue per car", "admin", FLEET_VOCABULARY, {})
+        data = {"by_status": {"confirmed": {"reservations": 2, "total": 9000.0}}, "booked_total": 9000.0, "paid_total": 0.0,
+                "by_vehicle": [{"car_id": 2, "make": "Toyota", "model": "Hilux", "reservations": 1, "booked": 6000.0},
+                               {"car_id": 1, "make": "Kia", "model": "Picanto", "reservations": 1, "booked": 3000.0}],
+                "by_customer": [], "from": None, "to": None}
+        text = grounded.compose(plan, [{"tool": "reservations.revenue", "status": "ok", "data": data}], "admin")[0]
+        self.assertTrue(text.startswith("The Toyota Hilux brings the highest booked value: PHP 6,000.00"), text)
+
+    def test_classifier_overrides_only_vague_plans(self):
+        from .assistant import _policy_question_over_vague_plan
+        vague = {"intent": "vehicles", "purpose": "listing", "retrievals": [{"tool": "vehicles.search", "args": {}}],
+                 "requested": {"makes": [], "models": [], "categories": [], "unknown_names": []}}
+        specific = {**vague, "retrievals": [{"tool": "vehicles.search", "args": {"models": ["Vios"]}}],
+                    "requested": {"makes": [], "models": ["Vios"], "categories": [], "unknown_names": []}}
+        import numpy as np
+        from unittest.mock import MagicMock
+        pipeline = MagicMock()
+        pipeline.classes_ = np.array(["rental_duration", "car_availability"])
+        with patch("ai_api.assistant.core.load_chatbot", return_value=(pipeline, {})):
+            pipeline.predict_proba.return_value = np.array([[0.7, 0.3]])
+            self.assertTrue(_policy_question_over_vague_plan("ilang araw minimum ng rental nyo", vague))
+            self.assertFalse(_policy_question_over_vague_plan("how much is the vios", specific))
+            pipeline.predict_proba.return_value = np.array([[0.4, 0.6]])
+            self.assertFalse(_policy_question_over_vague_plan("what cars do you have", vague))
+
+    def test_rule_fixes_for_requirements_extensions_and_cleaning(self):
+        for message in ("kelangan ko ba ng id pag kukunin yung kotse", "what if i need the car longer than planned"):
+            plan = plan_message(correct_typos(message), "customer", FLEET_VOCABULARY, {})
+            self.assertFalse((plan or {}).get("retrievals"), message)
+        cleaning = plan_message("are your cars clean and sanitized", "customer", FLEET_VOCABULARY, {})
+        self.assertEqual((cleaning["direct"], cleaning["topic"]), ("policy_unrecorded", "cleaning and sanitising of vehicles"))
+        self.assertIsNone(plan_message("how do i clean my throttle body", "customer", FLEET_VOCABULARY, {}))
+        self.assertIn("move", normalize_message(correct_typos("pwede ko bang i-move yung booking")))
+
+    @skipUnless(INDEX_BUILT, "knowledge index not built")
+    def test_hybrid_ev_and_less_common_faults_have_topics(self):
+        expected = {"how does a hybrid work": "hybrid_operation", "how do i charge an electric car": "ev_charging",
+                    "what is regenerative braking": "regenerative_braking", "my clutch is slipping": "clutch_slipping",
+                    "my horn is not working": "horn_not_working", "there is water in the car after rain": "water_in_cabin"}
+        for message, topic in expected.items():
+            response = answer_chat(message, viewer_role="customer", retrieval_protocol=1)
+            self.assertEqual((response.get("data") or {}).get("knowledge_id"), topic, message)

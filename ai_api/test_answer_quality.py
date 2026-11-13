@@ -113,7 +113,8 @@ class ReservationLookupTests(TestCase):
             plan_result = planner.plan(message, "customer", VOCABULARY)
             self.assertEqual((tools(plan_result), plan_result["purpose"]), (["bookings.mine"], "details"), message)
         _, text = answer("what's the status of reservation #41", "customer", bookings_result(BOOKINGS[:1]))
-        self.assertIn("is pending: it is waiting for an administrator", text)
+        # Since Back-End commit 22b829f a pending reservation awaits payment and is confirmed by the verified payment.
+        self.assertIn("is pending: it is awaiting payment", text)
         _, missing = answer("show reservation 999", "customer", bookings_result([]))
         self.assertEqual(missing, "I couldn't find reservation #999 on your account.")
 
@@ -138,7 +139,8 @@ class ReservationLookupTests(TestCase):
         _, owe = answer("how much do I owe for my booking", "customer", bookings_result(BOOKINGS))
         self.assertIn("pending PHP 4,500.00", owe)
         self.assertNotIn("3,400", owe)
-        self.assertIn("no payments", owe)
+        # Payments exist since Back-End commit 22b829f: the answer points to the payment status instead.
+        self.assertIn("did my payment go through?", owe)
 
 
 class PolicyAndSafetyTests(TestCase):

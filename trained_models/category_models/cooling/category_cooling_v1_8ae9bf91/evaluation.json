@@ -1,0 +1,141 @@
+{
+  "category": "cooling",
+  "category_name": "Cooling System",
+  "safety_critical": true,
+  "feature_schema_version": "1",
+  "catalog_version": "2026-11-07.1",
+  "policy_version": "1",
+  "horizon_days": 90,
+  "dataset": {
+    "rows": 250,
+    "vehicles": 20,
+    "faults": 23,
+    "healthy": 227,
+    "excluded_by_reason": {},
+    "sha256": "8ae9bf916f82450d9c5610f63f1662ab0902883b5e329a87f51c6c39a4498498"
+  },
+  "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+  "periods": {
+    "training": [
+      "2025-08-04",
+      "2026-05-20"
+    ],
+    "test": [
+      "2026-06-17",
+      "2026-10-25"
+    ],
+    "training_rows": 161,
+    "test_rows": 75,
+    "rows_purged_to_prevent_leakage": 14,
+    "validation_start": "2026-03-11"
+  },
+  "algorithm": "logistic_regression",
+  "candidates": {
+    "logistic_regression": {
+      "validation_f2": 1.0,
+      "threshold": 0.389092
+    },
+    "random_forest": {
+      "validation_f2": 1.0,
+      "threshold": 0.592241
+    }
+  },
+  "threshold": 0.389092,
+  "metrics": {
+    "records": 75,
+    "faults": 7,
+    "healthy": 68,
+    "precision": 0.7778,
+    "recall": 1.0,
+    "f1": 0.875,
+    "f2": 0.9459,
+    "accuracy": 0.9733,
+    "pr_auc": 0.9683,
+    "recall_lower_bound": 0.6457,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_negative": 66,
+      "false_positive": 2,
+      "false_negative": 0,
+      "true_positive": 7
+    }
+  },
+  "baseline_flag_everything": {
+    "records": 75,
+    "faults": 7,
+    "healthy": 68,
+    "precision": 0.0933,
+    "recall": 1.0,
+    "f1": 0.1707,
+    "f2": 0.3398,
+    "accuracy": 0.0933,
+    "pr_auc": 0.0933,
+    "recall_lower_bound": 0.6457,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 68,
+      "false_negative": 0,
+      "true_positive": 7
+    }
+  },
+  "unseen_vehicle_metrics": null,
+  "false_negative_analysis": {
+    "count": 0,
+    "rate": 0.0,
+    "missed_faults": [],
+    "note": "Each of these is a verified fault this model would not have flagged."
+  },
+  "model_name": "category_cooling",
+  "model_version": "category_cooling_v1_8ae9bf91",
+  "trained_at": "2026-11-08T13:29:20.312522+00:00",
+  "acceptance_criteria": [
+    {
+      "name": "Faults in the test period",
+      "required": "at least 5",
+      "actual": 7,
+      "passed": true
+    },
+    {
+      "name": "Healthy outcomes in the test period",
+      "required": "at least 5",
+      "actual": 68,
+      "passed": true
+    },
+    {
+      "name": "Recall",
+      "required": "at least 0.85",
+      "actual": 1.0,
+      "passed": true
+    },
+    {
+      "name": "Recall, 95% lower bound",
+      "required": "at least 0.6",
+      "actual": 0.6457,
+      "passed": true
+    },
+    {
+      "name": "Precision",
+      "required": "at least 0.5",
+      "actual": 0.7778,
+      "passed": true
+    },
+    {
+      "name": "F1-score",
+      "required": "at least 0.6",
+      "actual": 0.875,
+      "passed": true
+    },
+    {
+      "name": "PR-AUC against the fault rate",
+      "required": "at least 0.1167",
+      "actual": 0.9683,
+      "passed": true
+    }
+  ],
+  "acceptance_criteria_passed": true,
+  "status": "evaluated_pending",
+  "decision_reasons": [
+    "Passed every criterion. An administrator must review it before it can serve predictions."
+  ]
+}

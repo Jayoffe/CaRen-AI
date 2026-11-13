@@ -1035,9 +1035,9 @@
           "trained_at": "2026-11-08T13:29:16.111725+00:00",
           "requested_by": 1,
           "algorithm": "logistic_regression",
-          "artifact_path": "brakes\\category_brakes_v1_f4e7aba4\\pipeline.joblib",
+          "artifact_path": "brakes/category_brakes_v1_f4e7aba4/pipeline.joblib",
           "artifact_sha256": "2a06a3f3d7ce92d2915b7975b5f96414d6dac574d660811fa75e445d06486f88",
-          "evaluation_report_path": "brakes\\category_brakes_v1_f4e7aba4\\evaluation.json",
+          "evaluation_report_path": "brakes/category_brakes_v1_f4e7aba4/evaluation.json",
           "evaluation_report_sha256": "82a7d19f5e96a406589640ad031c8d3526071788465179b64e24fe0e4dd38472",
           "evaluation": {
             "acceptance_criteria_passed": true
@@ -1194,7 +1194,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:45.290917+00:00"
+          "accepted_at": "2026-11-08T13:29:45.290917+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 214,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1211,9 +1217,9 @@
           "trained_at": "2026-11-08T13:29:18.440219+00:00",
           "requested_by": 1,
           "algorithm": "random_forest",
-          "artifact_path": "engine\\category_engine_v1_17cb5775\\pipeline.joblib",
+          "artifact_path": "engine/category_engine_v1_17cb5775/pipeline.joblib",
           "artifact_sha256": "8b8e3cacdc779140299389e0e2f60387b6c6c0c2372e5c27fcb4b91da7931b99",
-          "evaluation_report_path": "engine\\category_engine_v1_17cb5775\\evaluation.json",
+          "evaluation_report_path": "engine/category_engine_v1_17cb5775/evaluation.json",
           "evaluation_report_sha256": "2924ad90a6884abc61d85044ddc46479088a06cfa2d035655d5fcc792a86ab81",
           "evaluation": {
             "acceptance_criteria_passed": true
@@ -1362,7 +1368,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:45.598019+00:00"
+          "accepted_at": "2026-11-08T13:29:45.598019+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 240,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1379,9 +1391,9 @@
           "trained_at": "2026-11-08T13:29:20.312522+00:00",
           "requested_by": 1,
           "algorithm": "logistic_regression",
-          "artifact_path": "cooling\\category_cooling_v1_8ae9bf91\\pipeline.joblib",
+          "artifact_path": "cooling/category_cooling_v1_8ae9bf91/pipeline.joblib",
           "artifact_sha256": "ea738f76de3d61caf5be0a58639e49e6ba7f933b1c8e93ff0be17e14974db441",
-          "evaluation_report_path": "cooling\\category_cooling_v1_8ae9bf91\\evaluation.json",
+          "evaluation_report_path": "cooling/category_cooling_v1_8ae9bf91/evaluation.json",
           "evaluation_report_sha256": "6633930f36f9e94845249d9796858af6373ded802ca81b87287c5a77703e16e9",
           "evaluation": {
             "acceptance_criteria_passed": true
@@ -1530,7 +1542,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:45.846268+00:00"
+          "accepted_at": "2026-11-08T13:29:45.846268+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 250,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1547,9 +1565,9 @@
           "trained_at": "2026-11-08T13:29:22.134732+00:00",
           "requested_by": 1,
           "algorithm": "logistic_regression",
-          "artifact_path": "suspension_steering\\category_suspension_steering_v1_c3ee93f3\\pipeline.joblib",
+          "artifact_path": "suspension_steering/category_suspension_steering_v1_c3ee93f3/pipeline.joblib",
           "artifact_sha256": "dfb6e4020a904e06e304471e76503cc2e980ea5fd4a6172908b74d31c0a4c587",
-          "evaluation_report_path": "suspension_steering\\category_suspension_steering_v1_c3ee93f3\\evaluation.json",
+          "evaluation_report_path": "suspension_steering/category_suspension_steering_v1_c3ee93f3/evaluation.json",
           "evaluation_report_sha256": "2d4ebf8421c344d9981fc0d23b3ef91b6d6cb645dcb54c820b55ff2754ba005a",
           "evaluation": {
             "acceptance_criteria_passed": true
@@ -1706,7 +1724,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:46.140075+00:00"
+          "accepted_at": "2026-11-08T13:29:46.140075+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 230,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1723,9 +1747,9 @@
           "trained_at": "2026-11-08T13:29:23.866584+00:00",
           "requested_by": 1,
           "algorithm": "logistic_regression",
-          "artifact_path": "air_conditioning\\category_air_conditioning_v1_7ba29703\\pipeline.joblib",
+          "artifact_path": "air_conditioning/category_air_conditioning_v1_7ba29703/pipeline.joblib",
           "artifact_sha256": "471005e0bdfb7d454dded5c40e0a9f1fe7d34cf6553735865f5de83e37278b3f",
-          "evaluation_report_path": "air_conditioning\\category_air_conditioning_v1_7ba29703\\evaluation.json",
+          "evaluation_report_path": "air_conditioning/category_air_conditioning_v1_7ba29703/evaluation.json",
           "evaluation_report_sha256": "6e1399e6014e7db695ca5a7d41cec34971f9667df37e793c04685d27b02de334",
           "evaluation": {
             "acceptance_criteria_passed": true
@@ -1882,7 +1906,13 @@
             ]
           },
           "accepted_by": 1,
-          "accepted_at": "2026-11-08T13:29:46.413643+00:00"
+          "accepted_at": "2026-11-08T13:29:46.413643+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 226,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
         }
       ]
     },
@@ -1899,9 +1929,9 @@
           "trained_at": "2026-11-08T13:29:25.552292+00:00",
           "requested_by": 1,
           "algorithm": "logistic_regression",
-          "artifact_path": "tires_wheels\\category_tires_wheels_v1_361589b5\\pipeline.joblib",
+          "artifact_path": "tires_wheels/category_tires_wheels_v1_361589b5/pipeline.joblib",
           "artifact_sha256": "4b2d1baaea103df065c9bdf9b3c8902b80e2e7c85a4de71b1a7a372e5e09b284",
-          "evaluation_report_path": "tires_wheels\\category_tires_wheels_v1_361589b5\\evaluation.json",
+          "evaluation_report_path": "tires_wheels/category_tires_wheels_v1_361589b5/evaluation.json",
           "evaluation_report_sha256": "377139e588fa2e4de11a442cfd6dbf188bc6dc0f06395ea0215eb02bc029b63b",
           "evaluation": {
             "acceptance_criteria_passed": false
@@ -2078,6 +2108,12 @@
               "Recall: required at least 0.85, got 0.6923.",
               "Recall, 95% lower bound: required at least 0.6, got 0.4237."
             ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 210,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
           }
         }
       ]
@@ -2095,9 +2131,9 @@
           "trained_at": "2026-11-08T13:29:27.831196+00:00",
           "requested_by": 1,
           "algorithm": "random_forest",
-          "artifact_path": "battery_electrical\\category_battery_electrical_v1_faa66044\\pipeline.joblib",
+          "artifact_path": "battery_electrical/category_battery_electrical_v1_faa66044/pipeline.joblib",
           "artifact_sha256": "a52a64473fc820df9acbd929f429cc6c1e62c430a89624abeaeb2c96425ac4ac",
-          "evaluation_report_path": "battery_electrical\\category_battery_electrical_v1_faa66044\\evaluation.json",
+          "evaluation_report_path": "battery_electrical/category_battery_electrical_v1_faa66044/evaluation.json",
           "evaluation_report_sha256": "6768093148d12852f9544b7a4f5eccb0d58438d4e1c98e75c8a604f6cb14faa1",
           "evaluation": {
             "acceptance_criteria_passed": false
@@ -2259,6 +2295,12 @@
             "decision_reasons": [
               "Recall, 95% lower bound: required at least 0.5, got 0.4902."
             ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 226,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
           }
         }
       ]
@@ -2276,9 +2318,9 @@
           "trained_at": "2026-11-08T13:29:29.755620+00:00",
           "requested_by": 1,
           "algorithm": "logistic_regression",
-          "artifact_path": "transmission\\category_transmission_v1_70d7058b\\pipeline.joblib",
+          "artifact_path": "transmission/category_transmission_v1_70d7058b/pipeline.joblib",
           "artifact_sha256": "73e5b9002386fa305bc1fbea3843a335fb94ca5fbd964ae730ffe37641e3a3a2",
-          "evaluation_report_path": "transmission\\category_transmission_v1_70d7058b\\evaluation.json",
+          "evaluation_report_path": "transmission/category_transmission_v1_70d7058b/evaluation.json",
           "evaluation_report_sha256": "bacb56a7b723e93992f3b3c7a37f36cacfc41d2647a53e7f071b0ea5390d062b",
           "evaluation": {
             "acceptance_criteria_passed": false
@@ -2447,6 +2489,12 @@
             "decision_reasons": [
               "Recall, 95% lower bound: required at least 0.5, got 0.4677."
             ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 242,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
           }
         }
       ]

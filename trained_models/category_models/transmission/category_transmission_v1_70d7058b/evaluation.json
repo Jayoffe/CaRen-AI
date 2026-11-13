@@ -1,0 +1,163 @@
+{
+  "category": "transmission",
+  "category_name": "Transmission",
+  "safety_critical": false,
+  "feature_schema_version": "1",
+  "catalog_version": "2026-11-07.1",
+  "policy_version": "1",
+  "horizon_days": 90,
+  "dataset": {
+    "rows": 242,
+    "vehicles": 20,
+    "faults": 27,
+    "healthy": 215,
+    "excluded_by_reason": {},
+    "sha256": "70d7058b63f1c7f17fdb42023f00a52838f431bbecbf154e726fd9f82d2e0e80"
+  },
+  "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+  "periods": {
+    "training": [
+      "2025-08-04",
+      "2026-05-24"
+    ],
+    "test": [
+      "2026-06-17",
+      "2026-11-06"
+    ],
+    "training_rows": 159,
+    "test_rows": 73,
+    "rows_purged_to_prevent_leakage": 10,
+    "validation_start": "2026-03-02"
+  },
+  "algorithm": "logistic_regression",
+  "candidates": {
+    "logistic_regression": {
+      "validation_f2": 1.0,
+      "threshold": 0.164895
+    },
+    "random_forest": {
+      "validation_f2": 0.9615,
+      "threshold": 0.452557
+    }
+  },
+  "threshold": 0.164895,
+  "metrics": {
+    "records": 73,
+    "faults": 12,
+    "healthy": 61,
+    "precision": 0.6429,
+    "recall": 0.75,
+    "f1": 0.6923,
+    "f2": 0.7258,
+    "accuracy": 0.8904,
+    "pr_auc": 0.7374,
+    "recall_lower_bound": 0.4677,
+    "false_negative_rate": 0.25,
+    "confusion_matrix": {
+      "true_negative": 56,
+      "false_positive": 5,
+      "false_negative": 3,
+      "true_positive": 9
+    }
+  },
+  "baseline_flag_everything": {
+    "records": 73,
+    "faults": 12,
+    "healthy": 61,
+    "precision": 0.1644,
+    "recall": 1.0,
+    "f1": 0.2824,
+    "f2": 0.4959,
+    "accuracy": 0.1644,
+    "pr_auc": 0.1644,
+    "recall_lower_bound": 0.7575,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 61,
+      "false_negative": 0,
+      "true_positive": 12
+    }
+  },
+  "unseen_vehicle_metrics": null,
+  "false_negative_analysis": {
+    "count": 3,
+    "rate": 0.25,
+    "missed_faults": [
+      {
+        "outcome_id": 207,
+        "vehicle_id": 25,
+        "assessed_on": "2026-06-17",
+        "outcome_date": "2026-07-07",
+        "rating": "poor"
+      },
+      {
+        "outcome_id": 178,
+        "vehicle_id": 22,
+        "assessed_on": "2026-07-28",
+        "outcome_date": "2026-08-02",
+        "rating": "fair"
+      },
+      {
+        "outcome_id": 21,
+        "vehicle_id": 10,
+        "assessed_on": "2026-10-18",
+        "outcome_date": "2026-11-01",
+        "rating": "good"
+      }
+    ],
+    "note": "Each of these is a verified fault this model would not have flagged."
+  },
+  "model_name": "category_transmission",
+  "model_version": "category_transmission_v1_70d7058b",
+  "trained_at": "2026-11-08T13:29:29.755620+00:00",
+  "acceptance_criteria": [
+    {
+      "name": "Faults in the test period",
+      "required": "at least 5",
+      "actual": 12,
+      "passed": true
+    },
+    {
+      "name": "Healthy outcomes in the test period",
+      "required": "at least 5",
+      "actual": 61,
+      "passed": true
+    },
+    {
+      "name": "Recall",
+      "required": "at least 0.7",
+      "actual": 0.75,
+      "passed": true
+    },
+    {
+      "name": "Recall, 95% lower bound",
+      "required": "at least 0.5",
+      "actual": 0.4677,
+      "passed": false
+    },
+    {
+      "name": "Precision",
+      "required": "at least 0.5",
+      "actual": 0.6429,
+      "passed": true
+    },
+    {
+      "name": "F1-score",
+      "required": "at least 0.6",
+      "actual": 0.6923,
+      "passed": true
+    },
+    {
+      "name": "PR-AUC against the fault rate",
+      "required": "at least 0.2055",
+      "actual": 0.7374,
+      "passed": true
+    }
+  ],
+  "acceptance_criteria_passed": false,
+  "status": "evaluated_rejected",
+  "decision_reasons": [
+    "Recall, 95% lower bound: required at least 0.5, got 0.4677."
+  ]
+}

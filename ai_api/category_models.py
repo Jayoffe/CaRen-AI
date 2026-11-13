@@ -19,6 +19,7 @@ level only. ``confidence`` stays null.
 """
 import hashlib
 import json
+import logging
 import math
 import threading
 from datetime import date, datetime, timezone
@@ -39,6 +40,8 @@ from data_pipeline.status import _read_json, _write_json_atomic
 from .assessment_service import AssessmentValidationError, _is_number, load_catalog, screen_component, validate_payload
 
 
+logger = logging.getLogger(__name__)
+
 FEATURE_SCHEMA_VERSION = "1"
 RANDOM_STATE = 42
 VALIDATION_FRACTION = 0.25
@@ -47,6 +50,31 @@ WILSON_Z = 1.96
 USAGE_ORDER = {"occasional": 0, "weekly": 1, "several_per_week": 2, "daily": 3}
 STATUS_PENDING = "evaluated_pending"
 STATUS_ACCEPTED = "evaluated_accepted"
+# Simulated demonstration vehicles carry plates with this prefix (the SAMPLE- fleet in the database).
+SIMULATED_PLATE_PREFIX = "SAMPLE-"
+DEMONSTRATION_NOTICE = (
+    "Demonstration model: trained on simulated SAMPLE- vehicles, not on real fleet outcomes. Do not base maintenance "
+    "decisions on it; use the condition-based screening and a mechanic's inspection."
+)
+UNKNOWN_DATA_NOTICE = (
+    "The training data of this model was not recorded, so it may include simulated vehicles. Treat it as a demonstration "
+    "and rely on the condition-based screening."
+)
+
+
+def training_data_source(rows):
+    """How much of a training set comes from simulated SAMPLE- vehicles: real, mixed or simulated."""
+    simulated = sum(1 for row in rows if str(row.get("plate_number") or "").upper().startswith(SIMULATED_PLATE_PREFIX))
+    source = "real" if simulated == 0 else "simulated" if simulated == len(rows) else "mixed"
+    return {"source": source, "rows": len(rows), "simulated_rows": simulated}
+
+
+def demonstration_notice(entry):
+    """The warning a prediction from this registry entry must carry, or None for a model trained only on real outcomes."""
+    data = entry.get("training_data") or {}
+    if data.get("source") == "real":
+        return None
+    return DEMONSTRATION_NOTICE if data.get("source") in ("simulated", "mixed") else UNKNOWN_DATA_NOTICE
 STATUS_REJECTED = "evaluated_rejected"
 STATUS_SUPERSEDED = "superseded"
 RISK_ELEVATED = "elevated"
@@ -453,6 +481,8 @@ def train_category(category_key, rows, requested_by=None):
             "healthy": summary["healthy"],
             "excluded_by_reason": summary["excluded_by_reason"],
             "sha256": _dataset_sha(eligible),
+            # Simulated SAMPLE- vehicles make a model a demonstration only (see demonstration_notice).
+            "training_data": training_data_source(eligible),
         },
         "methodology": (
             "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only "
@@ -561,13 +591,14 @@ def _finish(category_key, report, model, threshold, names, requested_by, reasons
             "trained_at": trained_at,
             "requested_by": requested_by,
             "algorithm": report.get("algorithm"),
-            "artifact_path": str(Path(category_key) / version / "pipeline.joblib") if artifact_sha else None,
+            "artifact_path": (Path(category_key) / version / "pipeline.joblib").as_posix() if artifact_sha else None,
             "artifact_sha256": artifact_sha,
-            "evaluation_report_path": str(Path(category_key) / version / "evaluation.json"),
+            "evaluation_report_path": (Path(category_key) / version / "evaluation.json").as_posix(),
             "evaluation_report_sha256": _sha_file(folder / "evaluation.json"),
             "evaluation": {"acceptance_criteria_passed": passed},
             "feature_schema_version": FEATURE_SCHEMA_VERSION,
             "catalog_version": report["catalog_version"],
+            "training_data": report["dataset"].get("training_data"),
             "report": report,
         }
         section["versions"].append(entry)
@@ -599,20 +630,63 @@ def _find_version(section, version):
     return None
 
 
+def _model_file(relative):
+    """A registry path (stored relative to the model root, '/'-separated; older entries
+    written on Windows use '\\') resolved against the configured model root."""
+    return _model_root().joinpath(*relative.replace("\\", "/").split("/"))
+
+
+def _integrity_check(entry):
+    """(status, reason) for why this entry's files cannot be trusted or used now, or None."""
+    if not entry.get("artifact_path") or not entry.get("artifact_sha256"):
+        return "no_artifact", "It has no model artifact."
+    if not entry.get("evaluation_report_path") or not entry.get("evaluation_report_sha256"):
+        return "invalid_registry_entry", "Its registry entry has no evaluation report reference."
+    artifact = _model_file(entry["artifact_path"])
+    report = _model_file(entry["evaluation_report_path"])
+    if not artifact.is_file():
+        return "artifact_missing", "Its model file is missing."
+    if not report.is_file():
+        return "report_missing", "Its evaluation report is missing."
+    try:
+        artifact_sha, report_sha = _sha_file(artifact), _sha_file(report)
+    except OSError:
+        return "artifact_unreadable", "Its files cannot be read."
+    if artifact_sha != entry["artifact_sha256"]:
+        return "artifact_changed", "Its model file has changed since evaluation."
+    if report_sha != entry["evaluation_report_sha256"]:
+        return "report_changed", "Its evaluation report has changed since evaluation."
+    if entry.get("feature_schema_version") != FEATURE_SCHEMA_VERSION:
+        return "incompatible_features", "It was built for a different feature schema."
+    if entry.get("catalog_version") != load_catalog()["version"]:
+        return "incompatible_questionnaire", "It was built for a different questionnaire version."
+    return None
+
+
 def _integrity_problem(entry):
     """Why this entry's files cannot be trusted or used now, or None."""
-    if not entry.get("artifact_path") or not entry.get("artifact_sha256"):
-        return "It has no model artifact."
-    artifact = _model_root() / entry["artifact_path"]
-    report = _model_root() / entry["evaluation_report_path"]
-    if not artifact.is_file() or not report.is_file():
-        return "Its files are missing."
-    if _sha_file(artifact) != entry["artifact_sha256"] or _sha_file(report) != entry["evaluation_report_sha256"]:
-        return "Its files have changed since evaluation."
-    if entry.get("feature_schema_version") != FEATURE_SCHEMA_VERSION:
-        return "It was built for a different feature schema."
-    if entry.get("catalog_version") != load_catalog()["version"]:
-        return "It was built for a different questionnaire version."
+    problem = _integrity_check(entry)
+    return problem[1] if problem else None
+
+
+def _load_check(category_key, entry):
+    """(status, reason) when the verified artifact cannot be loaded or does not fit the
+    inputs this service builds for the category, or None when it is ready to predict."""
+    try:
+        artifact = _load_artifact(entry)
+    except Exception as error:
+        logger.warning("Category model %s %s failed to load: %s", category_key, entry.get("model_version"), type(error).__name__)
+        return "load_failed", "Its model file could not be loaded."
+    if not isinstance(artifact, dict) or not hasattr(artifact.get("model"), "predict_proba"):
+        return "invalid_artifact", "Its model file does not contain a usable model."
+    try:
+        float(artifact["threshold"])
+    except (KeyError, TypeError, ValueError):
+        return "invalid_artifact", "Its model file has no decision threshold."
+    if list(artifact.get("features") or []) != list(feature_names(category_key)):
+        return "incompatible_features", "Its model expects different inputs than this service provides."
+    if not isinstance(entry.get("report"), dict) or "horizon_days" not in entry["report"]:
+        return "invalid_registry_entry", "Its registry entry has no evaluation summary."
     return None
 
 
@@ -660,16 +734,30 @@ def category_availability():
         key = category["key"]
         section = registry.get(key) or {}
         versions = section.get("versions") or []
-        entry = _find_version(section, section.get("active_version"))
+        active = section.get("active_version")
+        entry = _find_version(section, active)
         if entry is None:
-            reason = "No model has been trained for this category." if not versions else "No accepted model exists for this category."
-            result[key] = {"available": False, "reason": reason, "active_version": None}
+            if active:
+                status, reason = "invalid_registry_entry", "The active model version is not in the registry."
+            elif not versions:
+                status, reason = "not_trained", "No model has been trained for this category."
+            elif any(item.get("status") == STATUS_REJECTED for item in versions):
+                status, reason = "rejected", "No accepted model exists for this category."
+            else:
+                status, reason = "no_accepted_model", "No accepted model exists for this category."
+            result[key] = {"available": False, "status": status, "reason": reason, "active_version": None}
             continue
-        problem = _integrity_problem(entry)
-        if problem or entry["status"] != STATUS_ACCEPTED or entry.get("eligible_for_inference") is not True:
-            result[key] = {"available": False, "reason": problem or "The active model is not accepted.", "active_version": None}
+        if entry.get("status") != STATUS_ACCEPTED or entry.get("eligible_for_inference") is not True:
+            problem = ("not_accepted", "The active model is not accepted.")
         else:
-            result[key] = {"available": True, "reason": None, "active_version": entry["model_version"]}
+            problem = _integrity_check(entry) or _load_check(key, entry)
+        if problem:
+            result[key] = {"available": False, "status": problem[0], "reason": problem[1], "active_version": None}
+        else:
+            notice = demonstration_notice(entry)
+            result[key] = {"available": True, "status": "ready", "reason": None, "active_version": entry["model_version"],
+                           "demonstration": notice is not None, "notice": notice,
+                           "training_data_source": (entry.get("training_data") or {}).get("source", "not_recorded")}
     return result
 
 
@@ -683,7 +771,7 @@ _loaded = {}
 def _load_artifact(entry):
     key = entry["artifact_sha256"]
     if key not in _loaded:
-        _loaded[key] = joblib.load(_model_root() / entry["artifact_path"])
+        _loaded[key] = joblib.load(_model_file(entry["artifact_path"]))
     return _loaded[key]
 
 
@@ -713,6 +801,7 @@ def predict_category(category_key, payload, availability, section):
     elevated = score >= threshold
     horizon = entry["report"]["horizon_days"]
     label = entry["report"]["category_name"]
+    notice = demonstration_notice(entry)
     return {
         "available": True,
         "reason": None,
@@ -720,10 +809,14 @@ def predict_category(category_key, payload, availability, section):
         "model_score": round(score, 5),
         "threshold": round(threshold, 6),
         "horizon_days": horizon,
-        "model": {"name": entry["model_name"], "version": entry["model_version"]},
+        "model": {"name": entry["model_name"], "version": entry["model_version"], "demonstration": notice is not None},
+        "demonstration": notice is not None,
+        "notice": notice,
+        "training_data": entry.get("training_data"),
         "factors": factors,
         "explanation": (
-            f"The {label} model {'flags' if elevated else 'does not flag'} a verified fault within {horizon} days. "
+            ("Demonstration only: the" if notice else "The")
+            + f" {label} model {'flags' if elevated else 'does not flag'} a verified fault within {horizon} days. "
             + (f"Most influenced by: {', '.join(item['label'].lower() for item in factors)}." if factors else "")
         ),
         "evaluation": {key: entry["report"]["metrics"][key] for key in ("recall", "precision", "records", "faults")},
