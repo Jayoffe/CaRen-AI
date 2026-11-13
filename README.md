@@ -309,4 +309,4 @@ The EngineFaultDB preparation step writes a normalized copy and a transformation
 
 `GET /api/capabilities/` reports currently verified model capabilities. The existing legacy artifact is not loaded because it has no accepted registry entry and evaluation evidence.
 
-lmao ignore this haha
+lmao ignore this hahaha
