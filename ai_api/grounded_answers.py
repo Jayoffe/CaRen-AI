@@ -42,8 +42,8 @@ NOTES = {
                      "whether or when a deposit is refunded; the rental team handles that, so please confirm with them."),
     "dates_hint": "For specific dates, give me the pickup and return dates and I'll check them against existing bookings.",
     "schedule_estimate": "These are schedule estimates, not confirmed faults; check the manufacturer schedule.",
-    "booked_value": "These are stored reservation totals; the system records no payments, so they are not money received.",
-    "no_payments": "The system records reservation totals but no payments, so this is the booked amount, not money paid.",
+    "booked_value": "These are booked reservation totals, not money received; only verified online payments count as paid.",
+    "no_payments": "This is the booked amount. Whether each reservation is paid shows on My Reservations and Payments (/users/payments); ask \"did my payment go through?\" to check here.",
     "service_log": "Service-log entries record work done; they are not verified fault diagnoses.",
 }
 
@@ -479,6 +479,14 @@ def _compare_lines(compare, vehicles, label):
         high, low = by_price[0], by_price[-1]
         if high["daily_rental_price"] == low["daily_rental_price"]:
             lines.append(f"They cost the same per day: {money(high['daily_rental_price'])}.")
+        elif compare.get("lead") == "cheaper":
+            # "Which one is cheaper?" / "alin ang mas mura?": the answer names the cheaper vehicle first.
+            if len(vehicles) > 2:
+                lines.append(f"The {label[id(low)]} is the cheapest at {money(low['daily_rental_price'])} per day; "
+                             f"the most expensive is the {label[id(high)]} at {money(high['daily_rental_price'])} per day.")
+            else:
+                lines.append(f"The {label[id(low)]} is cheaper at {money(low['daily_rental_price'])} per day; "
+                             f"the {label[id(high)]} is {money(high['daily_rental_price'])} per day.")
         else:
             lines.append(f"The {label[id(high)]} is more expensive at {money(high['daily_rental_price'])} per day; "
                          f"the {label[id(low)]} is {money(low['daily_rental_price'])} per day.")
@@ -744,7 +752,13 @@ def _reservation_summary(plan, by_tool, role, vocabulary, guide, fleet_risk, not
     if plan.get("rank_customers"):
         # "Who has the most bookings?": customers ranked by how many reservations they made (cancelled ones included).
         tally = {}
-        for r in rows:
+        if data.get("by_customer") and not args:
+            # The Back-End counts every reservation, not only the rows listed.
+            tally = {item["customer_name"]: {"count": item["reservations"], "value": 0.0} for item in data["by_customer"]}
+            rows_counted = data.get("rows_counted", len(rows))
+        else:
+            rows_counted = len(rows)
+        for r in ([] if tally else rows):
             customer = r.get("customer_name") or "Unnamed customer"
             entry = tally.setdefault(customer, {"count": 0, "value": 0.0})
             entry["count"] += 1
@@ -759,8 +773,8 @@ def _reservation_summary(plan, by_tool, role, vocabulary, guide, fleet_risk, not
         lines = [f"{_join(leaders)} {'has' if len(leaders) == 1 else 'have'} the most reservations{window}: {top_count}."]
         # Counts only: summed peso amounts would not appear in the records, and the answer check refuses unrecorded amounts.
         lines += [f"- {customer}: {entry['count']} reservation(s)" for customer, entry in ranked[:10]]
-        if data.get("all_records_count", 0) > len(rows) and not args:
-            lines.append(f"Counted from the latest {len(rows)} of {data['all_records_count']} reservations.")
+        if data.get("all_records_count", 0) > rows_counted and not args:
+            lines.append(f"Counted from the latest {rows_counted} of {data['all_records_count']} reservations.")
         return "\n".join(lines)
     if args.get("reservation_id"):
         if not rows:
@@ -888,7 +902,19 @@ def _revenue(plan, by_tool, role, vocabulary, guide, fleet_risk, notes=None):
         item = by_status.get(status)
         lines.append(f"{status.capitalize()} reservations{window}: {money(item['total'])} from {item['reservations']} reservation(s)."
                      if item else f"There are no {status} reservations{window}.")
+    breakdown = plan.get("breakdown")
+    if breakdown in ("vehicle", "customer") and data.get(f"by_{breakdown}"):
+        # "Revenue per car", "top customers by revenue": booked value of pending, confirmed and completed reservations.
+        rows = data[f"by_{breakdown}"]
+        who = (lambda item: name(item)) if breakdown == "vehicle" else (lambda item: item["customer_name"])
+        lines.append(f"{'The ' if breakdown == 'vehicle' else ''}{who(rows[0])} {'brings' if breakdown == 'vehicle' else 'has'} the highest booked value"
+                     f"{window}: {money(rows[0]['booked'])} from {rows[0]['reservations']} reservation(s).")
+        lines += [f"- {who(item)}: {money(item['booked'])} from {item['reservations']} reservation(s)" for item in rows]
+        lines.append(f"Overall booked value{window}: {money(data.get('booked_total', 0))}.")
+        return "\n".join(lines)
     lines.append(f"{'Overall b' if lines else 'B'}ooked value{window}: {money(data.get('booked_total', 0))} (pending, confirmed and completed reservations).")
+    if data.get("paid_total"):
+        lines.append(f"Of that, {money(data['paid_total'])} is paid through verified online payments.")
     lines += [f"- {status}: {money(item['total'])} from {item['reservations']} reservation(s)" for status, item in by_status.items()]
     if notes:
         notes.add(lines, "booked_value")

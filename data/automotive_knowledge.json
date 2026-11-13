@@ -732,7 +732,6 @@
         "why does my car shake when I accelerate",
         "vibration on acceleration",
         "drivetrain vibration",
-        "clutch slipping",
         "driveshaft",
         "differential noise",
         "car shudders accelerating",
@@ -5079,6 +5078,330 @@
       "actions": [
         "Check the tire pressures first, then whether the check-engine light is on.",
         "If one wheel is much hotter than the others after a drive, a brake may be dragging; have it checked."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "hybrid_operation",
+      "title": "How a hybrid car works",
+      "category": "hybrid_electric",
+      "system": "hybrid system",
+      "component": "hybrid drive",
+      "keywords": [
+        "how does a hybrid work",
+        "how does a hybrid car work",
+        "what is a hybrid car",
+        "hybrid engine turns off",
+        "engine turns off at stop hybrid",
+        "hybrid engine stopped by itself",
+        "hybrid silent when starting",
+        "hybrid ready light",
+        "ready light on dashboard",
+        "hybrid vs gasoline",
+        "difference between hybrid and gasoline",
+        "is a hybrid worth it"
+      ],
+      "overview": "A hybrid combines a gasoline engine with an electric motor and battery. The car switches between them, or uses both, by itself: the engine often switches off when you stop or drive slowly, and the battery recharges while you brake. That's normal, and the READY light means the car is on even when it's silent.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "Drive it like any automatic: you never plug in a regular hybrid, it charges itself.",
+        "If a hybrid-system warning light comes on, have it checked by a technician trained in high-voltage systems."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you noticed."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "A hybrid combines a gasoline engine with an electric motor and battery. The car switches between them, or uses both, by itself: the engine often switches off when you stop or drive slowly, and the battery recharges while you brake. That's normal, and the READY light means the car is on even when it's silent.",
+      "key_causes": [],
+      "actions": [
+        "Drive it like any automatic: you never plug in a regular hybrid, it charges itself.",
+        "If a hybrid-system warning light comes on, have it checked by a technician trained in high-voltage systems."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "ev_charging",
+      "title": "Charging an electric car",
+      "category": "hybrid_electric",
+      "system": "electric drive",
+      "component": "charging",
+      "keywords": [
+        "how to charge an electric car",
+        "how do i charge an ev",
+        "ev charging",
+        "charging an electric vehicle",
+        "charge the ev",
+        "how long to charge an electric car",
+        "ev charging time",
+        "where to charge an ev",
+        "fast charging",
+        "ev range",
+        "electric car range",
+        "how far can an electric car go",
+        "range anxiety",
+        "plug in hybrid charging",
+        "charge an electric car",
+        "how do i charge",
+        "charge an ev",
+        "charging an electric car",
+        "charge my electric car",
+        "paano mag charge ng electric car"
+      ],
+      "overview": "An electric car charges from a home or public charging point through the cable and connector type it was built for. Charging time depends on the charger: an ordinary outlet can take a whole night, while a public fast charger can add most of the range in under an hour. Range drops with highway speed, heavy loads and air conditioning.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "Use only chargers and adaptors that match the car's connector, and follow the instructions on the charger.",
+        "In a rental, ask the rental team how full it should be when you return it and which charging points to use."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you noticed."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "An electric car charges from a home or public charging point through the cable and connector type it was built for. Charging time depends on the charger: an ordinary outlet can take a whole night, while a public fast charger can add most of the range in under an hour. Range drops with highway speed, heavy loads and air conditioning.",
+      "key_causes": [],
+      "actions": [
+        "Use only chargers and adaptors that match the car's connector, and follow the instructions on the charger.",
+        "In a rental, ask the rental team how full it should be when you return it and which charging points to use."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "regenerative_braking",
+      "title": "Regenerative braking in hybrids and EVs",
+      "category": "brakes",
+      "system": "brakes",
+      "component": "regenerative braking",
+      "keywords": [
+        "regenerative braking",
+        "what is regenerative braking",
+        "regen braking",
+        "car slows when i lift off",
+        "ev slows down by itself",
+        "one pedal driving",
+        "brake feels different in hybrid",
+        "hybrid brakes feel strange"
+      ],
+      "overview": "Regenerative braking uses the electric motor to slow the car and turn that energy back into battery charge, so a hybrid or EV slows down noticeably when you lift off the accelerator. The normal brakes still work and take over for harder or slower stops.",
+      "possible_causes": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "symptoms": [
+        "Not applicable: this entry is general guidance."
+      ],
+      "checks": [
+        "The brake pedal can feel slightly different from a gasoline car; this is normal.",
+        "If the brake pedal feels soft or a brake warning light comes on, stop safely and have the brakes checked."
+      ],
+      "urgency": "General guidance; no repair is implied.",
+      "needed_information": [
+        "The make, model and year, and what you noticed."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Regenerative braking uses the electric motor to slow the car and turn that energy back into battery charge, so a hybrid or EV slows down noticeably when you lift off the accelerator. The normal brakes still work and take over for harder or slower stops.",
+      "key_causes": [],
+      "actions": [
+        "The brake pedal can feel slightly different from a gasoline car; this is normal.",
+        "If the brake pedal feels soft or a brake warning light comes on, stop safely and have the brakes checked."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "clutch_slipping",
+      "title": "Slipping clutch in a manual car",
+      "category": "transmission",
+      "system": "transmission",
+      "component": "clutch",
+      "keywords": [
+        "clutch slipping",
+        "clutch is slipping",
+        "engine revs but car doesn't speed up manual",
+        "revs go up but car is slow",
+        "clutch smells burning",
+        "burning smell from clutch",
+        "clutch pedal high",
+        "clutch bites high",
+        "clutch worn out",
+        "clutch replacement"
+      ],
+      "overview": "A slipping clutch lets the engine rev without the car speeding up as it should, usually in a high gear or going uphill. It's most often a worn clutch plate, and it gets worse over time.",
+      "possible_causes": [
+        "a worn clutch plate",
+        "oil leaking onto the clutch",
+        "a clutch that doesn't fully engage, from a hydraulic or cable problem"
+      ],
+      "symptoms": [
+        "Engine revs rising without matching speed, a burning smell, or the clutch biting very high."
+      ],
+      "checks": [
+        "Avoid hard acceleration and riding the clutch pedal; don't rest your foot on it while driving.",
+        "Have it checked soon: a badly slipping clutch can leave you unable to drive the car."
+      ],
+      "urgency": "Have it checked soon; it gets worse with use.",
+      "needed_information": [
+        "The make, model and year, and what you noticed."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "A slipping clutch lets the engine rev without the car speeding up as it should, usually in a high gear or going uphill. It's most often a worn clutch plate, and it gets worse over time.",
+      "key_causes": [
+        "a worn clutch plate",
+        "oil leaking onto the clutch",
+        "a clutch that doesn't fully engage, from a hydraulic or cable problem"
+      ],
+      "actions": [
+        "Avoid hard acceleration and riding the clutch pedal; don't rest your foot on it while driving.",
+        "Have it checked soon: a badly slipping clutch can leave you unable to drive the car."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "horn_not_working",
+      "title": "Horn not working",
+      "category": "electrical",
+      "system": "electrical",
+      "component": "horn",
+      "keywords": [
+        "horn not working",
+        "horn doesn't work",
+        "horn stopped working",
+        "no horn",
+        "horn is weak",
+        "busina ayaw",
+        "ayaw tumunog ng busina"
+      ],
+      "overview": "A horn that stops working usually has a blown fuse or relay, a loose connection, or a faulty horn unit or steering-wheel contact.",
+      "possible_causes": [
+        "a blown horn fuse or faulty relay",
+        "a loose or corroded connection",
+        "a failed horn unit",
+        "a worn steering-wheel contact (clock spring)"
+      ],
+      "symptoms": [
+        "No sound, or a weak sound, when pressing the horn."
+      ],
+      "checks": [
+        "Check the horn fuse and relay listed in the owner's manual.",
+        "A working horn is required on the road, so have it fixed before driving far; in a rental, tell the rental team."
+      ],
+      "urgency": "Have it fixed soon; a horn is a safety device.",
+      "needed_information": [
+        "The make, model and year, and what you noticed."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "A horn that stops working usually has a blown fuse or relay, a loose connection, or a faulty horn unit or steering-wheel contact.",
+      "key_causes": [
+        "a blown horn fuse or faulty relay",
+        "a loose or corroded connection",
+        "a failed horn unit",
+        "a worn steering-wheel contact (clock spring)"
+      ],
+      "actions": [
+        "Check the horn fuse and relay listed in the owner's manual.",
+        "A working horn is required on the road, so have it fixed before driving far; in a rental, tell the rental team."
+      ],
+      "stop": null,
+      "professional": null
+    },
+    {
+      "id": "water_in_cabin",
+      "title": "Water inside the car",
+      "category": "body",
+      "system": "body",
+      "component": "seals and drains",
+      "keywords": [
+        "water in the car",
+        "water inside the car",
+        "wet floor in car",
+        "wet carpet",
+        "water leak inside car",
+        "car leaks when it rains",
+        "water on passenger floor",
+        "sunroof leaking",
+        "sunroof leak",
+        "may tubig sa loob ng sasakyan",
+        "pumapasok ang tubig"
+      ],
+      "overview": "Water inside the car usually comes from blocked sunroof or air-conditioning drains, or from worn door or window seals. A wet passenger floor after using the A/C often means a blocked A/C drain.",
+      "possible_causes": [
+        "a blocked sunroof drain",
+        "a blocked air-conditioning drain",
+        "worn door, window or windscreen seals",
+        "a damaged body seal or plug"
+      ],
+      "symptoms": [
+        "Damp carpets, a musty smell, or water dripping inside after rain or A/C use."
+      ],
+      "checks": [
+        "Dry it out quickly to prevent mould and electrical problems.",
+        "Note when it gets wet (rain, car wash, or A/C use); that shows which drain or seal to check."
+      ],
+      "urgency": "Have it checked soon to avoid mould and electrical damage.",
+      "needed_information": [
+        "The make, model and year, and what you noticed."
+      ],
+      "safety_critical": false,
+      "sources": [
+        {
+          "name": "Vehicle-specific owner's manual and service information",
+          "reference": "Procedures and limits are vehicle-specific; this entry gives general guidance only."
+        }
+      ],
+      "answer": "Water inside the car usually comes from blocked sunroof or air-conditioning drains, or from worn door or window seals. A wet passenger floor after using the A/C often means a blocked A/C drain.",
+      "key_causes": [
+        "a blocked sunroof drain",
+        "a blocked air-conditioning drain",
+        "worn door, window or windscreen seals",
+        "a damaged body seal or plug"
+      ],
+      "actions": [
+        "Dry it out quickly to prevent mould and electrical problems.",
+        "Note when it gets wet (rain, car wash, or A/C use); that shows which drain or seal to check."
       ],
       "stop": null,
       "professional": null

@@ -609,6 +609,27 @@ class GuideMatchesBackEndTests(TestCase):
         for doc_id in ("sys_booking_flow", "sys_reservation_statuses"):
             self.assertEqual("confirmed automatically" in self.texts[doc_id], automatic, doc_id)
 
+    def test_cancellation_refund_and_handover_rules_match_the_reservation_code(self):
+        model = (BACKEND / "app" / "models" / "ReservationModel.php").read_text(encoding="utf-8")
+        cancellation = self.texts["sys_cancellation"]
+        # Customers cancel only blocking (pending or confirmed) reservations.
+        blocking = re.search(r"BLOCKING_STATUSES = \[([^\]]*)\]", model).group(1)
+        if "'pending'" in blocking and "'confirmed'" in blocking:
+            self.assertIn("pending or confirmed", cancellation)
+        # A paid reservation needs a refund instead of a cancellation.
+        self.assertEqual("payment_refund_required" in model, "refund" in cancellation)
+        # A handed-over vehicle must be returned before its reservation can be cancelled.
+        self.assertEqual("'vehicle_in_use'" in model, "handed-over" in cancellation)
+        # Handover needs a verified payment.
+        handover_needs_payment = re.search(r"'payment_required'\s*\)", model) is not None or "abort('payment_required')" in model
+        for doc_id in ("sys_pickup_return", "sys_admin_reservations"):
+            self.assertEqual("paid" in self.texts[doc_id], handover_needs_payment, doc_id)
+
+    def test_licence_requirement_matches_the_rental_agreement(self):
+        agreement = (BACKEND / "app" / "libraries" / "RentalAgreement.php").read_text(encoding="utf-8")
+        if "valid driver license" in agreement:
+            self.assertIn("valid driver's licence", self.texts["sys_rental_requirements"])
+
 
 class RentalLengthAnswerTests(TestCase):
     def compose(self, quote, period=None):
@@ -774,3 +795,82 @@ class AnswerShapeTests(TestCase):
         for message in ("how much is that", "what's the total", "magkano yan"):
             args = plan_message(message, "customer", FLEET_VOCABULARY, memory)["retrievals"][0]["args"]
             self.assertEqual((args.get("start_date"), args.get("end_date")), ("2026-12-01", "2026-12-05"), message)
+
+
+class GapFixTests(TestCase):
+    """The gaps closed on 2026-11-13: cross-turn comparisons, longer-lived pickup dates, revenue breakdowns,
+    the classifier overriding vague rule plans, and new knowledge and policy coverage."""
+
+    TWO_CARS = {"last_vehicles": [{"make": "Ford", "model": "Territory"}, {"make": "Hyundai", "model": "Staria"}]}
+
+    def test_comparisons_can_refer_to_the_vehicles_shown_before(self):
+        for message in ("compare them", "which one is cheaper", "alin ang mas mura"):
+            plan = plan_message(correct_typos(message), "customer", FLEET_VOCABULARY, self.TWO_CARS)
+            self.assertEqual(plan["purpose"], "compare", message)
+            self.assertEqual(plan["retrievals"][0]["args"]["models"], ["Staria", "Territory"], message)
+        self.assertEqual(plan_message("which one is cheaper", "customer", FLEET_VOCABULARY, self.TWO_CARS)["compare"]["lead"], "cheaper")
+
+    def test_cheaper_question_names_the_cheaper_vehicle_first(self):
+        from . import grounded_answers as grounded
+        plan = plan_message("which one is cheaper", "customer", FLEET_VOCABULARY, self.TWO_CARS)
+        vehicles = [{"make": "Ford", "model": "Territory", "daily_rental_price": 3350.0, "seating_capacity": 5},
+                    {"make": "Hyundai", "model": "Staria", "daily_rental_price": 5200.0, "seating_capacity": 11}]
+        text = grounded.compose(plan, [{"tool": "vehicles.search", "status": "ok", "data": {"vehicles": vehicles}}], "customer")[0]
+        self.assertIn("The Ford Territory is cheaper at PHP 3,350.00 per day", text)
+
+    def test_pending_pickup_survives_a_question_in_between_and_clears_once_used(self):
+        from .assistant import _pending_pickup
+        kept = _pending_pickup({"pending_pickup": "2026-12-05", "pending_pickup_left": 3}, {})
+        self.assertEqual(kept, {"pending_pickup": "2026-12-05", "pending_pickup_left": 2})
+        self.assertEqual(_pending_pickup({"pending_pickup": "2026-12-05", "pending_pickup_left": 1}, {})["pending_pickup"], None)
+        self.assertEqual(_pending_pickup(kept, {"pending_pickup": None})["pending_pickup"], None)
+        self.assertEqual(_pending_pickup({}, {"pending_pickup": "2026-12-20"})["pending_pickup_left"], 3)
+
+    def test_revenue_breakdowns_by_car_and_by_customer(self):
+        from . import grounded_answers as grounded
+        for message, breakdown in (("revenue per car", "vehicle"), ("which car earns the most", "vehicle"),
+                                   ("top customers by revenue", "customer")):
+            self.assertEqual(plan_message(message, "admin", FLEET_VOCABULARY, {}).get("breakdown"), breakdown, message)
+        self.assertEqual(plan_message("which car earns the most", "customer", FLEET_VOCABULARY, {})["direct"], "admin_only")
+        plan = plan_message("revenue per car", "admin", FLEET_VOCABULARY, {})
+        data = {"by_status": {"confirmed": {"reservations": 2, "total": 9000.0}}, "booked_total": 9000.0, "paid_total": 0.0,
+                "by_vehicle": [{"car_id": 2, "make": "Toyota", "model": "Hilux", "reservations": 1, "booked": 6000.0},
+                               {"car_id": 1, "make": "Kia", "model": "Picanto", "reservations": 1, "booked": 3000.0}],
+                "by_customer": [], "from": None, "to": None}
+        text = grounded.compose(plan, [{"tool": "reservations.revenue", "status": "ok", "data": data}], "admin")[0]
+        self.assertTrue(text.startswith("The Toyota Hilux brings the highest booked value: PHP 6,000.00"), text)
+
+    def test_classifier_overrides_only_vague_plans(self):
+        from .assistant import _policy_question_over_vague_plan
+        vague = {"intent": "vehicles", "purpose": "listing", "retrievals": [{"tool": "vehicles.search", "args": {}}],
+                 "requested": {"makes": [], "models": [], "categories": [], "unknown_names": []}}
+        specific = {**vague, "retrievals": [{"tool": "vehicles.search", "args": {"models": ["Vios"]}}],
+                    "requested": {"makes": [], "models": ["Vios"], "categories": [], "unknown_names": []}}
+        import numpy as np
+        from unittest.mock import MagicMock
+        pipeline = MagicMock()
+        pipeline.classes_ = np.array(["rental_duration", "car_availability"])
+        with patch("ai_api.assistant.core.load_chatbot", return_value=(pipeline, {})):
+            pipeline.predict_proba.return_value = np.array([[0.7, 0.3]])
+            self.assertTrue(_policy_question_over_vague_plan("ilang araw minimum ng rental nyo", vague))
+            self.assertFalse(_policy_question_over_vague_plan("how much is the vios", specific))
+            pipeline.predict_proba.return_value = np.array([[0.4, 0.6]])
+            self.assertFalse(_policy_question_over_vague_plan("what cars do you have", vague))
+
+    def test_rule_fixes_for_requirements_extensions_and_cleaning(self):
+        for message in ("kelangan ko ba ng id pag kukunin yung kotse", "what if i need the car longer than planned"):
+            plan = plan_message(correct_typos(message), "customer", FLEET_VOCABULARY, {})
+            self.assertFalse((plan or {}).get("retrievals"), message)
+        cleaning = plan_message("are your cars clean and sanitized", "customer", FLEET_VOCABULARY, {})
+        self.assertEqual((cleaning["direct"], cleaning["topic"]), ("policy_unrecorded", "cleaning and sanitising of vehicles"))
+        self.assertIsNone(plan_message("how do i clean my throttle body", "customer", FLEET_VOCABULARY, {}))
+        self.assertIn("move", normalize_message(correct_typos("pwede ko bang i-move yung booking")))
+
+    @skipUnless(INDEX_BUILT, "knowledge index not built")
+    def test_hybrid_ev_and_less_common_faults_have_topics(self):
+        expected = {"how does a hybrid work": "hybrid_operation", "how do i charge an electric car": "ev_charging",
+                    "what is regenerative braking": "regenerative_braking", "my clutch is slipping": "clutch_slipping",
+                    "my horn is not working": "horn_not_working", "there is water in the car after rain": "water_in_cabin"}
+        for message, topic in expected.items():
+            response = answer_chat(message, viewer_role="customer", retrieval_protocol=1)
+            self.assertEqual((response.get("data") or {}).get("knowledge_id"), topic, message)

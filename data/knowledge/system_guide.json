@@ -116,7 +116,13 @@
         "charge for cancelling",
         "cancellation charge",
         "fee for cancelling",
-        "cancellation penalty"
+        "cancellation penalty",
+        "move my booking",
+        "move the booking",
+        "move booking to another date",
+        "move my reservation",
+        "change the date of my booking",
+        "ilipat ang booking"
       ],
       "text": "Open My Reservations (/users/reservations) and cancel a reservation that is still pending or confirmed. A reservation that has already been paid cannot be cancelled in the system: contact an administrator to arrange a refund. Completed, rejected, already-cancelled and handed-over reservations cannot be cancelled. There is no reschedule action: to change dates, cancel and create a new reservation, which is checked again for availability. The system stores no cancellation-fee rule, so ask the rental team about any fees.",
       "code_references": [
@@ -146,7 +152,12 @@
         "extend the rental",
         "add days to my booking",
         "pa-extend",
-        "i-extend ang booking"
+        "i-extend ang booking",
+        "need the car longer",
+        "need it longer",
+        "longer than planned",
+        "keep it longer",
+        "add more days to my rental"
       ],
       "text": "A reservation's dates cannot be changed or extended in the system: there is no reschedule, extend or edit-dates action. The rental agreement says any extension needs administrator approval and an updated agreement, so ask the rental team. To rent on other dates, create a new reservation (3 to 7 days, or up to 21 days as a special-duration request) and, if needed, cancel the old one from My Reservations (/users/reservations) while it is unpaid.",
       "code_references": [
@@ -302,7 +313,19 @@
         "needed to rent a car",
         "what do i need to rent a car",
         "what is required to rent",
-        "what are the requirements to rent a car"
+        "what are the requirements to rent a car",
+        "do i need an id",
+        "need my license at pickup",
+        "bring my license",
+        "id at pickup",
+        "kailangan ng id",
+        "need the id",
+        "need an id when i pick up",
+        "id when picking up the car",
+        "do i need id at pickup",
+        "need id to pick up the car",
+        "show my license at pickup",
+        "need my driver license when i pick up"
       ],
       "text": "To reserve a vehicle you need a signed-in, active customer account; administrator accounts cannot create reservations. The reservation form asks for the vehicle, a pickup date and a return date, and you must accept the rental agreement: the pickup date cannot be in the past, and the rental must be 3 to 7 days (up to 21 days as a special-duration request) and meet the vehicle's own minimum. The rental agreement says you must present a valid driver's licence and follow DriveRent's rental rules before pickup. Your profile (/users/profile) stores your driver's licence number and expiry date and a photo of you holding your licence, but the reservation form does not check the profile, so the system does not block a booking when no licence is saved, and the system stores no minimum-age rule or other document requirement, so ask the rental team what else they check at pickup.",
       "code_references": [
@@ -572,7 +595,12 @@
         "where is the pickup",
         "return location",
         "return it somewhere else",
-        "drop off location"
+        "drop off location",
+        "someone else return the car",
+        "can someone else return the car",
+        "another person return the car",
+        "ibang tao magbalik",
+        "who can return the car"
       ],
       "text": "Each reservation records a pickup date and a return date; the return date is not counted as a rental day, and the rental agreement requires the vehicle back on the stated return date. An administrator records the handover during the rental period, and only after the reservation is paid; when the vehicle comes back, the administrator records the return and the reservation is marked completed. The system stores no pickup or return times, no pickup location, and no fuel, cleaning or handover rules, so confirm those with the rental team.",
       "code_references": [

@@ -176,7 +176,7 @@ GREETING_ANSWERS = {
 # never pick up a mechanical note that happens to share words ("provide", "before", "car").
 RENTAL_POLICY = re.compile(
     r"\b(?:rent|rental|renting|book|booking|bookings|reserve|reservation|reservations|deposit|deposits|payment|pay"
-    r"|licen[cs]e|requirements?|provide|bring|documents?|cancel|reschedule|pickup|account|profile"
+    r"|licen[cs]e|requirements?|provide|bring|documents?|id|ids|cancel|reschedule|pickup|pick\s+up|return|returns|account|profile"
     r"|discounts?|promos?|promotions?|free\s+days?|fees?|cards?|credit|debit|gcash|g-cash|maya|paymaya|cash|online\s+payment|accept"
     r"|sign\s*up|signup|register|papers)\b",
     re.IGNORECASE,
@@ -311,6 +311,8 @@ def answer_chat(message, vehicle=None, vehicles=None, rental_context=None, diagn
         direct = None
         if database_mode and not _is_car_problem(message, entities):
             plan = planner.plan_message(message, role, vocabulary, memory)
+            if plan and plan.get("retrievals") and _policy_question_over_vague_plan(message, plan):
+                plan = None  # the rules only guessed a listing; the classifier is sure it is a policy question
             if plan and plan.get("retrievals"):
                 return {"status": "needs_data", "plan": plan}
             if plan and plan.get("intent") == "multi":
@@ -397,6 +399,8 @@ def _grounded_response(message, role, retrieval, vocabulary, memory=None, entiti
     period = next((r.get("args", {}).get("period") for r in results if isinstance(r, dict) and (r.get("args") or {}).get("period")), None)
     if period:
         updates["last_period"] = {"start_date": period["start_date"], "end_date": period["end_date"]}
+        if (memory or {}).get("pending_pickup") == period["start_date"]:
+            updates["pending_pickup"] = None  # the waiting pickup date has its return date now
     return _with_evidence(response, "database_record" if ok else ("reference" if sources else "none"), sources), vehicles_seen[:5], updates
 
 
@@ -756,6 +760,9 @@ GUIDE_SYNONYMS = {
     "hours": {"hourly"}, "hour": {"hourly"}, "age": {"minimum-age", "age"}, "old": {"minimum-age", "age"},
     "charge": {"fee", "fees"}, "charges": {"fee", "fees"}, "penalty": {"fee", "fees"},
     "cancelling": {"cancellation"}, "canceling": {"cancellation"}, "cancel": {"cancellation"},
+    "refundable": {"refund", "refunds", "returned"}, "gcash": {"methods", "xendit"}, "card": {"methods", "xendit"},
+    "credit": {"methods", "xendit"}, "license": {"licence"}, "licence": {"license"}, "documents": {"licence", "document"},
+    "id": {"licence", "document"}, "expire": {"expires", "lasts"}, "expired": {"expires", "lasts"}, "paid": {"verified", "verifies"},
 }
 
 
@@ -925,6 +932,36 @@ def _topic_follow_up(message, entities, memory):
     return response, updates
 
 
+# Classifier intents answered from the system guide, and how sure it must be to override a vague rule-based plan.
+POLICY_INTENTS = {"rental_duration", "rental_requirements", "booking_reservation", "deposits_payments", "pickup_return",
+                  "cancellation_rescheduling"}
+POLICY_OVERRIDE_CONFIDENCE = 0.5
+
+
+def _policy_question_over_vague_plan(message, plan):
+    """True when the rules made only a vague plan (every listed vehicle, or every booking, with no filter or specific
+    purpose) and the trained classifier is confident the question is about a rental policy. That question is then
+    answered from the guide ("ilang araw minimum ng rental nyo?" is not a request to list the fleet)."""
+    retrievals = plan.get("retrievals") or []
+    if len(retrievals) != 1 or plan.get("follow_up"):
+        return False
+    tool, args = retrievals[0].get("tool"), retrievals[0].get("args") or {}
+    requested = plan.get("requested") or {}
+    named = any(requested.get(key) for key in ("makes", "models", "categories", "unknown_names"))
+    vague_listing = tool == "vehicles.search" and not named and not any(
+        value for key, value in args.items() if key not in ("limit",)) and plan.get("purpose") in (None, "listing", "price", "details")
+    vague_bookings = tool == "bookings.mine" and not args and plan.get("purpose") in (None, "list") and not plan.get("guide")
+    if not (vague_listing or vague_bookings):
+        return False
+    try:
+        pipeline, _ = core.load_chatbot()
+        probabilities = pipeline.predict_proba([normalize_message(message)])[0]
+    except (FileNotFoundError, ValueError):
+        return False
+    best = int(probabilities.argmax())
+    return str(pipeline.classes_[best]) in POLICY_INTENTS and float(probabilities[best]) >= POLICY_OVERRIDE_CONFIDENCE
+
+
 def _is_car_problem(message, entities):
     """True for a question about a car problem or maintenance topic, which needs no rental records.
 
@@ -986,6 +1023,20 @@ def purge_expired_conversations():
     return deleted
 
 
+PENDING_PICKUP_TURNS = 3
+
+
+def _pending_pickup(memory, updates):
+    """The pickup date still waiting for a return date, and how many more messages it is kept for."""
+    if "pending_pickup" in updates:
+        date_value = updates["pending_pickup"]
+        return {"pending_pickup": date_value, "pending_pickup_left": PENDING_PICKUP_TURNS if date_value else 0}
+    left = int(memory.get("pending_pickup_left") or 0) - 1
+    if memory.get("pending_pickup") and left > 0:
+        return {"pending_pickup": memory["pending_pickup"], "pending_pickup_left": left}
+    return {"pending_pickup": None, "pending_pickup_left": 0}
+
+
 def _save_memory(conversation_id, scope, memory, entities, intent, vehicles=None, updates=None):
     if not conversation_id or not scope:
         return
@@ -999,8 +1050,8 @@ def _save_memory(conversation_id, scope, memory, entities, intent, vehicles=None
               # Explanations already shown in this conversation, and the last date range asked about.
               "notes_shown": (updates or {}).get("notes_shown", memory.get("notes_shown", [])),
               "last_period": (updates or {}).get("last_period", memory.get("last_period")),
-              # A pickup date waiting for its return date; kept for the next message only.
-              "pending_pickup": (updates or {}).get("pending_pickup"),
+              # A pickup date waiting for its return date: kept for up to three more messages, cleared once used.
+              **_pending_pickup(memory, updates or {}),
               "last_topic": (updates or {})["last_topic"] if "last_topic" in (updates or {}) else memory.get("last_topic")}
     try:
         conversation = Conversation.objects.filter(id=conversation_id).first()

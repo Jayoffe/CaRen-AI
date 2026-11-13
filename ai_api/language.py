@@ -58,7 +58,7 @@ _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replace
     (r"\blibre\b", "free"),
     (r"\bnaghihintay\b", "waiting"),
     (r"\btapos na\b", "completed"),
-    (r"\bi[- ]?(cancel|reset|extend)\b", r"\1"),
+    (r"\bi[- ]?(cancel|reset|extend|move|change|resched\w*)\b", r"\1"),
     (r"\bback out of\b", "cancel"),
     (r"\bpapers\b", "documents"),
     (r"\b(?:one |a )?(?:whole|full|entire) week\b", "7 days"),
@@ -121,7 +121,11 @@ _RULES = [(re.compile(pattern, re.IGNORECASE), replacement) for pattern, replace
     (r"\bmga\s+", ""),
     (r"\b(bookings?|reservations?|rentals?|rental history)\s+(?:ko|namin)\b", r"my \1"),
     (r"\b(?:the\s+)?(car|unit)\s+(?:ko|namin)\b", r"my \1"),  # "ang balik ng sasakyan ko": my car's return
-    (r"\bkailangan\b", "need"),
+    (r"\b(?:kailangan|kelangan|kilangan|kaylangan)\b", "need"),
+    # "sa susunod na linggo" is next week (linggo after a number is a week; see the rental-days rules above).
+    (r"\b(?:sa\s+)?susunod na (?:linggo|week)\b", "next week"),
+    (r"\b(?:sa\s+)?susunod na buwan\b", "next month"),
+    (r"\bbang\b", ""),
     (r"\bano\b", "what"),
     (r"\bpara\s+(?=rent|book|reserve)", "to "),
     (r"\bpo\b", ""),

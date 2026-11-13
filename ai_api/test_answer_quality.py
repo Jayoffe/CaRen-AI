@@ -139,7 +139,8 @@ class ReservationLookupTests(TestCase):
         _, owe = answer("how much do I owe for my booking", "customer", bookings_result(BOOKINGS))
         self.assertIn("pending PHP 4,500.00", owe)
         self.assertNotIn("3,400", owe)
-        self.assertIn("no payments", owe)
+        # Payments exist since Back-End commit 22b829f: the answer points to the payment status instead.
+        self.assertIn("did my payment go through?", owe)
 
 
 class PolicyAndSafetyTests(TestCase):

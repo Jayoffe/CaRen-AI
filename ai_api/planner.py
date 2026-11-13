@@ -167,6 +167,9 @@ UNRECORDED_TOPICS = [
     ("business hours", re.compile(r"\b(?:business hours|opening hours|office hours|what time do you (?:open|close)|are you open|open ba kayo|open kayo|open (?:on|at|today|sa)|anong oras)\b")),
     ("late returns and late fees", re.compile(r"\blate (?:return|returns|fee|fees|charge|penalty)\b|\breturn\w* (?:the car |it )?late\b|\bhuli(?:ng)? (?:pagbalik|balik)\b"
                                               r"|\bpenalt(?:y|ies)\b.*\b(?:late|return\w*)\b|\bif i'?m late\b")),
+    ("cleaning and sanitising of vehicles", re.compile(
+        r"\b(?:clean|cleaned|cleaning|sanitized|sanitised|sanitizing|sanitising|disinfected|hygiene|malinis|nililinis)\b"
+        r"(?!.*\b(?:engine|filter|injector|throttle|battery|terminals?|brakes?|vents?|leak)\b)")),
     # Vehicle records store fuel type but no consumption figures; "my car uses too much fuel" is a car problem, not this.
     ("fuel-consumption figures for its vehicles", re.compile(
         r"^(?!.*\bmy\b).*\b(?:fuel (?:economy|consumption|efficiency)|km ?(?:per|/) ?(?:liter|litre|l)\b|kmpl|mpg|matipid(?: sa)?(?: gas| gasolina)?"
@@ -199,6 +202,11 @@ YES_NO = re.compile(r"^(?:does|do|is|are|has|have|may|meron|can|would|could|with
 # Words that ask for a broader list, so the question is not about the vehicle discussed before.
 BROADER_LIST = re.compile(r"\b(?:all|list|lahat|options|others?|every|any other|ibang|mga)\b")
 ELLIPTICAL = re.compile(r"^(?:and|what about|how about|eh|yung|paano yung|e di|so)\b")
+# "Compare them", "which one is cheaper?", "alin ang mas mura?": a comparison of the vehicles shown in the previous answer.
+CROSS_TURN_COMPARE = re.compile(
+    r"\bcompare (?:them|these|those|both|the two|the (?:cars|vehicles))\b|\b(?:between|of) (?:them|these|those|the two)\b|\bboth of them\b"
+    r"|\b(?:which|alin|ano)(?: one| sa (?:kanila|dalawa))?(?: ang| is| the)? (?:cheaper|cheapest|bigger|biggest|better|best|more expensive|roomier"
+    r"|mas (?:mura|mahal|malaki|maluwag|maganda))\b|\bdifference between them\b|\bhow do they compare\b")
 # A reply that is only dates ("2026-12-09", "from 2026-12-10 to 2026-12-14") continues the vehicle being discussed.
 DATES_ONLY = re.compile(r"(?:\s*(?:\d{4}-\d{2}-\d{2}|from|to|until|till|til|hanggang|mula|sa|on|the|and|return(?:ing)?(?: on)?|pickup(?: on)?"
                         r"|pick up(?: on)?|po|lang|[-,.?!])\s*)+")
@@ -244,7 +252,8 @@ OTHER_PERSON_RECORDS = re.compile(r"\b(?!(?:my|what|that|it|where|who|how|here|t
                                   r"(?:bookings?|reservations?|rentals?|records?|details|account)\b")
 DEPOSIT_REFUND = re.compile(r"\bdeposits?\b.*\b(?:back|return(?:ed)?|refund\w*)\b|\b(?:back|return(?:ed)?|refund\w*)\b.*\bdeposits?\b")
 # Company money. Only administrators may see it, however it is worded.
-COMPANY_REVENUE = re.compile(r"\b(?:revenue|income|earnings?|sales|kita|kinita)\b|\bhow much (?:money )?(?:have|did|do) (?:you|the business|the company)(?: \w+)? (?:make|made|earn|earned)\b"
+COMPANY_REVENUE = re.compile(r"\b(?:revenue|income|earnings?|sales|kita|kinita|grossing)\b|\b(?:cars?|vehicles?|units?|fleet)\b.*\b(?:earns?|earning|earned)\b"
+                             r"|\bhow much (?:money )?(?:have|did|do) (?:you|the business|the company)(?: \w+)? (?:make|made|earn|earned)\b"
                              r"|\b(?:the business|the company)\b.*\b(?:make|made|earn|earned)\b")
 # Asking what something would cost is a quote, not a look-up of an existing booking ("how much would 5 days with the Vios cost me").
 HYPOTHETICAL = re.compile(r"\b(?:would|will|if i|kung|going to|gonna|planning|thinking|suppose|supposing|say i|i'?ll|might|could i)\b")
@@ -713,6 +722,15 @@ def plan(message, role, vocabulary=None, memory=None):
         return None
     if NEEDS_TO_RENT.search(u.text) and not asks_vehicle:
         return None
+    # "Kelangan ko ba ng ID pag kukunin yung kotse?", "do I need my licence at pickup?": a requirement, not my bookings.
+    if re.search(r"\b(?:need|needs|kailangan|kelangan|require\w*|bring|dalhin|dadalhin|present)\b.*\b(?<!user )(?<!account )(?<!customer )"
+                 r"(?:id|ids|license|licence|lisensya|documents?|requirements?)\b", u.text) \
+            and not ACCOUNT_ID.search(u.text) and not u.reservation_id and not asks_vehicle:
+        return None
+    # "What if I need the car longer?", "can I keep it longer?": the extension rules in the guide.
+    if re.search(r"\b(?:longer than (?:planned|expected|booked)|need (?:it|the car|the vehicle|the unit) longer|keep (?:it|the car|the vehicle) longer"
+                 r"|(?:add|extra) (?:a few |more |one more )?days?\b.*\b(?:rental|booking|reservation)|mas matagal)\b", u.text) and not u.reservation_id:
+        return None
     if HOW_TO_BOOK.search(u.text) and not (u.has("price", "deposit") or u.rental_days or u.start_date or u.has("own")):
         return None
     if u.has("price") and SERVICE_COST.search(u.text) and not (u.has("deposit", "availability") or re.search(r"\b(?:rent|rental|per day|daily)\b", u.text)):
@@ -810,8 +828,16 @@ def plan(message, role, vocabulary=None, memory=None):
 
     filters = _vehicle_filters(u)
     follow_up = False
+    compare_earlier = False
+    remembered = [item for item in memory.get("last_vehicles") or [] if item.get("model")]
+    if len(u.models) < 2 and len(remembered) >= 2 and CROSS_TURN_COMPARE.search(u.text):
+        # "Compare them", "which one is cheaper?" after two or more vehicles were shown.
+        filters["makes"] = sorted({item["make"] for item in remembered if item.get("make")})
+        filters["models"] = sorted({item["model"] for item in remembered})
+        follow_up = compare_earlier = True
     elliptical = ELLIPTICAL.search(u.text) or PRONOUN.search(u.text) or len(u.tokens) <= 6 or DATES_ONLY.fullmatch(u.text)
-    if not asks_vehicle and memory.get("last_vehicles") and (u.rental_days or u.has("price", "deposit", "specs", "availability") or u.start_date) \
+    if not compare_earlier and not asks_vehicle and memory.get("last_vehicles") and (u.rental_days or u.has("price", "deposit", "specs", "availability") or u.start_date
+                                                                                   or u.single_date and DATES_ONLY.fullmatch(u.text)) \
             and elliptical and not BROADER_LIST.search(u.text):
         # "How much for 3 days?" after asking about a vehicle refers to that vehicle.
         filters["makes"] = sorted({item["make"] for item in memory["last_vehicles"] if item.get("make")})
@@ -871,7 +897,7 @@ def plan(message, role, vocabulary=None, memory=None):
         result = _plan("vehicles", u, [("vehicles.search", filters)], purpose="attribute", follow_up=follow_up)
         result["attribute"] = u.bare_attribute
         return result
-    if feature_check is None and len(u.models) >= 2 and re.search(r"\b(?:or|o|vs\.?|versus|compare\w*|difference|differ|mas|than|kaysa)\b", u.text):
+    if feature_check is None and (compare_earlier or len(u.models) >= 2 and re.search(r"\b(?:or|o|vs\.?|versus|compare\w*|difference|differ|mas|than|kaysa)\b", u.text)):
         purpose = "compare"
     elif feature_check:
         purpose = "feature_check"
@@ -913,11 +939,15 @@ def plan(message, role, vocabulary=None, memory=None):
     if purpose == "compare":
         result["compare"] = {"by": "price" if u.has("price") or re.search(r"\b(?:expensive|cheaper|pricier|costs? more|costs? less|mahal|mura)\b", u.text)
                              else "seats" if re.search(r"\b(?:bigger|larger|seats?|more people|maluwag)\b", u.text) else "all"}
+        if re.search(r"\b(?:cheaper|cheapest|costs? less|less expensive|mas mura|pinakamura|mura)\b", u.text):
+            result["compare"]["lead"] = "cheaper"
     if getattr(u, "relative_period", False):
         result["period_from_words"] = True
     if u.single_date and not u.rental_days and not u.start_date:
         result["clarification"] = "return_date"
-        result["pending_pickup"] = u.single_date  # remembered for one turn: the next date is the return date
+        result["pending_pickup"] = u.single_date  # remembered for a few messages: the next date is the return date
+        if result.get("purpose") in ("price", "listing", "details"):
+            result["purpose"] = "availability"  # a date alone asks whether the vehicle is free, so ask for the return date
     return result
 
 
@@ -933,12 +963,17 @@ def _admin_lookup_plan(u):
         return _plan("reassessment_due", u, [("assessments.due", vehicle)])
     period = {k: v for k, v in (("from", u.start_date), ("to", u.end_date)) if v}
     period.update(_report_period(text))
-    if re.search(r"\b(?:revenue|income|earnings?|earn|earned|sales|kita|kinita)\b|\bbook(?:ed|ing|ings)? (?:value|amount|total)\b"
+    if re.search(r"\b(?:revenue|income|earnings?|earns?|earned|earning|grossing|sales|kita|kinita)\b|\bbook(?:ed|ing|ings)? (?:value|amount|total)\b"
                  r"|\b(?:bookings|reservations) (?:are )?worth\b|\bvalue of (?:all )?(?:the )?(?:bookings|reservations)\b"
                  r"|\bhow much (?:money )?(?:have|did|do) (?:we|the business|the company)(?: \w+)? (?:make|made|earn|earned)\b|\bmoney (?:have |did )?we (?:make|made|earn|earned)\b", text):
         result = _plan("revenue", u, [("reservations.revenue", period)])
         if u.reservation_statuses:
             result["focus_statuses"] = u.reservation_statuses
+        # "Revenue per car", "which car earns the most", "top customers by revenue".
+        if re.search(r"\b(?:per|by|each|every|for each) (?:car|vehicle|unit|model)s?\b|\bwhich (?:car|vehicle|unit)s?\b|\b(?:car|vehicle)s? (?:earn|earning|make|made)\b", text):
+            result["breakdown"] = "vehicle"
+        elif re.search(r"\b(?:per|by|each|every) (?:customer|renter|client)s?\b|\b(?:which|top|best) (?:customer|renter|client)s?\b|\bwho (?:spent|spends|paid|brings)\b", text):
+            result["breakdown"] = "customer"
         return result
     if re.search(r"\b(?:utili[sz]ation|utili[sz]ed|most (?:rented|booked|used)|least (?:rented|booked|used)|busiest|idle)\b", text):
         return _plan("utilization", u, [("fleet.utilization", period)])
