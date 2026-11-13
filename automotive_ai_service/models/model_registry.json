@@ -1,0 +1,2503 @@
+{
+  "schema_version": 1,
+  "maintenance_model": {
+    "status": "evaluated_rejected",
+    "model_name": "maintenance_model",
+    "model_version": "service_need_v3_3a435be143",
+    "task": "service_need_at_visit",
+    "dataset": "Vehicle Maintenance- Service Records.csv",
+    "source_sha256": "7b785211082064748502e7fc41d6ac5393e8ca160ba1381042daecfac6840847",
+    "eligible_for_inference": false,
+    "evaluation": {
+      "acceptance_criteria_passed": false
+    },
+    "artifact_path": "trained_models/service_need/service_need_v3_3a435be143/pipeline.joblib",
+    "artifact_sha256": "bce25e392485f7d9168eb843703ed50fd5ddfe92e42fe4d00c05492d9f3eacbb",
+    "evaluation_report_path": "trained_models/service_need/service_need_v3_3a435be143/evaluation.json",
+    "evaluation_report_sha256": "a424ac61dbf7f53b5bc26aaf479435ab4a982294efc28224f676ee23fc16ce38",
+    "feature_columns": [
+      "vehicle_type",
+      "fuel_type",
+      "mileage"
+    ],
+    "target_definitions": {
+      "dust_and_pollen_filter": {
+        "label": "Cabin dust and pollen filter",
+        "component_keys": [],
+        "action": "replacement"
+      },
+      "air_clean_filter": {
+        "label": "Air filter",
+        "component_keys": [
+          "engine"
+        ],
+        "action": "replacement"
+      },
+      "fuel_filter": {
+        "label": "Fuel filter",
+        "component_keys": [
+          "engine"
+        ],
+        "action": "replacement"
+      },
+      "brake_fluid": {
+        "label": "Brake fluid",
+        "component_keys": [
+          "brakes-front",
+          "brakes-rear"
+        ],
+        "action": "replacement"
+      },
+      "brake_and_clutch_oil": {
+        "label": "Brake and clutch fluid",
+        "component_keys": [
+          "brakes-front",
+          "brakes-rear",
+          "transmission"
+        ],
+        "action": "replacement"
+      },
+      "transmission_fluid": {
+        "label": "Transmission fluid",
+        "component_keys": [
+          "transmission"
+        ],
+        "action": "replacement"
+      },
+      "brake_pads": {
+        "label": "Brake pads",
+        "component_keys": [
+          "brakes-front",
+          "brakes-rear"
+        ],
+        "action": "inspection"
+      },
+      "clutch": {
+        "label": "Clutch",
+        "component_keys": [
+          "transmission"
+        ],
+        "action": "inspection"
+      }
+    },
+    "metrics": {
+      "balanced_accuracy": 0.7429,
+      "macro_f1": 0.5364,
+      "macro_pr_auc": 0.6312,
+      "macro_roc_auc": 0.8411,
+      "macro_brier": 0.1481,
+      "macro_ece": 0.1557,
+      "served_estimator": "milestone_frequency (training-group service frequency at the nearest 10,000 km milestone, smoothed towards prevalence)",
+      "baseline": "prevalence (training positive rate for every visit)",
+      "baseline_balanced_accuracy": 0.5,
+      "baseline_macro_f1": 0.0,
+      "baseline_macro_pr_auc": 0.2448,
+      "prevalence_baseline_macro_brier": 0.1788,
+      "best_ml_candidate": "logistic_regression {'C': 0.1, 'feature_set': 'full'} (calibrated)",
+      "best_ml_candidate_balanced_accuracy": 0.7251,
+      "best_ml_candidate_macro_f1": 0.4927,
+      "best_ml_candidate_macro_pr_auc": 0.6871,
+      "best_ml_candidate_macro_brier": 0.1392,
+      "served_targets": [
+        "air_clean_filter",
+        "brake_and_clutch_oil",
+        "brake_fluid",
+        "brake_pads",
+        "clutch",
+        "dust_and_pollen_filter",
+        "fuel_filter",
+        "transmission_fluid"
+      ],
+      "all_modeled_targets_macro_f1": 0.4831,
+      "all_modeled_targets_best_ml_macro_f1": 0.4481
+    },
+    "reason": "Service-need model did not meet the acceptance criteria; see evaluation.json.",
+    "updated_at": "2026-10-31T08:45:44.294343+00:00"
+  },
+  "experiments": {
+    "engine_condition_experiment": {
+      "status": "evaluated_not_served",
+      "task": "engine_condition_experiment",
+      "dataset": "train.csv, test.csv, raw_data.csv",
+      "eligible_for_inference": false,
+      "reason": "The meaning of engine_condition (0/1) is undocumented, there is no source or licence, and rows cannot be grouped by engine or vehicle, so held-out scores may overstate performance on new vehicles. The fleet database also holds none of these live sensor readings.",
+      "metrics": {
+        "prevalence_baseline": {
+          "records": 3907,
+          "positives": 2463,
+          "threshold": 0.5,
+          "precision": 0.6304,
+          "recall": 1.0,
+          "f1": 0.7733,
+          "balanced_accuracy": 0.5,
+          "pr_auc": 0.6304,
+          "roc_auc": 0.5,
+          "brier": 0.233,
+          "ece": 0.0001,
+          "prevalence": 0.6304
+        },
+        "logistic_regression": {
+          "records": 3907,
+          "positives": 2463,
+          "threshold": 0.25,
+          "precision": 0.6511,
+          "recall": 0.9622,
+          "f1": 0.7767,
+          "balanced_accuracy": 0.5414,
+          "pr_auc": 0.7888,
+          "roc_auc": 0.692,
+          "brier": 0.2222,
+          "ece": 0.1137,
+          "prevalence": 0.6304
+        },
+        "random_forest": {
+          "records": 3907,
+          "positives": 2463,
+          "threshold": 0.225,
+          "precision": 0.6355,
+          "recall": 0.9903,
+          "f1": 0.7742,
+          "balanced_accuracy": 0.5107,
+          "pr_auc": 0.79,
+          "roc_auc": 0.69,
+          "brier": 0.2131,
+          "ece": 0.054,
+          "prevalence": 0.6304
+        },
+        "gradient_boosting": {
+          "records": 3907,
+          "positives": 2463,
+          "threshold": 0.25,
+          "precision": 0.643,
+          "recall": 0.9785,
+          "f1": 0.776,
+          "balanced_accuracy": 0.5259,
+          "pr_auc": 0.8009,
+          "roc_auc": 0.6975,
+          "brier": 0.2189,
+          "ece": 0.1062,
+          "prevalence": 0.6304
+        }
+      },
+      "updated_at": "2026-10-31T08:55:50.028038+00:00"
+    },
+    "synthetic_signal_audit": {
+      "status": "excluded_no_learnable_signal",
+      "task": "synthetic_signal_audit",
+      "dataset": null,
+      "eligible_for_inference": false,
+      "reason": "Models do not beat the prevalence baseline (ROC-AUC near 0.5, R-squared near 0): the labels are independent of every input, consistent with randomly generated data. Training on them would produce a model that outputs noise, so both datasets are excluded from every served model.",
+      "metrics": null,
+      "updated_at": "2026-10-31T08:55:50.028062+00:00"
+    },
+    "cvffad_fault_system_experiment": {
+      "status": "evaluated_not_served",
+      "task": "fault_system (7 systems) from operating readings and vehicle context",
+      "dataset": null,
+      "eligible_for_inference": false,
+      "reason": "Every CVFFAD record is marked source='generated' and the dataset covers Chinese commercial trucks/vans with a placeholder DOI. Patterns learned from generated events must not be presented as real fleet risk.",
+      "metrics": {
+        "macro_f1": 0.3115,
+        "majority_baseline_macro_f1": 0.0395
+      },
+      "updated_at": "2026-10-31T08:55:50.028072+00:00"
+    },
+    "diesel_dtc_presence_experiment": {
+      "status": "evaluated_not_served",
+      "task": "any active DTC (excluding P0000) from 11 OBD-II PIDs",
+      "dataset": null,
+      "eligible_for_inference": false,
+      "reason": "DTCs are constant per vehicle, so labels identify the vehicle. With only one fault-free signature the vehicle-disjoint evaluation cannot support a fault detector; the fleet also has no live PID stream.",
+      "metrics": null,
+      "updated_at": "2026-10-31T08:55:50.028079+00:00"
+    },
+    "carobd_sensor_anomaly_v1": {
+      "status": "evaluated_unsupervised_experiment",
+      "task": null,
+      "dataset": null,
+      "eligible_for_inference": false,
+      "reason": "Evaluated experiment kept from its own pipeline; not connected to fleet inference.",
+      "metrics": null,
+      "updated_at": "2026-10-31T08:55:50.028085+00:00"
+    },
+    "nasa_battery_cell_rul_1p4ah": {
+      "status": "evaluated_experiment",
+      "task": null,
+      "dataset": null,
+      "eligible_for_inference": false,
+      "reason": "Evaluated experiment kept from its own pipeline; not connected to fleet inference.",
+      "metrics": {
+        "random_forest": {
+          "mae_cycles": 14.194759803418808,
+          "rmse_cycles": 15.79951164370811,
+          "r2": 0.8082760613059384
+        },
+        "median_baseline": {
+          "mae_cycles": 32.216,
+          "rmse_cycles": 37.72267222772003,
+          "r2": -0.0929339477726574
+        }
+      },
+      "updated_at": "2026-10-31T08:55:50.028089+00:00"
+    },
+    "diesel_airpath_fault_classifier_v1": {
+      "status": "research_only_not_deployable",
+      "model_name": "diesel_airpath_fault_classifier_v1",
+      "model_version": "diesel_airpath_fault_classifier_v1_20261107",
+      "task": "Classify ten documented air-path conditions (healthy, MAF drift, MAP drift, EGR valve clog) from one row of signals",
+      "capability": "fault_classification_research",
+      "dataset": "main_df_standardized.parquet with metadata.json and cycles.json",
+      "dataset_sources": {
+        "signals": "main_df_standardized.parquet",
+        "label_definitions": "metadata.json",
+        "cycle_definitions": "cycles.json"
+      },
+      "trained_at": "2026-11-07T08:14:29.497384+00:00",
+      "eligible_for_inference": false,
+      "validation_status": "research_only_not_deployable",
+      "metrics": {
+        "majority_baseline": {
+          "test_records": 130942,
+          "accuracy": 0.1,
+          "macro_f1": 0.0182,
+          "per_class": {
+            "EGVClog_10": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "EGVClog_20": {
+              "precision": 0.1,
+              "recall": 1.0,
+              "f1-score": 0.1818
+            },
+            "EGVClog_30": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "Healthy": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAFLowDrift_70": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAFLowDrift_80": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAFLowDrift_90": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAPLowDrift_70": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAPLowDrift_80": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            },
+            "MAPLowDrift_90": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0
+            }
+          },
+          "confusion_matrix": {
+            "labels": [
+              "EGVClog_10",
+              "EGVClog_20",
+              "EGVClog_30",
+              "Healthy",
+              "MAFLowDrift_70",
+              "MAFLowDrift_80",
+              "MAFLowDrift_90",
+              "MAPLowDrift_70",
+              "MAPLowDrift_80",
+              "MAPLowDrift_90"
+            ],
+            "rows": [
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13095,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13095,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                13094,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ]
+          },
+          "fault_missed_as_healthy_rate": 0.0,
+          "false_alarm_rate_on_held_out_healthy_cycles": 1.0,
+          "held_out_healthy_records": 46965
+        },
+        "logistic_regression": {
+          "test_records": 130942,
+          "accuracy": 0.7419,
+          "macro_f1": 0.7363,
+          "per_class": {
+            "EGVClog_10": {
+              "precision": 0.7889,
+              "recall": 0.8583,
+              "f1-score": 0.8222
+            },
+            "EGVClog_20": {
+              "precision": 0.563,
+              "recall": 0.526,
+              "f1-score": 0.5439
+            },
+            "EGVClog_30": {
+              "precision": 0.4142,
+              "recall": 0.3204,
+              "f1-score": 0.3613
+            },
+            "Healthy": {
+              "precision": 0.4609,
+              "recall": 0.4684,
+              "f1-score": 0.4646
+            },
+            "MAFLowDrift_70": {
+              "precision": 0.8818,
+              "recall": 0.9159,
+              "f1-score": 0.8985
+            },
+            "MAFLowDrift_80": {
+              "precision": 0.794,
+              "recall": 0.8089,
+              "f1-score": 0.8014
+            },
+            "MAFLowDrift_90": {
+              "precision": 0.6633,
+              "recall": 0.7164,
+              "f1-score": 0.6888
+            },
+            "MAPLowDrift_70": {
+              "precision": 0.9772,
+              "recall": 0.969,
+              "f1-score": 0.9731
+            },
+            "MAPLowDrift_80": {
+              "precision": 0.9365,
+              "recall": 0.9467,
+              "f1-score": 0.9416
+            },
+            "MAPLowDrift_90": {
+              "precision": 0.8483,
+              "recall": 0.8888,
+              "f1-score": 0.8681
+            }
+          },
+          "confusion_matrix": {
+            "labels": [
+              "EGVClog_10",
+              "EGVClog_20",
+              "EGVClog_30",
+              "Healthy",
+              "MAFLowDrift_70",
+              "MAFLowDrift_80",
+              "MAFLowDrift_90",
+              "MAPLowDrift_70",
+              "MAPLowDrift_80",
+              "MAPLowDrift_90"
+            ],
+            "rows": [
+              [
+                11239,
+                429,
+                784,
+                262,
+                0,
+                15,
+                121,
+                9,
+                71,
+                164
+              ],
+              [
+                946,
+                6888,
+                2496,
+                1638,
+                0,
+                28,
+                763,
+                1,
+                14,
+                321
+              ],
+              [
+                882,
+                2449,
+                4195,
+                3922,
+                14,
+                80,
+                1199,
+                0,
+                3,
+                350
+              ],
+              [
+                858,
+                1708,
+                2250,
+                6133,
+                64,
+                142,
+                1457,
+                4,
+                4,
+                474
+              ],
+              [
+                6,
+                15,
+                10,
+                9,
+                11993,
+                947,
+                100,
+                0,
+                1,
+                13
+              ],
+              [
+                19,
+                98,
+                62,
+                62,
+                1202,
+                10593,
+                1000,
+                3,
+                2,
+                54
+              ],
+              [
+                108,
+                353,
+                230,
+                1173,
+                168,
+                1374,
+                9380,
+                2,
+                2,
+                304
+              ],
+              [
+                1,
+                104,
+                9,
+                0,
+                9,
+                0,
+                0,
+                12688,
+                276,
+                7
+              ],
+              [
+                7,
+                7,
+                10,
+                1,
+                29,
+                1,
+                0,
+                248,
+                12396,
+                395
+              ],
+              [
+                180,
+                183,
+                82,
+                108,
+                122,
+                162,
+                122,
+                29,
+                468,
+                11638
+              ]
+            ]
+          },
+          "fault_missed_as_healthy_rate": 0.0609,
+          "false_alarm_rate_on_held_out_healthy_cycles": 0.5232,
+          "held_out_healthy_records": 46965
+        },
+        "gradient_boosting": {
+          "test_records": 130942,
+          "accuracy": 0.8562,
+          "macro_f1": 0.8545,
+          "per_class": {
+            "EGVClog_10": {
+              "precision": 0.8812,
+              "recall": 0.9249,
+              "f1-score": 0.9025
+            },
+            "EGVClog_20": {
+              "precision": 0.7218,
+              "recall": 0.7607,
+              "f1-score": 0.7407
+            },
+            "EGVClog_30": {
+              "precision": 0.6086,
+              "recall": 0.5182,
+              "f1-score": 0.5598
+            },
+            "Healthy": {
+              "precision": 0.5707,
+              "recall": 0.585,
+              "f1-score": 0.5777
+            },
+            "MAFLowDrift_70": {
+              "precision": 0.9679,
+              "recall": 0.9756,
+              "f1-score": 0.9718
+            },
+            "MAFLowDrift_80": {
+              "precision": 0.9286,
+              "recall": 0.937,
+              "f1-score": 0.9328
+            },
+            "MAFLowDrift_90": {
+              "precision": 0.8923,
+              "recall": 0.8927,
+              "f1-score": 0.8925
+            },
+            "MAPLowDrift_70": {
+              "precision": 0.9953,
+              "recall": 0.997,
+              "f1-score": 0.9961
+            },
+            "MAPLowDrift_80": {
+              "precision": 0.9886,
+              "recall": 0.9905,
+              "f1-score": 0.9895
+            },
+            "MAPLowDrift_90": {
+              "precision": 0.9817,
+              "recall": 0.9808,
+              "f1-score": 0.9812
+            }
+          },
+          "confusion_matrix": {
+            "labels": [
+              "EGVClog_10",
+              "EGVClog_20",
+              "EGVClog_30",
+              "Healthy",
+              "MAFLowDrift_70",
+              "MAFLowDrift_80",
+              "MAFLowDrift_90",
+              "MAPLowDrift_70",
+              "MAPLowDrift_80",
+              "MAPLowDrift_90"
+            ],
+            "rows": [
+              [
+                12110,
+                475,
+                280,
+                222,
+                0,
+                0,
+                1,
+                0,
+                0,
+                6
+              ],
+              [
+                609,
+                9961,
+                1095,
+                1334,
+                5,
+                5,
+                77,
+                0,
+                0,
+                9
+              ],
+              [
+                505,
+                1841,
+                6785,
+                3652,
+                7,
+                15,
+                276,
+                0,
+                0,
+                13
+              ],
+              [
+                453,
+                1401,
+                2769,
+                7660,
+                21,
+                68,
+                644,
+                0,
+                0,
+                78
+              ],
+              [
+                2,
+                1,
+                3,
+                8,
+                12775,
+                267,
+                21,
+                0,
+                0,
+                17
+              ],
+              [
+                10,
+                12,
+                22,
+                59,
+                315,
+                12270,
+                381,
+                1,
+                1,
+                24
+              ],
+              [
+                46,
+                74,
+                162,
+                457,
+                53,
+                577,
+                11689,
+                0,
+                4,
+                32
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                13055,
+                35,
+                4
+              ],
+              [
+                1,
+                4,
+                0,
+                0,
+                4,
+                1,
+                0,
+                58,
+                12969,
+                57
+              ],
+              [
+                7,
+                31,
+                32,
+                31,
+                18,
+                10,
+                11,
+                3,
+                109,
+                12842
+              ]
+            ]
+          },
+          "fault_missed_as_healthy_rate": 0.0489,
+          "false_alarm_rate_on_held_out_healthy_cycles": 0.4274,
+          "held_out_healthy_records": 46965
+        }
+      },
+      "reason": "Faults are injected, on data with no documented source, so scores do not establish real-world performance. Inputs are standardized with an unknown reference and include EGR and turbo signals an inspection does not record. All faulted runs share one route, so the holdout does not test generalization to other routes.",
+      "known_limitations": [
+        "Faults are injected, on data with no documented source, so scores do not establish real-world performance.",
+        "Inputs are standardized with an unknown reference and include EGR and turbo signals an inspection does not record.",
+        "All faulted runs share one route, so the holdout does not test generalization to other routes.",
+        "cycles.json states that Cycle_RDE_Eifel2 drives the same route as Cycle_RDE_Eifel, so test results overstate performance on new routes.",
+        "If the supplied standardization used test rows, a small amount of leakage cannot be excluded."
+      ],
+      "artifact_path": "trained_models/experiments/diesel_airpath_fault_classifier_v1/pipeline.joblib",
+      "artifact_sha256": "4921c2741be854832c4a828a8473b3b07e416025c7b7c2e23b590517399787f0",
+      "evaluation_report_path": "trained_models/experiments/diesel_airpath_fault_classifier_v1/evaluation.json",
+      "evaluation_report_sha256": "57620823baee90f563169e7f5d475d859166f13dfebc395b4dd1745440383b24"
+    },
+    "scania_component_x_repair_window_v1": {
+      "status": "evaluated_rejected",
+      "model_name": "scania_component_x_repair_window_v1",
+      "model_version": "scania_component_x_repair_window_v1_20261107",
+      "task": "Repair of anonymized Component X within 48 time steps of a truck's last readout",
+      "capability": "predictive_maintenance_benchmark",
+      "dataset": "SCANIA Component X (inferred attribution; no documentation present locally)",
+      "dataset_sources": {
+        "train_readouts": "train_operational_readouts.csv",
+        "train_tte": "train_tte.csv",
+        "train_specifications": "train_specifications.csv",
+        "validation_readouts": "validation_operational_readouts.csv",
+        "validation_labels": "validation_labels.csv",
+        "validation_specifications": "validation_specifications.csv",
+        "test_readouts": "test_operational_readouts.csv",
+        "test_labels": "test_labels.csv",
+        "test_specifications": "test_specifications.csv"
+      },
+      "trained_at": "2026-11-07T08:17:23.839910+00:00",
+      "eligible_for_inference": false,
+      "validation_status": "evaluated_rejected",
+      "metrics": {
+        "prevalence_baseline": {
+          "validation": {
+            "records": 5046,
+            "positives": 136,
+            "threshold": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "pr_auc": 0.027,
+            "roc_auc": 0.5,
+            "confusion_matrix": {
+              "true_negative": 4910,
+              "false_positive": 0,
+              "false_negative": 136,
+              "true_positive": 0
+            },
+            "false_negative_rate": 1.0
+          },
+          "test": {
+            "records": 5045,
+            "positives": 142,
+            "threshold": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "pr_auc": 0.0281,
+            "roc_auc": 0.5,
+            "confusion_matrix": {
+              "true_negative": 4903,
+              "false_positive": 0,
+              "false_negative": 142,
+              "true_positive": 0
+            },
+            "false_negative_rate": 1.0,
+            "recall_by_label_window": {
+              "class_1": 0.0,
+              "class_2": 0.0,
+              "class_3": 0.0,
+              "class_4": 0.0
+            }
+          }
+        },
+        "logistic_regression": {
+          "validation": {
+            "records": 5046,
+            "positives": 136,
+            "threshold": 0.0,
+            "precision": 0.0271,
+            "recall": 0.9926,
+            "f1": 0.0527,
+            "pr_auc": 0.0219,
+            "roc_auc": 0.4258,
+            "confusion_matrix": {
+              "true_negative": 55,
+              "false_positive": 4855,
+              "false_negative": 1,
+              "true_positive": 135
+            },
+            "false_negative_rate": 0.0074
+          },
+          "test": {
+            "records": 5045,
+            "positives": 142,
+            "threshold": 0.0,
+            "precision": 0.028,
+            "recall": 0.993,
+            "f1": 0.0544,
+            "pr_auc": 0.0314,
+            "roc_auc": 0.4894,
+            "confusion_matrix": {
+              "true_negative": 2,
+              "false_positive": 4901,
+              "false_negative": 1,
+              "true_positive": 141
+            },
+            "false_negative_rate": 0.007,
+            "recall_by_label_window": {
+              "class_1": 1.0,
+              "class_2": 1.0,
+              "class_3": 1.0,
+              "class_4": 0.9833
+            }
+          }
+        },
+        "gradient_boosting": {
+          "validation": {
+            "records": 5046,
+            "positives": 136,
+            "threshold": 0.133358,
+            "precision": 0.0383,
+            "recall": 0.7059,
+            "f1": 0.0726,
+            "pr_auc": 0.0452,
+            "roc_auc": 0.6036,
+            "confusion_matrix": {
+              "true_negative": 2499,
+              "false_positive": 2411,
+              "false_negative": 40,
+              "true_positive": 96
+            },
+            "false_negative_rate": 0.2941
+          },
+          "test": {
+            "records": 5045,
+            "positives": 142,
+            "threshold": 0.133358,
+            "precision": 0.0337,
+            "recall": 0.9366,
+            "f1": 0.065,
+            "pr_auc": 0.0443,
+            "roc_auc": 0.6531,
+            "confusion_matrix": {
+              "true_negative": 1088,
+              "false_positive": 3815,
+              "false_negative": 9,
+              "true_positive": 133
+            },
+            "false_negative_rate": 0.0634,
+            "recall_by_label_window": {
+              "class_1": 0.9231,
+              "class_2": 0.8667,
+              "class_3": 0.9512,
+              "class_4": 0.95
+            }
+          }
+        }
+      },
+      "reason": "'Component X' is anonymized, so it cannot be mapped to any of the eight assessment categories. Inputs are anonymized heavy-truck histogram counters that this fleet does not collect. Trained on heavy trucks; not validated on the passenger cars, SUVs, vans and motorcycles in this fleet.",
+      "known_limitations": [
+        "'Component X' is anonymized, so it cannot be mapped to any of the eight assessment categories.",
+        "Inputs are anonymized heavy-truck histogram counters that this fleet does not collect.",
+        "Trained on heavy trucks; not validated on the passenger cars, SUVs, vans and motorcycles in this fleet.",
+        "Model scores are uncalibrated and are not failure probabilities.",
+        "Time steps are anonymized units, so the horizon cannot be stated in days or kilometres."
+      ],
+      "artifact_path": "trained_models/experiments/scania_component_x_repair_window_v1/pipeline.joblib",
+      "artifact_sha256": "4ba935c0c04697e8a86e2c9349f562e8dae48d77676b58472318b067f2c15595",
+      "evaluation_report_path": "trained_models/experiments/scania_component_x_repair_window_v1/evaluation.json",
+      "evaluation_report_sha256": "473d95b88f516a7667cd3368c8aea81991e8a3ce971f17b7cf6767d2fc7c8bca"
+    }
+  },
+  "category_models": {
+    "brakes": {
+      "active_version": "category_brakes_v1_f4e7aba4",
+      "versions": [
+        {
+          "model_name": "category_brakes",
+          "model_version": "category_brakes_v1_f4e7aba4",
+          "category": "brakes",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_accepted",
+          "eligible_for_inference": true,
+          "trained_at": "2026-11-08T13:29:16.111725+00:00",
+          "requested_by": 1,
+          "algorithm": "logistic_regression",
+          "artifact_path": "brakes/category_brakes_v1_f4e7aba4/pipeline.joblib",
+          "artifact_sha256": "2a06a3f3d7ce92d2915b7975b5f96414d6dac574d660811fa75e445d06486f88",
+          "evaluation_report_path": "brakes/category_brakes_v1_f4e7aba4/evaluation.json",
+          "evaluation_report_sha256": "82a7d19f5e96a406589640ad031c8d3526071788465179b64e24fe0e4dd38472",
+          "evaluation": {
+            "acceptance_criteria_passed": true
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "brakes",
+            "category_name": "Brakes",
+            "safety_critical": true,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 214,
+              "vehicles": 20,
+              "faults": 43,
+              "healthy": 171,
+              "excluded_by_reason": {},
+              "sha256": "f4e7aba4215c926b29ab03a9506fda9f71b01f501a5af1069daa40a82741e2e5"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-05",
+                "2026-05-25"
+              ],
+              "test": [
+                "2026-06-20",
+                "2026-10-18"
+              ],
+              "training_rows": 142,
+              "test_rows": 66,
+              "rows_purged_to_prevent_leakage": 6,
+              "validation_start": "2026-03-18"
+            },
+            "algorithm": "logistic_regression",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 1.0,
+                "threshold": 0.130109
+              },
+              "random_forest": {
+                "validation_f2": 0.9804,
+                "threshold": 0.628166
+              }
+            },
+            "threshold": 0.130109,
+            "metrics": {
+              "records": 66,
+              "faults": 15,
+              "healthy": 51,
+              "precision": 0.7368,
+              "recall": 0.9333,
+              "f1": 0.8235,
+              "f2": 0.8861,
+              "accuracy": 0.9091,
+              "pr_auc": 0.9389,
+              "recall_lower_bound": 0.7018,
+              "false_negative_rate": 0.0667,
+              "confusion_matrix": {
+                "true_negative": 46,
+                "false_positive": 5,
+                "false_negative": 1,
+                "true_positive": 14
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 66,
+              "faults": 15,
+              "healthy": 51,
+              "precision": 0.2273,
+              "recall": 1.0,
+              "f1": 0.3704,
+              "f2": 0.5952,
+              "accuracy": 0.2273,
+              "pr_auc": 0.2273,
+              "recall_lower_bound": 0.7961,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 51,
+                "false_negative": 0,
+                "true_positive": 15
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 1,
+              "rate": 0.0667,
+              "missed_faults": [
+                {
+                  "outcome_id": 209,
+                  "vehicle_id": 25,
+                  "assessed_on": "2026-08-14",
+                  "outcome_date": "2026-09-04",
+                  "rating": "excellent"
+                }
+              ],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_brakes",
+            "model_version": "category_brakes_v1_f4e7aba4",
+            "trained_at": "2026-11-08T13:29:16.111725+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 15,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 51,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.85",
+                "actual": 0.9333,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.6",
+                "actual": 0.7018,
+                "passed": true
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 0.7368,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.8235,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.2841",
+                "actual": 0.9389,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": true,
+            "status": "evaluated_pending",
+            "decision_reasons": [
+              "Passed every criterion. An administrator must review it before it can serve predictions."
+            ]
+          },
+          "accepted_by": 1,
+          "accepted_at": "2026-11-08T13:29:45.290917+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 214,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "engine": {
+      "active_version": "category_engine_v1_17cb5775",
+      "versions": [
+        {
+          "model_name": "category_engine",
+          "model_version": "category_engine_v1_17cb5775",
+          "category": "engine",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_accepted",
+          "eligible_for_inference": true,
+          "trained_at": "2026-11-08T13:29:18.440219+00:00",
+          "requested_by": 1,
+          "algorithm": "random_forest",
+          "artifact_path": "engine/category_engine_v1_17cb5775/pipeline.joblib",
+          "artifact_sha256": "8b8e3cacdc779140299389e0e2f60387b6c6c0c2372e5c27fcb4b91da7931b99",
+          "evaluation_report_path": "engine/category_engine_v1_17cb5775/evaluation.json",
+          "evaluation_report_sha256": "2924ad90a6884abc61d85044ddc46479088a06cfa2d035655d5fcc792a86ab81",
+          "evaluation": {
+            "acceptance_criteria_passed": true
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "engine",
+            "category_name": "Engine",
+            "safety_critical": false,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 240,
+              "vehicles": 20,
+              "faults": 28,
+              "healthy": 212,
+              "excluded_by_reason": {},
+              "sha256": "17cb577559854bf7508a3c52dfee85062b2fd712ee2a40f600f6135e1e650d32"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-04",
+                "2026-06-09"
+              ],
+              "test": [
+                "2026-06-16",
+                "2026-11-06"
+              ],
+              "training_rows": 162,
+              "test_rows": 72,
+              "rows_purged_to_prevent_leakage": 6,
+              "validation_start": "2026-03-11"
+            },
+            "algorithm": "random_forest",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 0.9677,
+                "threshold": 0.373504
+              },
+              "random_forest": {
+                "validation_f2": 1.0,
+                "threshold": 0.543005
+              }
+            },
+            "threshold": 0.543005,
+            "metrics": {
+              "records": 72,
+              "faults": 11,
+              "healthy": 61,
+              "precision": 0.6875,
+              "recall": 1.0,
+              "f1": 0.8148,
+              "f2": 0.9167,
+              "accuracy": 0.9306,
+              "pr_auc": 0.9564,
+              "recall_lower_bound": 0.7412,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 56,
+                "false_positive": 5,
+                "false_negative": 0,
+                "true_positive": 11
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 72,
+              "faults": 11,
+              "healthy": 61,
+              "precision": 0.1528,
+              "recall": 1.0,
+              "f1": 0.2651,
+              "f2": 0.4741,
+              "accuracy": 0.1528,
+              "pr_auc": 0.1528,
+              "recall_lower_bound": 0.7412,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 61,
+                "false_negative": 0,
+                "true_positive": 11
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 0,
+              "rate": 0.0,
+              "missed_faults": [],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_engine",
+            "model_version": "category_engine_v1_17cb5775",
+            "trained_at": "2026-11-08T13:29:18.440219+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 11,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 61,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.7",
+                "actual": 1.0,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.5",
+                "actual": 0.7412,
+                "passed": true
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 0.6875,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.8148,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.191",
+                "actual": 0.9564,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": true,
+            "status": "evaluated_pending",
+            "decision_reasons": [
+              "Passed every criterion. An administrator must review it before it can serve predictions."
+            ]
+          },
+          "accepted_by": 1,
+          "accepted_at": "2026-11-08T13:29:45.598019+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 240,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "cooling": {
+      "active_version": "category_cooling_v1_8ae9bf91",
+      "versions": [
+        {
+          "model_name": "category_cooling",
+          "model_version": "category_cooling_v1_8ae9bf91",
+          "category": "cooling",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_accepted",
+          "eligible_for_inference": true,
+          "trained_at": "2026-11-08T13:29:20.312522+00:00",
+          "requested_by": 1,
+          "algorithm": "logistic_regression",
+          "artifact_path": "cooling/category_cooling_v1_8ae9bf91/pipeline.joblib",
+          "artifact_sha256": "ea738f76de3d61caf5be0a58639e49e6ba7f933b1c8e93ff0be17e14974db441",
+          "evaluation_report_path": "cooling/category_cooling_v1_8ae9bf91/evaluation.json",
+          "evaluation_report_sha256": "6633930f36f9e94845249d9796858af6373ded802ca81b87287c5a77703e16e9",
+          "evaluation": {
+            "acceptance_criteria_passed": true
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "cooling",
+            "category_name": "Cooling System",
+            "safety_critical": true,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 250,
+              "vehicles": 20,
+              "faults": 23,
+              "healthy": 227,
+              "excluded_by_reason": {},
+              "sha256": "8ae9bf916f82450d9c5610f63f1662ab0902883b5e329a87f51c6c39a4498498"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-04",
+                "2026-05-20"
+              ],
+              "test": [
+                "2026-06-17",
+                "2026-10-25"
+              ],
+              "training_rows": 161,
+              "test_rows": 75,
+              "rows_purged_to_prevent_leakage": 14,
+              "validation_start": "2026-03-11"
+            },
+            "algorithm": "logistic_regression",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 1.0,
+                "threshold": 0.389092
+              },
+              "random_forest": {
+                "validation_f2": 1.0,
+                "threshold": 0.592241
+              }
+            },
+            "threshold": 0.389092,
+            "metrics": {
+              "records": 75,
+              "faults": 7,
+              "healthy": 68,
+              "precision": 0.7778,
+              "recall": 1.0,
+              "f1": 0.875,
+              "f2": 0.9459,
+              "accuracy": 0.9733,
+              "pr_auc": 0.9683,
+              "recall_lower_bound": 0.6457,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 66,
+                "false_positive": 2,
+                "false_negative": 0,
+                "true_positive": 7
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 75,
+              "faults": 7,
+              "healthy": 68,
+              "precision": 0.0933,
+              "recall": 1.0,
+              "f1": 0.1707,
+              "f2": 0.3398,
+              "accuracy": 0.0933,
+              "pr_auc": 0.0933,
+              "recall_lower_bound": 0.6457,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 68,
+                "false_negative": 0,
+                "true_positive": 7
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 0,
+              "rate": 0.0,
+              "missed_faults": [],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_cooling",
+            "model_version": "category_cooling_v1_8ae9bf91",
+            "trained_at": "2026-11-08T13:29:20.312522+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 7,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 68,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.85",
+                "actual": 1.0,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.6",
+                "actual": 0.6457,
+                "passed": true
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 0.7778,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.875,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.1167",
+                "actual": 0.9683,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": true,
+            "status": "evaluated_pending",
+            "decision_reasons": [
+              "Passed every criterion. An administrator must review it before it can serve predictions."
+            ]
+          },
+          "accepted_by": 1,
+          "accepted_at": "2026-11-08T13:29:45.846268+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 250,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "suspension_steering": {
+      "active_version": "category_suspension_steering_v1_c3ee93f3",
+      "versions": [
+        {
+          "model_name": "category_suspension_steering",
+          "model_version": "category_suspension_steering_v1_c3ee93f3",
+          "category": "suspension_steering",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_accepted",
+          "eligible_for_inference": true,
+          "trained_at": "2026-11-08T13:29:22.134732+00:00",
+          "requested_by": 1,
+          "algorithm": "logistic_regression",
+          "artifact_path": "suspension_steering/category_suspension_steering_v1_c3ee93f3/pipeline.joblib",
+          "artifact_sha256": "dfb6e4020a904e06e304471e76503cc2e980ea5fd4a6172908b74d31c0a4c587",
+          "evaluation_report_path": "suspension_steering/category_suspension_steering_v1_c3ee93f3/evaluation.json",
+          "evaluation_report_sha256": "2d4ebf8421c344d9981fc0d23b3ef91b6d6cb645dcb54c820b55ff2754ba005a",
+          "evaluation": {
+            "acceptance_criteria_passed": true
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "suspension_steering",
+            "category_name": "Suspension and Steering",
+            "safety_critical": true,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 230,
+              "vehicles": 20,
+              "faults": 36,
+              "healthy": 194,
+              "excluded_by_reason": {},
+              "sha256": "c3ee93f32590c7647d8b452498d9be01958216292de6e50c478abd50554f43f0"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-05",
+                "2026-06-07"
+              ],
+              "test": [
+                "2026-06-22",
+                "2026-10-30"
+              ],
+              "training_rows": 153,
+              "test_rows": 69,
+              "rows_purged_to_prevent_leakage": 8,
+              "validation_start": "2026-03-12"
+            },
+            "algorithm": "logistic_regression",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 0.7812,
+                "threshold": 0.10379
+              },
+              "random_forest": {
+                "validation_f2": 0.7812,
+                "threshold": 0.383546
+              }
+            },
+            "threshold": 0.10379,
+            "metrics": {
+              "records": 69,
+              "faults": 14,
+              "healthy": 55,
+              "precision": 0.9286,
+              "recall": 0.9286,
+              "f1": 0.9286,
+              "f2": 0.9286,
+              "accuracy": 0.971,
+              "pr_auc": 0.9508,
+              "recall_lower_bound": 0.6853,
+              "false_negative_rate": 0.0714,
+              "confusion_matrix": {
+                "true_negative": 54,
+                "false_positive": 1,
+                "false_negative": 1,
+                "true_positive": 13
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 69,
+              "faults": 14,
+              "healthy": 55,
+              "precision": 0.2029,
+              "recall": 1.0,
+              "f1": 0.3373,
+              "f2": 0.56,
+              "accuracy": 0.2029,
+              "pr_auc": 0.2029,
+              "recall_lower_bound": 0.7847,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 55,
+                "false_negative": 0,
+                "true_positive": 14
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 1,
+              "rate": 0.0714,
+              "missed_faults": [
+                {
+                  "outcome_id": 66,
+                  "vehicle_id": 13,
+                  "assessed_on": "2026-10-30",
+                  "outcome_date": "2026-11-04",
+                  "rating": "fair"
+                }
+              ],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_suspension_steering",
+            "model_version": "category_suspension_steering_v1_c3ee93f3",
+            "trained_at": "2026-11-08T13:29:22.134732+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 14,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 55,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.85",
+                "actual": 0.9286,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.6",
+                "actual": 0.6853,
+                "passed": true
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 0.9286,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.9286,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.2536",
+                "actual": 0.9508,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": true,
+            "status": "evaluated_pending",
+            "decision_reasons": [
+              "Passed every criterion. An administrator must review it before it can serve predictions."
+            ]
+          },
+          "accepted_by": 1,
+          "accepted_at": "2026-11-08T13:29:46.140075+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 230,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "air_conditioning": {
+      "active_version": "category_air_conditioning_v1_7ba29703",
+      "versions": [
+        {
+          "model_name": "category_air_conditioning",
+          "model_version": "category_air_conditioning_v1_7ba29703",
+          "category": "air_conditioning",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_accepted",
+          "eligible_for_inference": true,
+          "trained_at": "2026-11-08T13:29:23.866584+00:00",
+          "requested_by": 1,
+          "algorithm": "logistic_regression",
+          "artifact_path": "air_conditioning/category_air_conditioning_v1_7ba29703/pipeline.joblib",
+          "artifact_sha256": "471005e0bdfb7d454dded5c40e0a9f1fe7d34cf6553735865f5de83e37278b3f",
+          "evaluation_report_path": "air_conditioning/category_air_conditioning_v1_7ba29703/evaluation.json",
+          "evaluation_report_sha256": "6e1399e6014e7db695ca5a7d41cec34971f9667df37e793c04685d27b02de334",
+          "evaluation": {
+            "acceptance_criteria_passed": true
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "air_conditioning",
+            "category_name": "Air Conditioning",
+            "safety_critical": false,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 226,
+              "vehicles": 20,
+              "faults": 34,
+              "healthy": 192,
+              "excluded_by_reason": {},
+              "sha256": "7ba297031dba862091749052c69c00c8ffa6bb6393f10aa8d8ae2ad2eec1550b"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-04",
+                "2026-05-14"
+              ],
+              "test": [
+                "2026-06-07",
+                "2026-10-18"
+              ],
+              "training_rows": 149,
+              "test_rows": 68,
+              "rows_purged_to_prevent_leakage": 9,
+              "validation_start": "2026-03-12"
+            },
+            "algorithm": "logistic_regression",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 0.7143,
+                "threshold": 0.877663
+              },
+              "random_forest": {
+                "validation_f2": 0.7143,
+                "threshold": 0.671742
+              }
+            },
+            "threshold": 0.877663,
+            "metrics": {
+              "records": 68,
+              "faults": 15,
+              "healthy": 53,
+              "precision": 1.0,
+              "recall": 0.9333,
+              "f1": 0.9655,
+              "f2": 0.9459,
+              "accuracy": 0.9853,
+              "pr_auc": 0.9522,
+              "recall_lower_bound": 0.7018,
+              "false_negative_rate": 0.0667,
+              "confusion_matrix": {
+                "true_negative": 53,
+                "false_positive": 0,
+                "false_negative": 1,
+                "true_positive": 14
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 68,
+              "faults": 15,
+              "healthy": 53,
+              "precision": 0.2206,
+              "recall": 1.0,
+              "f1": 0.3614,
+              "f2": 0.5859,
+              "accuracy": 0.2206,
+              "pr_auc": 0.2206,
+              "recall_lower_bound": 0.7961,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 53,
+                "false_negative": 0,
+                "true_positive": 15
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 1,
+              "rate": 0.0667,
+              "missed_faults": [
+                {
+                  "outcome_id": 265,
+                  "vehicle_id": 29,
+                  "assessed_on": "2026-09-12",
+                  "outcome_date": "2026-10-06",
+                  "rating": "fair"
+                }
+              ],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_air_conditioning",
+            "model_version": "category_air_conditioning_v1_7ba29703",
+            "trained_at": "2026-11-08T13:29:23.866584+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 15,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 53,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.7",
+                "actual": 0.9333,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.5",
+                "actual": 0.7018,
+                "passed": true
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 1.0,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.9655,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.2757",
+                "actual": 0.9522,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": true,
+            "status": "evaluated_pending",
+            "decision_reasons": [
+              "Passed every criterion. An administrator must review it before it can serve predictions."
+            ]
+          },
+          "accepted_by": 1,
+          "accepted_at": "2026-11-08T13:29:46.413643+00:00",
+          "training_data": {
+            "source": "simulated",
+            "rows": 226,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "tires_wheels": {
+      "active_version": null,
+      "versions": [
+        {
+          "model_name": "category_tires_wheels",
+          "model_version": "category_tires_wheels_v1_361589b5",
+          "category": "tires_wheels",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_rejected",
+          "eligible_for_inference": false,
+          "trained_at": "2026-11-08T13:29:25.552292+00:00",
+          "requested_by": 1,
+          "algorithm": "logistic_regression",
+          "artifact_path": "tires_wheels/category_tires_wheels_v1_361589b5/pipeline.joblib",
+          "artifact_sha256": "4b2d1baaea103df065c9bdf9b3c8902b80e2e7c85a4de71b1a7a372e5e09b284",
+          "evaluation_report_path": "tires_wheels/category_tires_wheels_v1_361589b5/evaluation.json",
+          "evaluation_report_sha256": "377139e588fa2e4de11a442cfd6dbf188bc6dc0f06395ea0215eb02bc029b63b",
+          "evaluation": {
+            "acceptance_criteria_passed": false
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "tires_wheels",
+            "category_name": "Tires and Wheels",
+            "safety_critical": true,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 210,
+              "vehicles": 20,
+              "faults": 42,
+              "healthy": 168,
+              "excluded_by_reason": {},
+              "sha256": "361589b51ac9da4eee2b91e0d03816395b909cc8fa8c6857bcae225fb74bfefe"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-04",
+                "2026-05-25"
+              ],
+              "test": [
+                "2026-06-22",
+                "2026-11-06"
+              ],
+              "training_rows": 137,
+              "test_rows": 63,
+              "rows_purged_to_prevent_leakage": 10,
+              "validation_start": "2026-03-12"
+            },
+            "algorithm": "logistic_regression",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 0.8974,
+                "threshold": 0.930165
+              },
+              "random_forest": {
+                "validation_f2": 0.8974,
+                "threshold": 0.490643
+              }
+            },
+            "threshold": 0.930165,
+            "metrics": {
+              "records": 63,
+              "faults": 13,
+              "healthy": 50,
+              "precision": 1.0,
+              "recall": 0.6923,
+              "f1": 0.8182,
+              "f2": 0.7377,
+              "accuracy": 0.9365,
+              "pr_auc": 0.9422,
+              "recall_lower_bound": 0.4237,
+              "false_negative_rate": 0.3077,
+              "confusion_matrix": {
+                "true_negative": 50,
+                "false_positive": 0,
+                "false_negative": 4,
+                "true_positive": 9
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 63,
+              "faults": 13,
+              "healthy": 50,
+              "precision": 0.2063,
+              "recall": 1.0,
+              "f1": 0.3421,
+              "f2": 0.5652,
+              "accuracy": 0.2063,
+              "pr_auc": 0.2063,
+              "recall_lower_bound": 0.7719,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 50,
+                "false_negative": 0,
+                "true_positive": 13
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 4,
+              "rate": 0.3077,
+              "missed_faults": [
+                {
+                  "outcome_id": 152,
+                  "vehicle_id": 20,
+                  "assessed_on": "2026-07-16",
+                  "outcome_date": "2026-08-12",
+                  "rating": "poor"
+                },
+                {
+                  "outcome_id": 64,
+                  "vehicle_id": 13,
+                  "assessed_on": "2026-08-02",
+                  "outcome_date": "2026-08-14",
+                  "rating": "good"
+                },
+                {
+                  "outcome_id": 179,
+                  "vehicle_id": 22,
+                  "assessed_on": "2026-08-26",
+                  "outcome_date": "2026-09-04",
+                  "rating": "poor"
+                },
+                {
+                  "outcome_id": 266,
+                  "vehicle_id": 29,
+                  "assessed_on": "2026-10-13",
+                  "outcome_date": "2026-10-15",
+                  "rating": "critical"
+                }
+              ],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_tires_wheels",
+            "model_version": "category_tires_wheels_v1_361589b5",
+            "trained_at": "2026-11-08T13:29:25.552292+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 13,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 50,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.85",
+                "actual": 0.6923,
+                "passed": false
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.6",
+                "actual": 0.4237,
+                "passed": false
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 1.0,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.8182,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.2579",
+                "actual": 0.9422,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": false,
+            "status": "evaluated_rejected",
+            "decision_reasons": [
+              "Recall: required at least 0.85, got 0.6923.",
+              "Recall, 95% lower bound: required at least 0.6, got 0.4237."
+            ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 210,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "battery_electrical": {
+      "active_version": null,
+      "versions": [
+        {
+          "model_name": "category_battery_electrical",
+          "model_version": "category_battery_electrical_v1_faa66044",
+          "category": "battery_electrical",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_rejected",
+          "eligible_for_inference": false,
+          "trained_at": "2026-11-08T13:29:27.831196+00:00",
+          "requested_by": 1,
+          "algorithm": "random_forest",
+          "artifact_path": "battery_electrical/category_battery_electrical_v1_faa66044/pipeline.joblib",
+          "artifact_sha256": "a52a64473fc820df9acbd929f429cc6c1e62c430a89624abeaeb2c96425ac4ac",
+          "evaluation_report_path": "battery_electrical/category_battery_electrical_v1_faa66044/evaluation.json",
+          "evaluation_report_sha256": "6768093148d12852f9544b7a4f5eccb0d58438d4e1c98e75c8a604f6cb14faa1",
+          "evaluation": {
+            "acceptance_criteria_passed": false
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "battery_electrical",
+            "category_name": "Battery and Electrical",
+            "safety_critical": false,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 226,
+              "vehicles": 20,
+              "faults": 33,
+              "healthy": 193,
+              "excluded_by_reason": {},
+              "sha256": "faa660449d8c8fb812a7890096670d1704be21eec0a8ca4bce748fcf5316fd4d"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-05",
+                "2026-06-10"
+              ],
+              "test": [
+                "2026-07-03",
+                "2026-10-25"
+              ],
+              "training_rows": 150,
+              "test_rows": 68,
+              "rows_purged_to_prevent_leakage": 8,
+              "validation_start": "2026-03-13"
+            },
+            "algorithm": "random_forest",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 0.9677,
+                "threshold": 0.090839
+              },
+              "random_forest": {
+                "validation_f2": 1.0,
+                "threshold": 0.403575
+              }
+            },
+            "threshold": 0.403575,
+            "metrics": {
+              "records": 68,
+              "faults": 10,
+              "healthy": 58,
+              "precision": 0.5333,
+              "recall": 0.8,
+              "f1": 0.64,
+              "f2": 0.7273,
+              "accuracy": 0.8676,
+              "pr_auc": 0.8259,
+              "recall_lower_bound": 0.4902,
+              "false_negative_rate": 0.2,
+              "confusion_matrix": {
+                "true_negative": 51,
+                "false_positive": 7,
+                "false_negative": 2,
+                "true_positive": 8
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 68,
+              "faults": 10,
+              "healthy": 58,
+              "precision": 0.1471,
+              "recall": 1.0,
+              "f1": 0.2564,
+              "f2": 0.463,
+              "accuracy": 0.1471,
+              "pr_auc": 0.1471,
+              "recall_lower_bound": 0.7225,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 58,
+                "false_negative": 0,
+                "true_positive": 10
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 2,
+              "rate": 0.2,
+              "missed_faults": [
+                {
+                  "outcome_id": 134,
+                  "vehicle_id": 19,
+                  "assessed_on": "2026-07-11",
+                  "outcome_date": "2026-07-23",
+                  "rating": "good"
+                },
+                {
+                  "outcome_id": 180,
+                  "vehicle_id": 22,
+                  "assessed_on": "2026-09-23",
+                  "outcome_date": "2026-09-24",
+                  "rating": "good"
+                }
+              ],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_battery_electrical",
+            "model_version": "category_battery_electrical_v1_faa66044",
+            "trained_at": "2026-11-08T13:29:27.831196+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 10,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 58,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.7",
+                "actual": 0.8,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.5",
+                "actual": 0.4902,
+                "passed": false
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 0.5333,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.64,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.1838",
+                "actual": 0.8259,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": false,
+            "status": "evaluated_rejected",
+            "decision_reasons": [
+              "Recall, 95% lower bound: required at least 0.5, got 0.4902."
+            ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 226,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    },
+    "transmission": {
+      "active_version": null,
+      "versions": [
+        {
+          "model_name": "category_transmission",
+          "model_version": "category_transmission_v1_70d7058b",
+          "category": "transmission",
+          "task": "Verified fault within 90 days of an assessment",
+          "status": "evaluated_rejected",
+          "eligible_for_inference": false,
+          "trained_at": "2026-11-08T13:29:29.755620+00:00",
+          "requested_by": 1,
+          "algorithm": "logistic_regression",
+          "artifact_path": "transmission/category_transmission_v1_70d7058b/pipeline.joblib",
+          "artifact_sha256": "73e5b9002386fa305bc1fbea3843a335fb94ca5fbd964ae730ffe37641e3a3a2",
+          "evaluation_report_path": "transmission/category_transmission_v1_70d7058b/evaluation.json",
+          "evaluation_report_sha256": "bacb56a7b723e93992f3b3c7a37f36cacfc41d2647a53e7f071b0ea5390d062b",
+          "evaluation": {
+            "acceptance_criteria_passed": false
+          },
+          "feature_schema_version": "1",
+          "catalog_version": "2026-11-07.1",
+          "report": {
+            "category": "transmission",
+            "category_name": "Transmission",
+            "safety_critical": false,
+            "feature_schema_version": "1",
+            "catalog_version": "2026-11-07.1",
+            "policy_version": "1",
+            "horizon_days": 90,
+            "dataset": {
+              "rows": 242,
+              "vehicles": 20,
+              "faults": 27,
+              "healthy": 215,
+              "excluded_by_reason": {},
+              "sha256": "70d7058b63f1c7f17fdb42023f00a52838f431bbecbf154e726fd9f82d2e0e80"
+            },
+            "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+            "periods": {
+              "training": [
+                "2025-08-04",
+                "2026-05-24"
+              ],
+              "test": [
+                "2026-06-17",
+                "2026-11-06"
+              ],
+              "training_rows": 159,
+              "test_rows": 73,
+              "rows_purged_to_prevent_leakage": 10,
+              "validation_start": "2026-03-02"
+            },
+            "algorithm": "logistic_regression",
+            "candidates": {
+              "logistic_regression": {
+                "validation_f2": 1.0,
+                "threshold": 0.164895
+              },
+              "random_forest": {
+                "validation_f2": 0.9615,
+                "threshold": 0.452557
+              }
+            },
+            "threshold": 0.164895,
+            "metrics": {
+              "records": 73,
+              "faults": 12,
+              "healthy": 61,
+              "precision": 0.6429,
+              "recall": 0.75,
+              "f1": 0.6923,
+              "f2": 0.7258,
+              "accuracy": 0.8904,
+              "pr_auc": 0.7374,
+              "recall_lower_bound": 0.4677,
+              "false_negative_rate": 0.25,
+              "confusion_matrix": {
+                "true_negative": 56,
+                "false_positive": 5,
+                "false_negative": 3,
+                "true_positive": 9
+              }
+            },
+            "baseline_flag_everything": {
+              "records": 73,
+              "faults": 12,
+              "healthy": 61,
+              "precision": 0.1644,
+              "recall": 1.0,
+              "f1": 0.2824,
+              "f2": 0.4959,
+              "accuracy": 0.1644,
+              "pr_auc": 0.1644,
+              "recall_lower_bound": 0.7575,
+              "false_negative_rate": 0.0,
+              "confusion_matrix": {
+                "true_negative": 0,
+                "false_positive": 61,
+                "false_negative": 0,
+                "true_positive": 12
+              }
+            },
+            "unseen_vehicle_metrics": null,
+            "false_negative_analysis": {
+              "count": 3,
+              "rate": 0.25,
+              "missed_faults": [
+                {
+                  "outcome_id": 207,
+                  "vehicle_id": 25,
+                  "assessed_on": "2026-06-17",
+                  "outcome_date": "2026-07-07",
+                  "rating": "poor"
+                },
+                {
+                  "outcome_id": 178,
+                  "vehicle_id": 22,
+                  "assessed_on": "2026-07-28",
+                  "outcome_date": "2026-08-02",
+                  "rating": "fair"
+                },
+                {
+                  "outcome_id": 21,
+                  "vehicle_id": 10,
+                  "assessed_on": "2026-10-18",
+                  "outcome_date": "2026-11-01",
+                  "rating": "good"
+                }
+              ],
+              "note": "Each of these is a verified fault this model would not have flagged."
+            },
+            "model_name": "category_transmission",
+            "model_version": "category_transmission_v1_70d7058b",
+            "trained_at": "2026-11-08T13:29:29.755620+00:00",
+            "acceptance_criteria": [
+              {
+                "name": "Faults in the test period",
+                "required": "at least 5",
+                "actual": 12,
+                "passed": true
+              },
+              {
+                "name": "Healthy outcomes in the test period",
+                "required": "at least 5",
+                "actual": 61,
+                "passed": true
+              },
+              {
+                "name": "Recall",
+                "required": "at least 0.7",
+                "actual": 0.75,
+                "passed": true
+              },
+              {
+                "name": "Recall, 95% lower bound",
+                "required": "at least 0.5",
+                "actual": 0.4677,
+                "passed": false
+              },
+              {
+                "name": "Precision",
+                "required": "at least 0.5",
+                "actual": 0.6429,
+                "passed": true
+              },
+              {
+                "name": "F1-score",
+                "required": "at least 0.6",
+                "actual": 0.6923,
+                "passed": true
+              },
+              {
+                "name": "PR-AUC against the fault rate",
+                "required": "at least 0.2055",
+                "actual": 0.7374,
+                "passed": true
+              }
+            ],
+            "acceptance_criteria_passed": false,
+            "status": "evaluated_rejected",
+            "decision_reasons": [
+              "Recall, 95% lower bound: required at least 0.5, got 0.4677."
+            ]
+          },
+          "training_data": {
+            "source": "simulated",
+            "rows": 242,
+            "simulated_rows": null,
+            "recorded_from": "Commit 5b738f3 (2026-11-08): trained on simulated SAMPLE- vehicles for a demonstration; to be revoked after it."
+          }
+        }
+      ]
+    }
+  }
+}

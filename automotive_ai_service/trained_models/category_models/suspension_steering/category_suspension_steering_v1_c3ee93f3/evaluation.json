@@ -1,0 +1,149 @@
+{
+  "category": "suspension_steering",
+  "category_name": "Suspension and Steering",
+  "safety_critical": true,
+  "feature_schema_version": "1",
+  "catalog_version": "2026-11-07.1",
+  "policy_version": "1",
+  "horizon_days": 90,
+  "dataset": {
+    "rows": 230,
+    "vehicles": 20,
+    "faults": 36,
+    "healthy": 194,
+    "excluded_by_reason": {},
+    "sha256": "c3ee93f32590c7647d8b452498d9be01958216292de6e50c478abd50554f43f0"
+  },
+  "methodology": "Chronological holdout: the latest assessments are the test set and are scored once. Training uses only earlier assessments whose outcomes were also known before the test period began. The threshold and algorithm are chosen on an earlier validation period, never on the test set.",
+  "periods": {
+    "training": [
+      "2025-08-05",
+      "2026-06-07"
+    ],
+    "test": [
+      "2026-06-22",
+      "2026-10-30"
+    ],
+    "training_rows": 153,
+    "test_rows": 69,
+    "rows_purged_to_prevent_leakage": 8,
+    "validation_start": "2026-03-12"
+  },
+  "algorithm": "logistic_regression",
+  "candidates": {
+    "logistic_regression": {
+      "validation_f2": 0.7812,
+      "threshold": 0.10379
+    },
+    "random_forest": {
+      "validation_f2": 0.7812,
+      "threshold": 0.383546
+    }
+  },
+  "threshold": 0.10379,
+  "metrics": {
+    "records": 69,
+    "faults": 14,
+    "healthy": 55,
+    "precision": 0.9286,
+    "recall": 0.9286,
+    "f1": 0.9286,
+    "f2": 0.9286,
+    "accuracy": 0.971,
+    "pr_auc": 0.9508,
+    "recall_lower_bound": 0.6853,
+    "false_negative_rate": 0.0714,
+    "confusion_matrix": {
+      "true_negative": 54,
+      "false_positive": 1,
+      "false_negative": 1,
+      "true_positive": 13
+    }
+  },
+  "baseline_flag_everything": {
+    "records": 69,
+    "faults": 14,
+    "healthy": 55,
+    "precision": 0.2029,
+    "recall": 1.0,
+    "f1": 0.3373,
+    "f2": 0.56,
+    "accuracy": 0.2029,
+    "pr_auc": 0.2029,
+    "recall_lower_bound": 0.7847,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 55,
+      "false_negative": 0,
+      "true_positive": 14
+    }
+  },
+  "unseen_vehicle_metrics": null,
+  "false_negative_analysis": {
+    "count": 1,
+    "rate": 0.0714,
+    "missed_faults": [
+      {
+        "outcome_id": 66,
+        "vehicle_id": 13,
+        "assessed_on": "2026-10-30",
+        "outcome_date": "2026-11-04",
+        "rating": "fair"
+      }
+    ],
+    "note": "Each of these is a verified fault this model would not have flagged."
+  },
+  "model_name": "category_suspension_steering",
+  "model_version": "category_suspension_steering_v1_c3ee93f3",
+  "trained_at": "2026-11-08T13:29:22.134732+00:00",
+  "acceptance_criteria": [
+    {
+      "name": "Faults in the test period",
+      "required": "at least 5",
+      "actual": 14,
+      "passed": true
+    },
+    {
+      "name": "Healthy outcomes in the test period",
+      "required": "at least 5",
+      "actual": 55,
+      "passed": true
+    },
+    {
+      "name": "Recall",
+      "required": "at least 0.85",
+      "actual": 0.9286,
+      "passed": true
+    },
+    {
+      "name": "Recall, 95% lower bound",
+      "required": "at least 0.6",
+      "actual": 0.6853,
+      "passed": true
+    },
+    {
+      "name": "Precision",
+      "required": "at least 0.5",
+      "actual": 0.9286,
+      "passed": true
+    },
+    {
+      "name": "F1-score",
+      "required": "at least 0.6",
+      "actual": 0.9286,
+      "passed": true
+    },
+    {
+      "name": "PR-AUC against the fault rate",
+      "required": "at least 0.2536",
+      "actual": 0.9508,
+      "passed": true
+    }
+  ],
+  "acceptance_criteria_passed": true,
+  "status": "evaluated_pending",
+  "decision_reasons": [
+    "Passed every criterion. An administrator must review it before it can serve predictions."
+  ]
+}
